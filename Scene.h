@@ -22,7 +22,6 @@ public:
 
         cub->scale({ 10,10,10 });
         cub->rotate(90, { 1,0,0 });
-        cub->translate({ 0,0,-10 });
 
         lightSource->translate({ 0,0,30 });
 

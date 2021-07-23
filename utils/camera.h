@@ -8,7 +8,7 @@
 class Camera
 {
 public:
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 30.0f);
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 60.0f);
 
 	Camera(Screen& s) :screen(s)
 	{

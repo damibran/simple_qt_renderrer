@@ -26,7 +26,8 @@ void MainWindow::screen_refresh()
     QPen screenPen;
 
     //configure painter
-    painter.setWindow(0,0,m_width, m_height);
+    float system_scale = 2; //take into account system window elements scaling 1 - 100%,2 - 200%;
+    painter.setWindow(0,0,m_width* system_scale, m_height* system_scale);
 
     painter.fillRect(0, 0,m_width, m_height,QBrush(QColor(255,255,255)));
 

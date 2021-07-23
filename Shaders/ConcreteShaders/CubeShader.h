@@ -51,7 +51,7 @@ public:
 		glm::vec3 reflectDir = glm::normalize(glm::reflect(-lightDir, norm_pixel));
 
 		float diff = glm::clamp(std::fmaxf(glm::dot(norm_pixel, lightDir), 0.0f), 0.0f, 1.0f);
-		float spec = glm::clamp(std::pow(std::fmaxf(glm::dot(viewDir, reflectDir), 0.0f), 256), 0.0, 1.0);
+		float spec = glm::clamp(std::pow(std::fmaxf(glm::dot(viewDir, reflectDir), 0.0f), 32), 0.0, 1.0);
 
 		float color = ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3;
 
