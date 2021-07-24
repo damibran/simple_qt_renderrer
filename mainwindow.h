@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "Screen.h"
 #include "Scene.h"
+#include "utils/input.h"
 
 class MainWindow : public QWindow
 {
@@ -25,6 +26,7 @@ protected:
 
 private:
     QBackingStore *m_backingStore;
+    CameraAction camAct= CameraAction::NOTHING;
     int m_width;
     int m_height;
     Screen screen;

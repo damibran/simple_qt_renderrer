@@ -29,6 +29,11 @@ public:
         worldObj.addChild(lightSource);
     }
 
+    void updateCamera(CameraAction ca)
+    {
+        cam.moveCamera(ca);
+    }
+
     void updateScene()
     {
         t += 0.01;

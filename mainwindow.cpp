@@ -33,6 +33,8 @@ void MainWindow::screen_refresh()
 
     //here must be rendering implemented
     screen.clearScreen();
+    scene.updateCamera(camAct);
+    camAct = CameraAction::NOTHING;
     scene.updateScene();
 
    for(int y =0 ;y<m_height;++y)
@@ -63,8 +65,20 @@ bool MainWindow::event(QEvent *event)
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if(event->key()==16777216)
+    if (event->key() == 16777216)
         this->close();
+    else if (event->key() == 'A')
+        camAct = CameraAction::LEFT;
+    else if (event->key() == 'W')
+        camAct = CameraAction::UP;
+    else if (event->key() == 'D')
+        camAct = CameraAction::RIGHT;
+    else if (event->key() == 'S')
+        camAct = CameraAction::DOWN;
+    else if (event->key() == 'E')
+        camAct = CameraAction::ZOOMIN;
+    else if (event->key() == 'Q')
+        camAct = CameraAction::ZOOMOUT;
 }
 
 void MainWindow::exposeEvent(QExposeEvent *)

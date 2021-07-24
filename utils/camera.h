@@ -14,20 +14,36 @@ public:
 	{
 		proj = glm::perspective(glm::radians(90.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 200.0f);
 	}
-	void moveCamera(Input::CameraAction act, float dt)
+	void moveCamera(CameraAction act, float dt)
 	{
 		float tspeed = dt * speed;
-		if (act == Input::CameraAction::UP)
+		if (act == CameraAction::UP)
 			cameraPos += tspeed * cameraUp;
-		else if (act == Input::CameraAction::DOWN)
+		else if (act == CameraAction::DOWN)
 			cameraPos -= tspeed * cameraUp;
-		else if (act == Input::CameraAction::LEFT)
+		else if (act == CameraAction::LEFT)
 			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == Input::CameraAction::RIGHT)
+		else if (act == CameraAction::RIGHT)
 			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == Input::CameraAction::ZOOMOUT)
+		else if (act == CameraAction::ZOOMOUT)
 			cameraPos -= tspeed * cameraFront;
-		else if (act == Input::CameraAction::ZOOMIN)
+		else if (act == CameraAction::ZOOMIN)
+			cameraPos += tspeed * cameraFront;
+	}
+	void moveCamera(CameraAction act)
+	{
+		float tspeed = 0.16 * speed;
+		if (act == CameraAction::UP)
+			cameraPos += tspeed * cameraUp;
+		else if (act == CameraAction::DOWN)
+			cameraPos -= tspeed * cameraUp;
+		else if (act == CameraAction::LEFT)
+			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
+		else if (act == CameraAction::RIGHT)
+			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
+		else if (act == CameraAction::ZOOMOUT)
+			cameraPos -= tspeed * cameraFront;
+		else if (act == CameraAction::ZOOMIN)
 			cameraPos += tspeed * cameraFront;
 	}
 	MVP_mat getCameraProjViewMat()const
