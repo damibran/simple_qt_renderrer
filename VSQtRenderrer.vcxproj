@@ -111,6 +111,8 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
     <ClInclude Include="Shaders\Shader.h" />
+    <ClInclude Include="shapes\Mesh.h" />
+    <ClInclude Include="shapes\shape.h" />
     <ClInclude Include="utils\camera.h" />
     <ClInclude Include="utils\input.h" />
     <ClInclude Include="utils\MeshRenderer.h" />

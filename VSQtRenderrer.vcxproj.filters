@@ -53,6 +53,12 @@
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shapes\shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shapes\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
