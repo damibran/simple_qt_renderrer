@@ -28,7 +28,7 @@ public:
     {
         for(int i=0;i<colorBuffer.size();++i)
         {
-            colorBuffer[i]=glm::vec3(255.0);
+            colorBuffer[i]=glm::vec3(100);
         }
     }
 private:

@@ -14,5 +14,5 @@ class Shader
 {
 public:
 	virtual triangleClipPos computeVertexShader(const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)  = 0;
-	virtual float computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0;//return color
+	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0;//return color
 };

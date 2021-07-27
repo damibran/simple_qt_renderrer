@@ -78,9 +78,13 @@ private:
 						w1 /= corr;
 						w2 /= corr;
 
-                        float color = shader.computeFragmentShader(pixel, w0, w1, w2);
+                        glm::vec3 color = shader.computeFragmentShader(pixel, w0, w1, w2);
 
-						screen.put_point(x, y, glm::vec3(255.0f)*color);
+						color.r = glm::clamp<float>(color.r, 0, 255);
+						color.g = glm::clamp<float>(color.g, 0, 255);
+						color.b = glm::clamp<float>(color.b, 0, 255);
+
+						screen.put_point(x, y, color);
 					}
 				}
 			}

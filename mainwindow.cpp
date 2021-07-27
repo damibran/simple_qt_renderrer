@@ -26,17 +26,16 @@ void MainWindow::screen_refresh()
     QPen screenPen;
 
     //configure painter
-    float system_scale = 2; //take into account system window elements scaling 1 - 100%,2 - 200%;
+    float system_scale = 1; //take into account system window elements scaling 1 - 100%,2 - 200%;
     painter.setWindow(0,0,m_width* system_scale, m_height* system_scale);
 
-    painter.fillRect(0, 0,m_width, m_height,QBrush(QColor(255,255,255)));
-
-    //here must be rendering implemented
     screen.clearScreen();
+    //updating all scene
     scene.updateCamera(camAct);
     camAct = CameraAction::NOTHING;
     scene.updateScene();
 
+   //updating screen using colorbuffer info
    for(int y =0 ;y<m_height;++y)
    {
        for(int x=0;x<m_width;++x)
@@ -47,7 +46,7 @@ void MainWindow::screen_refresh()
            painter.drawPoint(x,y);
        }
    }
-
+   //end of render loop
     painter.end();
 
     m_backingStore->endPaint();

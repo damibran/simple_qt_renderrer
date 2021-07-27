@@ -3,6 +3,7 @@
 
 class CubeShader : public Shader
 {
+private:
 	struct vrtx
 	{
 		glm::vec3 view_pos;
@@ -15,9 +16,11 @@ class CubeShader : public Shader
 
 	glm::vec3 view_light_pos;
 
-	float ambient = 0.5f;
+	float ambient = 0.3f;
 	float diffStrength = 0.5f;
 	float specStrength = 0.8f;
+
+	glm::vec3 objColor = glm::vec3(255, 255, 84);
 
 public:
 	glm::vec3 world_light_pos;
@@ -41,7 +44,7 @@ public:
 
 		return triangleClipPos(clip_a, clip_b, clip_c);
 	}
-	float computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
+	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
 	{
 		glm::vec3 view_pixel_pos = w0 * a.view_pos + w1 * b.view_pos + w2 * c.view_pos;
 		glm::vec3 norm_pixel = glm::normalize(w0 * a.view_norm + w1 * b.view_norm + w2 * c.view_norm);
@@ -53,7 +56,7 @@ public:
 		float diff = glm::clamp(std::fmaxf(glm::dot(norm_pixel, lightDir), 0.0f), 0.0f, 1.0f);
 		float spec = glm::clamp(std::pow(std::fmaxf(glm::dot(viewDir, reflectDir), 0.0f), 32), 0.0, 1.0);
 
-		float color = ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3;
+		glm::vec3 color = objColor * (ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3);
 
 		return color;
 	}
