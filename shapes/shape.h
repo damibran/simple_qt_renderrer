@@ -21,19 +21,18 @@ public:
 	{
 		childs.push_back(s);
 	}
-	void drawChild(const MVP_mat& parent_trans)const
+	
+	void drawShape(Screen &screen,const MVP_mat& parent_trans)const//meant to only used with world obj
 	{
 		MVP_mat thisTrans(parent_trans);
 		thisTrans.model = parent_trans.model * position * rotation * scaling;
 
-		if (mshRndr.get() != nullptr)
-			mshRndr->mesh.drawMesh(mshRndr->raster, thisTrans);
-
 		for (int i = 0; i < childs.size(); ++i)
 		{
-			childs[i]->drawChild(thisTrans);
+			childs[i]->drawChild(screen, thisTrans);
 		}
 	}
+
 	void translate(const glm::vec3& v)
 	{
 		position = glm::translate(position, v);
@@ -55,6 +54,21 @@ public:
 		return position * glm::vec4(1);
 	}
 private:
+
+	void drawChild(Screen &screen,const MVP_mat& parent_trans)const
+	{
+		MVP_mat thisTrans(parent_trans);
+		thisTrans.model = parent_trans.model * position * rotation * scaling;
+
+		if (mshRndr.get() != nullptr)
+			mshRndr->drawMesh(screen,thisTrans);
+
+		for (int i = 0; i < childs.size(); ++i)
+		{
+			childs[i]->drawChild(screen,thisTrans);
+		}
+	}
+
 	std::vector<std::shared_ptr<Shape>> childs;
 	std::unique_ptr<MeshRenderer> mshRndr;
 	glm::mat4 position = glm::mat4(1.0f);

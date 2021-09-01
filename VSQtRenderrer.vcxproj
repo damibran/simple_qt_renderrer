@@ -107,7 +107,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="renderers\Rasterizer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
     <ClInclude Include="Shaders\Shader.h" />

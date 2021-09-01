@@ -2,7 +2,6 @@
 #include<QDebug>
 #include"../utils/MVP_mat.h"
 #include"../utils/Vertex.h"
-#include"../renderers/Rasterizer.h"
 #include <string>
 #include <vector>
 #include <assimp/Importer.hpp>
@@ -17,19 +16,9 @@ public:
 	{
 		loadMesh(path);
 	}
+	
+	friend class MeshRenderer;
 
-	void drawMesh(const Rasterizer& raster,const MVP_mat& trans)const
-	{
-		for (int i = 0; indices.size() != 0 && i <= indices.size() - 3; i += 3)
-		{
-			raster.process_trngl(trans, vertices[indices[i]], vertices[indices[i + 1]], vertices[indices[i + 2]]);
-		}
-
-		for (int i = 0; i < childs.size(); ++i)
-		{
-			childs[i]->drawMesh(raster,trans);
-		}
-	}
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	Mesh(std::vector<vertex> verts, std::vector<unsigned int> indes)
 	{

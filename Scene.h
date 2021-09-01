@@ -2,7 +2,6 @@
 #define SCENE_H
 #include "Screen.h"
 #include "Shaders/ConcreteShaders/CubeShader.h"
-#include "renderers/Rasterizer.h"
 #include "shapes/Mesh.h"
 #include "shapes/shape.h"
 #include "utils/camera.h"
@@ -11,13 +10,13 @@ class Scene
 {
 public:
     Scene(Screen& s):
-        cubShdr()
-      ,rasterizer(s,cubShdr)
+      screen(s)
+      ,cubShdr()
       ,cubMesh("res/cub.obj")
       ,worldObj()
       ,cam(s)
     {
-        cub=std::shared_ptr<Shape>(new Shape(std::make_unique<MeshRenderer>(rasterizer,cubMesh)));
+        cub=std::shared_ptr<Shape>(new Shape(std::make_unique<MeshRenderer>(cubShdr,cubMesh)));
         lightSource = std::make_shared<Shape>();
 
         cub->scale({ 10,10,10 });
@@ -41,11 +40,11 @@ public:
         cubShdr.world_light_pos = lightSource->getPos();
         cub->rotate(0.3, { 0.2,-1,0.6 });
 
-        worldObj.drawChild(cam.getCameraProjViewMat());
+        worldObj.drawShape(screen,cam.getCameraProjViewMat());
     }
 private:
+    Screen& screen;
     CubeShader cubShdr;
-    Rasterizer rasterizer;
     Mesh cubMesh;
     Shape worldObj;
     Camera cam;
