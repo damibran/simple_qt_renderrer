@@ -10,6 +10,8 @@ private:
 		glm::vec3 view_norm;
 	};
 
+	CubeShader(std::shared_ptr<glm::vec3> wlp) :world_light_pos(wlp) {}
+
 	vrtx a;
 	vrtx b;
 	vrtx c;
@@ -23,7 +25,10 @@ private:
 	glm::vec3 objColor = glm::vec3(255, 255, 84);
 
 public:
-	glm::vec3 world_light_pos;
+	std::shared_ptr<glm::vec3> world_light_pos;//NEED TO BE CORRECTED
+
+	CubeShader() :world_light_pos(new glm::vec3(0)) {};
+
 	triangleClipPos computeVertexShader(const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2) override
 	{
 		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
@@ -40,7 +45,7 @@ public:
 		b.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v1.norm;
 		c.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v2.norm;
 
-		view_light_pos = trans.view * glm::vec4(world_light_pos, 1.0f);
+		view_light_pos = trans.view * glm::vec4(*world_light_pos.get(), 1.0f);
 
 		return triangleClipPos(clip_a, clip_b, clip_c);
 	}
@@ -59,5 +64,10 @@ public:
 		glm::vec3 color = objColor * (ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3);
 
 		return color;
+	}
+
+	std::unique_ptr<Shader> prototypeCopy()override
+	{
+		return std::unique_ptr<Shader>(new CubeShader(world_light_pos));
 	}
 };

@@ -112,6 +112,7 @@
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="shapes\Mesh.h" />
     <ClInclude Include="shapes\shape.h" />
+    <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="utils\camera.h" />
     <ClInclude Include="utils\input.h" />
     <ClInclude Include="utils\MeshRenderer.h" />

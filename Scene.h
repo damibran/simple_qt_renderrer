@@ -41,7 +41,7 @@ public:
     {
         t += 0.01;
         lightSource->setPos({30*cos(t),0,30*sin(t)});
-        cubShdr.world_light_pos = lightSource->getPos();
+        *(cubShdr.world_light_pos) = lightSource->getPos();
         cub->rotate(0.3, { 0.2,-1,0.6 });
 
         worldObj.drawShape(screen,cam.getCameraProjViewMat());

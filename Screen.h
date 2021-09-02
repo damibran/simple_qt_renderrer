@@ -33,9 +33,9 @@ public:
         }
     }
 
-	void process_trngl(Shader &shader,const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
+	void process_trngl(std::unique_ptr<Shader>& shader,const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
 	{
-		triangleClipPos abc = shader.computeVertexShader(trans, v0, v1, v2);
+		triangleClipPos abc = shader->computeVertexShader(trans, v0, v1, v2);
 
 		glm::vec3 a;
 		glm::vec3 b;
@@ -60,7 +60,7 @@ public:
 			put_triangle(shader, a, b, c);
 	}
 private:
-	void put_triangle(Shader& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
+	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
 		float xmin = min3(v0.x, v1.x, v2.x);
 		float ymin = min3(v0.y, v1.y, v2.y);
@@ -99,7 +99,7 @@ private:
 						w1 /= corr;
 						w2 /= corr;
 
-						glm::vec3 color = shader.computeFragmentShader(pixel, w0, w1, w2);
+						glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
 						color.r = glm::clamp<float>(color.r, 0, 255);
 						color.g = glm::clamp<float>(color.g, 0, 255);
