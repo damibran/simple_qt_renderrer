@@ -12,11 +12,15 @@ public:
     Scene(Screen& s):
       screen(s)
       ,cubShdr()
-      ,cubMesh("res/cub.obj")
       ,worldObj()
       ,cam(s)
     {
-        cub=std::shared_ptr<Shape>(new Shape(std::make_unique<MeshRenderer>(cubShdr,cubMesh)));
+        cub=std::shared_ptr<Shape>(new Shape(
+                std::make_unique<MeshRenderer>(
+                    cubShdr,
+                    std::make_unique<Mesh>("res/cub.obj")
+                )
+            ));
         lightSource = std::make_shared<Shape>();
 
         cub->scale({ 10,10,10 });
@@ -45,7 +49,6 @@ public:
 private:
     Screen& screen;
     CubeShader cubShdr;
-    Mesh cubMesh;
     Shape worldObj;
     Camera cam;
     ////////
