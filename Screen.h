@@ -1,5 +1,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
+#include <QtGui>
 #include<QColor>
 #include<vector>
 #include"Shaders/Shader.h"
@@ -10,27 +11,27 @@ class Screen
 public:
     const int XMAX;
     const int YMAX;
-    Screen(int mx,int my):XMAX(mx),YMAX(my)
-    {
-        colorBuffer.resize(XMAX*YMAX);
-    }
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QPixmap>(XMAX, YMAX)) {}
 
     void put_point(int a, int b, glm::vec3 color)
     {
-        colorBuffer[(YMAX - b) * XMAX + a] = color;
+		std::lock_guard<std::mutex> lg(lock);
+		QPainter painter(buffer.get());
+		painter.setPen(QColor(color.r, color.g, color.b));
+
+		painter.drawPoint(a, YMAX - b);
+
+        //colorBuffer[(YMAX - b) * XMAX + a] = color;
     }
 
-    QColor getColorAtIndex(int ndx)
+	std::unique_ptr<QPixmap>& getPixmap()
     {
-        return QColor(colorBuffer[ndx].r,colorBuffer[ndx].g,colorBuffer[ndx].b);
+        return buffer;
     }
 
     void clearScreen()
     {
-        for(int i=0;i<colorBuffer.size();++i)
-        {
-            colorBuffer[i]=glm::vec3(100);
-        }
+		buffer->fill(QColor(150, 150, 150));
     }
 
 	void process_trngl(std::unique_ptr<Shader>& shader,const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
@@ -60,6 +61,10 @@ public:
 			put_triangle(shader, a, b, c);
 	}
 private:
+
+	std::unique_ptr<QPixmap> buffer;
+	std::mutex lock;
+
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
 		float xmin = min3(v0.x, v1.x, v2.x);
@@ -123,7 +128,6 @@ private:
 	{
 		return -((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x));
 	}
-    std::vector<glm::vec3> colorBuffer;
 };
 
 #endif // SCREEN_H

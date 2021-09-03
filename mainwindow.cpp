@@ -32,7 +32,6 @@ void MainWindow::screen_refresh()
 
 	QPaintDevice* device = m_backingStore->paintDevice();
 	QPainter painter(device);
-	QPen screenPen;
 
 	//configure painter
 	float system_scale = 1; //take into account system window elements scaling 1 - 100%,2 - 200%;
@@ -45,17 +44,9 @@ void MainWindow::screen_refresh()
 	scene.updateScene();
 
 	//updating screen using colorbuffer info
-	for (int y = 0; y < m_height; ++y)
-	{
-		for (int x = 0; x < m_width; ++x)
-		{
-			screenPen.setColor(screen.getColorAtIndex(y * m_width + x));
-			painter.setPen(screenPen);
-
-			painter.drawPoint(x, y);
-		}
-	}
+	painter.drawPixmap(0, 0, *screen.getPixmap());
 	//end of render loop
+
 	painter.end();
 
 	m_backingStore->endPaint();
