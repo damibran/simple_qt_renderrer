@@ -31,7 +31,9 @@ private:
 				pool.enqueue([this, &cond, &screen, &trans, &_mesh, i]()
 					{
 						std::unique_lock<std::mutex> lock(qMut);
-						cond.wait(lock, [this] {return !shadersQ.empty(); });
+
+						while(shadersQ.empty())
+							cond.wait(lock);
 
 						std::unique_ptr tempShader = std::move(shadersQ.front());
 						shadersQ.pop();
@@ -52,7 +54,7 @@ private:
 			drawMesh(screen, trans, _mesh->childs[i]);
 		}
 	}
-	size_t countThreads = 8;
+	size_t countThreads = 4;
 	std::mutex qMut;
 	std::queue<std::unique_ptr<Shader>> shadersQ;
 	Shader& shader;
