@@ -22,10 +22,10 @@ public:
 		childs.push_back(s);
 	}
 	
-	void drawShape(Screen &screen,const MVP_mat& parent_trans)const//meant to only used with world obj
+	void drawShape(Screen &screen,const MVP_mat& parent_trans)const//meant to be used only with world obj
 	{
 		MVP_mat thisTrans(parent_trans);
-		thisTrans.model = parent_trans.model * position * rotation * scaling;
+		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position) * rotation * glm::scale(glm::mat4(1), scaling);
 
 		for (int i = 0; i < childs.size(); ++i)
 		{
@@ -35,11 +35,11 @@ public:
 
 	void translate(const glm::vec3& v)
 	{
-		position = glm::translate(position, v);
+		position = glm::translate(glm::mat4(1), v)*glm::vec4(position, 1);
 	}
 	void setPos(const glm::vec3& v)
 	{
-		position = glm::translate(glm::mat4(1), v);
+		position = v;
 	}
 	void rotate(float angle, glm::vec3 v)
 	{
@@ -47,18 +47,18 @@ public:
 	}
 	void scale(const glm::vec3& factor)
 	{
-		scaling = glm::scale(scaling, factor);
+		scaling *= factor;
 	}
 	glm::vec3 getPos()const
 	{
-		return position * glm::vec4(1);
+		return position;
 	}
 private:
 
 	void drawChild(Screen &screen,const MVP_mat& parent_trans)const
 	{
 		MVP_mat thisTrans(parent_trans);
-		thisTrans.model = parent_trans.model * position * rotation * scaling;
+		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1),position) * rotation * glm::scale(glm::mat4(1),scaling);
 
 		if (mshRndr.get() != nullptr)
 			mshRndr->drawMesh(screen,thisTrans);
@@ -71,9 +71,9 @@ private:
 
 	std::vector<std::shared_ptr<Shape>> childs;
 	std::unique_ptr<MeshRenderer> mshRndr;
-	glm::mat4 position = glm::mat4(1.0f);
+	glm::vec3 position = glm::vec3(0.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);
-	glm::mat4 scaling = glm::mat4(1.0f);
+	glm::vec3 scaling = glm::vec3(1.0f);
 
 
 };

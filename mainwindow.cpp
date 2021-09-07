@@ -11,6 +11,9 @@ MainWindow::MainWindow(int wr, int hr, QWindow* parent)
 	m_width = wr;
 	m_height = hr;
 
+	timer->start(16);
+	QObject::connect(timer, SIGNAL(timeout()), this, SLOT(screen_refresh()));
+
 }
 
 void MainWindow::screen_refresh()
@@ -41,7 +44,7 @@ void MainWindow::screen_refresh()
 	//updating all scene
 	scene.updateCamera(camAct);
 	camAct = CameraAction::NOTHING;
-	scene.updateScene();
+	scene.updateScene(deltaTime);
 
 	//updating screen using colorbuffer info
 	painter.drawPixmap(0, 0, *screen.getPixmap());
@@ -51,15 +54,6 @@ void MainWindow::screen_refresh()
 
 	m_backingStore->endPaint();
 	m_backingStore->flush(rect);
-}
-
-bool MainWindow::event(QEvent* event)
-{
-	if (event->type() == QEvent::UpdateRequest) {
-		screen_refresh();
-		return true;
-	}
-	return QWindow::event(event);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event)
@@ -78,12 +72,6 @@ void MainWindow::keyPressEvent(QKeyEvent* event)
 		camAct = CameraAction::ZOOMIN;
 	else if (event->key() == 'Q')
 		camAct = CameraAction::ZOOMOUT;
-}
-
-void MainWindow::exposeEvent(QExposeEvent*)
-{
-	//if (isExposed())
-	//    screen_refresh();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* resizeEvent)

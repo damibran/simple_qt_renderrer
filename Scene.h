@@ -41,11 +41,11 @@ public:
 		cam.moveCamera(ca);
 	}
 
-	void updateScene()
+	void updateScene(float dt)
 	{
-		t += 0.01;
+		t += 0.7*dt;
 		lightSource->setPos({ 30 * cos(t),0,30 * sin(t) });
-		cub->rotate(0.3, { 0.2,-1,0.6 });
+		cub->rotate(20*dt, { 0.2,-1,0.6 });
 
 		worldObj.drawShape(screen, cam.getCameraProjViewMat());
 	}
