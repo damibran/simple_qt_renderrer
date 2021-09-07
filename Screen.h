@@ -9,31 +9,37 @@
 class Screen
 {
 public:
-    const int XMAX;
-    const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QPixmap>(XMAX, YMAX)) {}
+	const int XMAX;
+	const int YMAX;
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QPixmap>(XMAX, YMAX))
+	{
+		for (size_t i = 0; i < XMAX * YMAX; ++i)
+			zBuffer.push_back(FLT_MAX);
+	}
 
-    void put_point(int a, int b, glm::vec3 color)
-    {
+	void put_point(int a, int b, glm::vec3 color)
+	{
 		QPainter painter(buffer.get());
 		painter.setPen(QColor(color.r, color.g, color.b));
 
 		painter.drawPoint(a, YMAX - b);
 
-        //colorBuffer[(YMAX - b) * XMAX + a] = color;
-    }
+		//colorBuffer[(YMAX - b) * XMAX + a] = color;
+	}
 
 	std::unique_ptr<QPixmap>& getPixmap()
-    {
-        return buffer;
-    }
+	{
+		return buffer;
+	}
 
-    void clearScreen()
-    {
+	void clearScreen()
+	{
 		buffer->fill(QColor(150, 150, 150));
-    }
+		for (size_t i = 0; i < XMAX * YMAX; ++i)
+			zBuffer[i] = FLT_MAX;
+	}
 
-	void process_trngl(std::unique_ptr<Shader>& shader,const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
+	void process_trngl(std::unique_ptr<Shader>& shader, const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
 	{
 		triangleClipPos abc = shader->computeVertexShader(trans, v0, v1, v2);
 
@@ -62,6 +68,7 @@ public:
 private:
 
 	std::unique_ptr<QPixmap> buffer;
+	std::vector<float> zBuffer;
 
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
@@ -102,13 +109,19 @@ private:
 						w1 /= corr;
 						w2 /= corr;
 
-						glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
+						float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
+						if (z < zBuffer[y * XMAX + x]) 
+						{
+							zBuffer[y * XMAX + x] = z;
 
-						color.r = glm::clamp<float>(color.r, 0, 255);
-						color.g = glm::clamp<float>(color.g, 0, 255);
-						color.b = glm::clamp<float>(color.b, 0, 255);
+							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
-						put_point(x, y, color);
+							color.r = glm::clamp<float>(color.r, 0, 255);
+							color.g = glm::clamp<float>(color.g, 0, 255);
+							color.b = glm::clamp<float>(color.b, 0, 255);
+
+							put_point(x, y, color);
+						}
 					}
 				}
 			}
