@@ -12,7 +12,7 @@ public:
 
 	Camera(Screen& s) :screen(s)
 	{
-		proj = glm::perspective(glm::radians(90.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 200.0f);
+		proj = glm::perspective(glm::radians(90.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 500.0f);
 	}
 	void moveCamera(CameraAction act, float dt)
 	{

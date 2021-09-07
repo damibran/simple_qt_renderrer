@@ -109,6 +109,7 @@
   <ItemGroup>
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
+    <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="shapes\Mesh.h" />
     <ClInclude Include="shapes\shape.h" />
