@@ -15,7 +15,6 @@ public:
 
     void put_point(int a, int b, glm::vec3 color)
     {
-		std::lock_guard<std::mutex> lg(lock);
 		QPainter painter(buffer.get());
 		painter.setPen(QColor(color.r, color.g, color.b));
 
@@ -63,7 +62,6 @@ public:
 private:
 
 	std::unique_ptr<QPixmap> buffer;
-	std::mutex lock;
 
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
