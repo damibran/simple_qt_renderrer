@@ -6,13 +6,14 @@ MainWindow::MainWindow(int wr, int hr, QWindow* parent)
 	, m_backingStore(new QBackingStore(this))
 	, screen(wr, hr)
 	, scene(screen)
+	,timer(new QTimer())
 {
 	setGeometry(100, 100, wr * 3, hr * 3);
 	m_width = wr;
 	m_height = hr;
 
 	timer->start(16);
-	QObject::connect(timer, SIGNAL(timeout()), this, SLOT(screen_refresh()));
+	QObject::connect(timer.get(), SIGNAL(timeout()), this, SLOT(screen_refresh()));
 
 }
 

@@ -25,13 +25,13 @@ protected:
 private:
 	std::chrono::system_clock::time_point tp1 = std::chrono::system_clock::now();
 	std::chrono::system_clock::time_point tp2 = std::chrono::system_clock::now();
-	QBackingStore* m_backingStore;
+	std::unique_ptr<QBackingStore> m_backingStore;
 	CameraAction camAct = CameraAction::NOTHING;
 	int m_width;
 	int m_height;
 	Screen screen;
 	Scene scene;
-	QTimer* timer = new QTimer();
+	std::unique_ptr<QTimer> timer;
 
 };
 #endif // MAINWINDOW_H
