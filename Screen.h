@@ -11,23 +11,21 @@ class Screen
 public:
 	const int XMAX;
 	const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QPixmap>(XMAX, YMAX))
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32))
 	{
+		buffer->fill(QColor(150, 150, 150));
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			zBuffer.push_back(FLT_MAX);
 	}
 
 	void put_point(int a, int b, glm::vec3 color)
 	{
-		QPainter painter(buffer.get());
-		painter.setPen(QColor(color.r, color.g, color.b));
 
-		painter.drawPoint(a, YMAX - b);
-
+		buffer->setPixel(a, YMAX - b, qRgb(color.r, color.g, color.b));
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
-	std::unique_ptr<QPixmap>& getPixmap()
+	std::unique_ptr<QImage>& getPixmap()
 	{
 		return buffer;
 	}
@@ -67,7 +65,7 @@ public:
 	}
 private:
 
-	std::unique_ptr<QPixmap> buffer;
+	std::unique_ptr<QImage> buffer;
 	std::vector<float> zBuffer;
 
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)

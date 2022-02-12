@@ -38,7 +38,7 @@ void MainWindow::screen_refresh()
 	QPainter painter(device);
 
 	//configure painter
-	float system_scale = 1; //take into account system window elements scaling 1 - 100%,2 - 200%;
+	float system_scale = 2; //take into account system window elements scaling 1 - 100%,2 - 200%;
 	painter.setWindow(0, 0, m_width * system_scale, m_height * system_scale);
 
 	screen.clearScreen();
@@ -48,7 +48,7 @@ void MainWindow::screen_refresh()
 	scene.updateScene(deltaTime);
 
 	//updating screen using colorbuffer info
-	painter.drawPixmap(0, 0, *screen.getPixmap());
+	painter.drawPixmap(0, 0, QPixmap::fromImage(* screen.getPixmap()));
 	//end of render loop
 
 	painter.end();
