@@ -83,6 +83,10 @@ private:
 			int y1 = std::min(YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
+
+			if (area < 0) // back face culling
+				return;
+
 			for (int y = y0; y <= y1; ++y)
 			{
 				for (int x = x0; x <= x1; ++x)
