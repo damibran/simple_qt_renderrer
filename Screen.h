@@ -5,15 +5,17 @@
 #include<vector>
 #include"Shaders/Shader.h"
 #include<glm/glm.hpp>
+#include "thread_pool.hpp"
 
 class Screen
 {
 public:
 	const int XMAX;
 	const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32))
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(4)
 	{
 		buffer->fill(QColor(150, 150, 150));
+		pool.sleep_duration = 0;
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			zBuffer.push_back(FLT_MAX);
 	}
@@ -67,6 +69,7 @@ private:
 
 	std::unique_ptr<QImage> buffer;
 	std::vector<float> zBuffer;
+	thread_pool pool;
 
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
@@ -83,50 +86,50 @@ private:
 			int y1 = std::min(YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-
-			if (area < 0) // back face culling
-				return;
-
-			for (int y = y0; y <= y1; ++y)
-			{
-				for (int x = x0; x <= x1; ++x)
+			auto loop = [this, v0, v1, v2, area, x0,x1, &shader](const int a, const int b) {
+				for (int y = a; y <= b; ++y)
 				{
-					glm::vec2 pixel = { x + 0.5,y + 0.5 };
-					float w0 = edgeFunction(v1, v2, pixel);
-					float w1 = edgeFunction(v2, v0, pixel);
-					float w2 = edgeFunction(v0, v1, pixel);
-					if (w0 >= 0 && w1 >= 0 && w2 >= 0)
+					for (int x = x0; x <= x1; ++x)
 					{
-						w0 /= area;
-						w1 /= area;
-						w2 /= area;
-
-						float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
-
-						w0 /= v0.z;
-						w1 /= v1.z;
-						w2 /= v2.z;
-
-						w0 /= corr;
-						w1 /= corr;
-						w2 /= corr;
-
-						float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
-						if (z < zBuffer[y * XMAX + x]) 
+						glm::vec2 pixel = { x + 0.5,y + 0.5 };
+						float w0 = edgeFunction(v1, v2, pixel);
+						float w1 = edgeFunction(v2, v0, pixel);
+						float w2 = edgeFunction(v0, v1, pixel);
+						if (w0 >= 0 && w1 >= 0 && w2 >= 0)
 						{
-							zBuffer[y * XMAX + x] = z;
+							w0 /= area;
+							w1 /= area;
+							w2 /= area;
 
-							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
+							float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
 
-							color.r = glm::clamp<float>(color.r, 0, 255);
-							color.g = glm::clamp<float>(color.g, 0, 255);
-							color.b = glm::clamp<float>(color.b, 0, 255);
+							w0 /= v0.z;
+							w1 /= v1.z;
+							w2 /= v2.z;
 
-							put_point(x, y, color);
+							w0 /= corr;
+							w1 /= corr;
+							w2 /= corr;
+
+							float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
+							if (z < zBuffer[y * XMAX + x])
+							{
+								zBuffer[y * XMAX + x] = z;
+
+								glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
+
+								color.r = glm::clamp<float>(color.r, 0, 255);
+								color.g = glm::clamp<float>(color.g, 0, 255);
+								color.b = glm::clamp<float>(color.b, 0, 255);
+
+								put_point(x, y, color);
+							}
 						}
 					}
+
 				}
-			}
+			};
+			pool.parallelize_loop(y0, y1, loop, (y1 - y0) / pool.get_thread_count());
 		}
 	}
 	float min3(const float& a, const float& b, const float& c)const
