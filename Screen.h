@@ -12,9 +12,10 @@ class Screen
 public:
 	const int XMAX;
 	const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(6)
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(4)
 	{
 		buffer->fill(QColor(150, 150, 150));
+		pool.sleep_duration = 0;
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			zBuffer.push_back(FLT_MAX);
 	}
@@ -85,10 +86,10 @@ private:
 			int y1 = std::min(YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-			for (int y = y0; y <= y1; ++y)
-			{
-				auto loop = [this, v0, v1, v2, area, y, &shader](const int a, const int b) {
-					for (int x = a; x <= b; ++x)
+			auto loop = [this, v0, v1, v2, area, x0,x1, &shader](const int a, const int b) {
+				for (int y = a; y <= b; ++y)
+				{
+					for (int x = x0; x <= x1; ++x)
 					{
 						glm::vec2 pixel = { x + 0.5,y + 0.5 };
 						float w0 = edgeFunction(v1, v2, pixel);
@@ -125,9 +126,10 @@ private:
 							}
 						}
 					}
-				};
-				pool.parallelize_loop(x0, x1, loop, (x1 - x0) / 6);
-			}
+
+				}
+			};
+			pool.parallelize_loop(y0, y1, loop, (y1 - y0) / pool.get_thread_count());
 		}
 	}
 	float min3(const float& a, const float& b, const float& c)const
