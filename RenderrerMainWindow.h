@@ -1,37 +1,33 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#pragma once
 
-#include <QtGui>
+#include <QtWidgets/QMainWindow>
 #include <time.h>
 #include <glm/glm.hpp>
 #include "Screen.h"
 #include "Scene.h"
 #include "utils/input.h"
+#include "ui_RenderrerMainWindow.h"
 
-class MainWindow : public QWindow
+class RenderrerMainWindow : public QMainWindow
 {
-	Q_OBJECT
+    Q_OBJECT
+
 public:
-	explicit MainWindow(int wr, int hr, QWindow* parent = 0);
+    RenderrerMainWindow(int wr, int hr,QWidget *parent = Q_NULLPTR);
 
 public slots:
 	void screen_refresh();
 
 protected:
-
-	void resizeEvent(QResizeEvent* event) override;
 	void keyPressEvent(QKeyEvent* event) override;
-
 private:
+    Ui::RenderrerMainWindowClass ui;
 	std::chrono::system_clock::time_point tp1 = std::chrono::system_clock::now();
 	std::chrono::system_clock::time_point tp2 = std::chrono::system_clock::now();
-	std::unique_ptr<QBackingStore> m_backingStore;
 	CameraAction camAct = CameraAction::NOTHING;
 	int m_width;
 	int m_height;
 	Screen screen;
 	Scene scene;
 	std::unique_ptr<QTimer> timer;
-
 };
-#endif // MAINWINDOW_H

@@ -8,9 +8,8 @@
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
-//== 2. Библиотека фигур ==
 class Shape
-{ // Виртуальный базовый класс "фигура"
+{
 
 public:
 	Shape(Shape&) = delete;
@@ -22,7 +21,7 @@ public:
 		childs.push_back(s);
 	}
 	
-	void drawShape(Screen &screen,const MVP_mat& parent_trans)const//meant to be used only with world obj
+	void drawShape(Screen &screen,const MVP_mat& parent_trans)const //meant to be used only with world obj
 	{
 		MVP_mat thisTrans(parent_trans);
 		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position) * rotation * glm::scale(glm::mat4(1), scaling);

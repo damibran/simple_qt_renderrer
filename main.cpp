@@ -1,14 +1,10 @@
-#include "mainwindow.h"
+#include "RenderrerMainWindow.h"
+#include <QtWidgets/QApplication>
 
-#include <QtWidgets/qapplication.h>
-
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
-
-    MainWindow window(400, 300);
-
-    window.show();
-
-    return app.exec();
+    QApplication a(argc, argv);
+    RenderrerMainWindow w(960,540);
+    w.show();
+    return a.exec();
 }
