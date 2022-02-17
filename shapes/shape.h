@@ -40,6 +40,7 @@ public:
 	{
 		position = v;
 	}
+	
 	void rotate(float angle, glm::vec3 v)
 	{
 		rotation = glm::rotate(rotation, glm::radians(angle), v);
@@ -47,6 +48,10 @@ public:
 	void scale(const glm::vec3& factor)
 	{
 		scaling *= factor;
+	}
+	void setScale(const glm::vec3& v)
+	{
+		scaling = v;
 	}
 	glm::vec3 getPos()const
 	{

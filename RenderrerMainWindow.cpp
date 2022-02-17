@@ -1,17 +1,18 @@
 #include "RenderrerMainWindow.h"
+#include <glm/glm.hpp>
 
-RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget *parent)
-    : QMainWindow(parent)
-	, screen(wr/2, hr/2)
+RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
+	: QMainWindow(parent)
+	, screen(wr / 2, hr / 2)
 	, scene(screen)
 	, timer(new QTimer())
 {
 	timer->start(16);
 	QObject::connect(timer.get(), SIGNAL(timeout()), this, SLOT(screen_refresh()));
 
-    ui.setupUi(this);
+	ui.setupUi(this);
 
-	resize(wr, hr);
+	resize(wr+250, hr);
 
 	ui.renderLabel->resize(wr, hr);
 }
@@ -24,7 +25,7 @@ void RenderrerMainWindow::screen_refresh()
 	tp1 = tp2;
 	float deltaTime = elapsedTime.count();
 
-	//qDebug() << 1.0f / deltaTime;
+	qDebug() << 1.0f / deltaTime;
 
 	//qDebug() << ui.renderLabel->size().width();
 
@@ -35,10 +36,10 @@ void RenderrerMainWindow::screen_refresh()
 	//updating all scene
 	scene.updateCamera(camAct);
 	camAct = CameraAction::NOTHING;
-	scene.updateScene(deltaTime);
+	scene.updateScene(deltaTime, { ui.XlineEdit->text().toFloat(), ui.YlineEdit->text().toFloat(),ui.ZlineEdit->text().toFloat() });
 
 	//updating screen using colorbuffer info
-	ui.renderLabel->setPixmap(QPixmap::fromImage((* screen.getImage()).scaled(ui.renderLabel->size())));
+	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
