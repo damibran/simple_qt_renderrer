@@ -86,7 +86,7 @@ private:
 			int y1 = std::min(YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-			auto loop = [this, v0, v1, v2, area, x0,x1, &shader](const int a, const int b) {
+			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const int a, const int b) {
 				for (int y = a; y <= b; ++y)
 				{
 					for (int x = x0; x <= x1; ++x)
@@ -95,23 +95,25 @@ private:
 						float w0 = edgeFunction(v1, v2, pixel);
 						float w1 = edgeFunction(v2, v0, pixel);
 						float w2 = edgeFunction(v0, v1, pixel);
-						if (w0 >= 0 && w1 >= 0 && w2 >= 0)
+
+						w0 /= area;
+						w1 /= area;
+						w2 /= area;
+
+						float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
+
+						w0 /= v0.z;
+						w1 /= v1.z;
+						w2 /= v2.z;
+
+						w0 /= corr;
+						w1 /= corr;
+						w2 /= corr;
+
+						float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
+						float epsilon = 0.005;
+						if ((w0<epsilon && w0>=0) || (w1<epsilon && w1>=0) || (w2<epsilon && w2>=0))
 						{
-							w0 /= area;
-							w1 /= area;
-							w2 /= area;
-
-							float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
-
-							w0 /= v0.z;
-							w1 /= v1.z;
-							w2 /= v2.z;
-
-							w0 /= corr;
-							w1 /= corr;
-							w2 /= corr;
-
-							float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
 							if (z < zBuffer[y * XMAX + x])
 							{
 								zBuffer[y * XMAX + x] = z;

@@ -24,7 +24,7 @@ void RenderrerMainWindow::screen_refresh()
 	tp1 = tp2;
 	float deltaTime = elapsedTime.count();
 
-	qDebug() << 1.0f / deltaTime;
+	//qDebug() << 1.0f / deltaTime;
 
 	//qDebug() << ui.renderLabel->size().width();
 

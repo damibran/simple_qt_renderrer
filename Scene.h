@@ -27,12 +27,22 @@ public:
 				)
 		));
 
+		coordSys = std::shared_ptr<Shape>(new Shape(
+			std::make_unique<MeshRenderer>(
+				std::make_unique<CubeShader>(lightSource)
+				, std::make_unique<Mesh>("res/CoordSys.obj")
+				)
+		));
+
 		cub->scale({ 10,10,10 });
 		cub->rotate(90, { 1,0,0 });
+
+		coordSys->scale({ 100,100,100 });
 
 		lightSource->translate({ 0,0,30 });
 
 		worldObj.addChild(cub);
+		worldObj.addChild(coordSys);
 		worldObj.addChild(lightSource);
 	}
 
@@ -55,6 +65,7 @@ private:
 	Camera cam;
 	////////
 	std::shared_ptr<Shape> cub;
+	std::shared_ptr<Shape> coordSys;
 	std::shared_ptr<Shape> lightSource;
 	float t = 0;
 
