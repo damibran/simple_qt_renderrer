@@ -48,16 +48,16 @@ public:
 		glm::vec3 c;
 
 		//calculating raster positions
-		a.x = (abc.v1)[0] / (abc.v1)[3] * XMAX + XMAX / 2;
-		a.y = (abc.v1)[1] / (abc.v1)[3] * YMAX + YMAX / 2;
+		a.x = (abc.v1.x / abc.v1.w + 1) / 2 * XMAX;
+		a.y = (abc.v1.y / abc.v1.w + 1) / 2 * YMAX;
 		a.z = abc.v1.w;
 
-		b.x = (abc.v2)[0] / (abc.v2)[3] * XMAX + XMAX / 2;
-		b.y = (abc.v2)[1] / (abc.v2)[3] * YMAX + YMAX / 2;
+		b.x = (abc.v2.x / abc.v2.w + 1) / 2 * XMAX;
+		b.y = (abc.v2.y / abc.v2.w + 1) / 2 * YMAX;
 		b.z = abc.v2.w;
 
-		c.x = (abc.v3)[0] / (abc.v3)[3] * XMAX + XMAX / 2;
-		c.y = (abc.v3)[1] / (abc.v3)[3] * YMAX + YMAX / 2;
+		c.x = (abc.v3.x / abc.v3.w + 1) / 2 * XMAX;
+		c.y = (abc.v3.y / abc.v3.w + 1) / 2 * YMAX;
 		c.z = abc.v3.w;
 
 		if (abc.v1.z <= abc.v1.w && abc.v1.z >= -abc.v1.w &&

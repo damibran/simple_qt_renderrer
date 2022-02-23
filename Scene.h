@@ -47,8 +47,13 @@ public:
 		t += 0.7*dt;
 		//cub->rotate(20*dt, { 0.2,-1,0.6 });
 		cub->setScale(cubScale);
+	}
+
+	void renderScene()
+	{
 		worldObj.drawShape(screen, cam.getCameraProjViewMat());
 	}
+
 private:
 	Screen& screen;
 	Shape worldObj;

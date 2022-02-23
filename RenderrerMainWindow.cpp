@@ -37,7 +37,7 @@ void RenderrerMainWindow::screen_refresh()
 	scene.updateCamera(camAct);
 	camAct = CameraAction::NOTHING;
 	scene.updateScene(deltaTime, { ui.XlineEdit->text().toFloat(), ui.YlineEdit->text().toFloat(),ui.ZlineEdit->text().toFloat() });
-
+	scene.renderScene();
 	//updating screen using colorbuffer info
 	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
 }
