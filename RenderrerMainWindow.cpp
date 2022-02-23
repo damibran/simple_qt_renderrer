@@ -7,12 +7,12 @@ RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 	, scene(screen)
 	, timer(new QTimer())
 {
-	timer->start(16);
+	timer->start(32);
 	QObject::connect(timer.get(), SIGNAL(timeout()), this, SLOT(screen_refresh()));
 
 	ui.setupUi(this);
 
-	resize(wr+250, hr);
+	resize(wr + 250, hr);
 
 	ui.renderLabel->resize(wr, hr);
 }
@@ -25,25 +25,29 @@ void RenderrerMainWindow::screen_refresh()
 	tp1 = tp2;
 	float deltaTime = elapsedTime.count();
 
-	qDebug() << 1.0f / deltaTime;
-
-	//qDebug() << ui.renderLabel->size().width();
+	//qDebug() << 1.0f / deltaTime;
 
 	//configure painter
-	float system_scale = 2; //take into account system window elements scaling 1 - 100%,2 - 200%;
+	float system_scale = 1; //take into account system window elements scaling 1 - 100%,2 - 200%;
 
 	screen.clearScreen();
 	//updating all scene
 	scene.updateCamera(camAct);
-	camAct = CameraAction::NOTHING;
-	scene.updateScene(deltaTime, { ui.XlineEdit->text().toFloat(), ui.YlineEdit->text().toFloat(),ui.ZlineEdit->text().toFloat() });
+	//camAct = CameraAction::NOTHING;
+	scene.updateScene(deltaTime, { ui.CubeXlineEdit->text().toFloat(), ui.CubeYlineEdit->text().toFloat(),ui.CubeZlineEdit->text().toFloat() });
 	scene.renderScene();
+
+	glm::vec3 camPos = scene.getCamPosition();
+
+	ui.CameraPositionLabel->setText("Camera position:<br>x: " + QString::number(camPos.x) + " y:" + QString::number(camPos.y) + " z:" + QString::number(camPos.z));
+
 	//updating screen using colorbuffer info
 	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 {
+	qDebug() << "E";
 	if (event->key() == 16777216)
 		this->close();
 	else if (event->key() == 'A')
@@ -58,4 +62,15 @@ void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 		camAct = CameraAction::ZOOMIN;
 	else if (event->key() == 'Q')
 		camAct = CameraAction::ZOOMOUT;
+}
+
+void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
+{
+	if (event->key() == 'A' ||
+		event->key() == 'W' ||
+		event->key() == 'D' ||
+		event->key() == 'S' ||
+		event->key() == 'E' ||
+		event->key() == 'Q')
+		camAct = CameraAction::NOTHING;
 }

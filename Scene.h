@@ -19,14 +19,14 @@ public:
 
 		cub = std::shared_ptr<Shape>(new Shape(
 			std::make_unique<MeshRenderer>(
-				std::make_unique<WireFrameShader>(0.00015)
+				std::make_unique<WireFrameShader>(0.0005)
 				, std::make_unique<Mesh>("res/cub.obj")
 				)
 		));
 
 		coordSys = std::shared_ptr<Shape>(new Shape(
 			std::make_unique<MeshRenderer>(
-				std::make_unique<WireFrameShader>(0.00002)
+				std::make_unique<WireFrameShader>(0.00005)
 				, std::make_unique<Mesh>("res/CoordSys.obj")
 				)
 		));
@@ -52,6 +52,11 @@ public:
 	void renderScene()
 	{
 		worldObj.drawShape(screen, cam.getCameraProjViewMat());
+	}
+
+	glm::vec3 getCamPosition()
+	{
+		return cam.cameraPos;
 	}
 
 private:

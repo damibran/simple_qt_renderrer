@@ -43,7 +43,7 @@
      <string>Cube Scale:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="XlineEdit">
+   <widget class="QLineEdit" name="CubeXlineEdit">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -59,7 +59,7 @@
      <string>10</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="YlineEdit">
+   <widget class="QLineEdit" name="CubeYlineEdit">
     <property name="geometry">
      <rect>
       <x>60</x>
@@ -75,7 +75,7 @@
      <string>10</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="ZlineEdit">
+   <widget class="QLineEdit" name="CubeZlineEdit">
     <property name="geometry">
      <rect>
       <x>100</x>
@@ -91,7 +91,7 @@
      <string>10</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Xlabel">
+   <widget class="QLabel" name="CubeXlabel">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -104,7 +104,7 @@
      <string>X</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Ylabel">
+   <widget class="QLabel" name="CubeYlabel">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -117,7 +117,7 @@
      <string>Y</string>
     </property>
    </widget>
-   <widget class="QLabel" name="Zlabel">
+   <widget class="QLabel" name="CubeZlabel">
     <property name="geometry">
      <rect>
       <x>110</x>
@@ -130,7 +130,7 @@
      <string>Z</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="MovementInfoLabel">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -144,6 +144,28 @@
     </property>
     <property name="scaledContents">
      <bool>false</bool>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="CameraPositionLabel">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>270</y>
+      <width>111</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Camera position:&lt;br&gt;</string>
+    </property>
+    <property name="scaledContents">
+     <bool>false</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
     </property>
     <property name="wordWrap">
      <bool>true</bool>

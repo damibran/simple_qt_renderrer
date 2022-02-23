@@ -12,7 +12,7 @@ class Screen
 public:
 	const int XMAX;
 	const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(4)
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(2)
 	{
 		buffer->fill(QColor(150, 150, 150));
 		pool.sleep_duration = 0;
