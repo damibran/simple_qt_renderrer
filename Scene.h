@@ -31,7 +31,8 @@ public:
 				)
 		));
 
-		lightCube->scale(glm::vec3(5));
+		//lightCube->scale(glm::vec3(5));
+		cub->scale({ 10,10,10 });
 
 		worldObj.addChild(cub);
 		worldObj.addChild(lightCube);
@@ -42,12 +43,12 @@ public:
 		cam.moveCamera(ca);
 	}
 
-	void updateScene(float dt,glm::vec3 cubScale)
+	void updateScene(float dt)
 	{
-		//t += 0.7*dt;
-		lightCube->rotate(speed*dt, { 0,1,0 });
-		//cub->rotate(20*dt, { 0.2,-1,0.6 });
-		cub->setScale(cubScale);
+		t += 0.7 * dt;
+		lightCube->setPos({ 30 * cos(t),0,30 * sin(t) });
+
+		cub->rotate(20 * dt, { 0.2,-1,0.6 });
 	}
 
 	void renderScene()
@@ -67,7 +68,7 @@ private:
 	////////
 	std::shared_ptr<Shape> cub;
 	std::shared_ptr<Shape> lightCube;
-	float speed = 100;
+	float t = 0;
 
 };
 

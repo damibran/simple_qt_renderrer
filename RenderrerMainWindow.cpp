@@ -27,19 +27,14 @@ void RenderrerMainWindow::screen_refresh()
 
 	//qDebug() << 1.0f / deltaTime;
 
-	//configure painter
-	float system_scale = 1; //take into account system window elements scaling 1 - 100%,2 - 200%;
-
 	screen.clearScreen();
 	//updating all scene
 	scene.updateCamera(camAct);
 	//camAct = CameraAction::NOTHING;
-	scene.updateScene(deltaTime, { ui.CubeXlineEdit->text().toFloat(), ui.CubeYlineEdit->text().toFloat(),ui.CubeZlineEdit->text().toFloat() });
+	scene.updateScene(deltaTime);
 	scene.renderScene();
 
 	glm::vec3 camPos = scene.getCamPosition();
-
-	ui.CameraPositionLabel->setText("Camera position:<br>x: " + QString::number(camPos.x) + " y:" + QString::number(camPos.y) + " z:" + QString::number(camPos.z));
 
 	//updating screen using colorbuffer info
 	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
@@ -47,7 +42,6 @@ void RenderrerMainWindow::screen_refresh()
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 {
-	qDebug() << "E";
 	if (event->key() == 16777216)
 		this->close();
 	else if (event->key() == 'A')
