@@ -40,7 +40,7 @@ public:
 		if (w0 < line_width * z || w1 < line_width * z || w2 < line_width * z)
 			return glm::vec3(0, 0, 0);
 		else
-			return glm::vec3(300, 300, 300);
+			return glm::vec3(300, 300, 300);// danger, also z buffer should be turned off
 
 	}
 };
