@@ -20,6 +20,8 @@ public slots:
 
 protected:
 	void keyPressEvent(QKeyEvent* event) override;
+	void keyReleaseEvent(QKeyEvent*)override;
+
 private:
     Ui::RenderrerMainWindowClass ui;
 	std::chrono::system_clock::time_point tp1 = std::chrono::system_clock::now();

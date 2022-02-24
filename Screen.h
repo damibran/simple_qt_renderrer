@@ -12,7 +12,7 @@ class Screen
 public:
 	const int XMAX;
 	const int YMAX;
-	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(4)
+	Screen(int mx, int my) :XMAX(mx), YMAX(my), buffer(std::make_unique<QImage>(XMAX, YMAX, QImage::Format_RGB32)), pool(2)
 	{
 		buffer->fill(QColor(150, 150, 150));
 		pool.sleep_duration = 0;
@@ -86,15 +86,17 @@ private:
 			int y1 = std::min(YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-			auto loop = [this, v0, v1, v2, area, x0,x1, &shader](const int a, const int b) {
+			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const int a, const int b) {
 				for (int y = a; y <= b; ++y)
 				{
 					for (int x = x0; x <= x1; ++x)
 					{
 						glm::vec2 pixel = { x + 0.5,y + 0.5 };
+
 						float w0 = edgeFunction(v1, v2, pixel);
 						float w1 = edgeFunction(v2, v0, pixel);
 						float w2 = edgeFunction(v0, v1, pixel);
+
 						if (w0 >= 0 && w1 >= 0 && w2 >= 0)
 						{
 							w0 /= area;
@@ -112,6 +114,7 @@ private:
 							w2 /= corr;
 
 							float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
+
 							if (z < zBuffer[y * XMAX + x])
 							{
 								zBuffer[y * XMAX + x] = z;
@@ -121,7 +124,6 @@ private:
 								color.r = glm::clamp<float>(color.r, 0, 255);
 								color.g = glm::clamp<float>(color.g, 0, 255);
 								color.b = glm::clamp<float>(color.b, 0, 255);
-
 								put_point(x, y, color);
 							}
 						}

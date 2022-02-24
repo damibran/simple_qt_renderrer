@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>701</width>
-    <height>496</height>
+    <width>936</width>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,33 @@
    <widget class="QLabel" name="renderLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>150</x>
       <y>10</y>
       <width>591</width>
       <height>341</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::ClickFocus</enum>
+    </property>
     <property name="text">
      <string>RenderLabel</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="infoFrame">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>120</width>
+      <height>421</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
     </property>
    </widget>
   </widget>
@@ -33,7 +52,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>701</width>
+     <width>936</width>
      <height>22</height>
     </rect>
    </property>

@@ -84,5 +84,8 @@
     <ClInclude Include="thread_pool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

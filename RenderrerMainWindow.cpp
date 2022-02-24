@@ -1,17 +1,18 @@
 #include "RenderrerMainWindow.h"
+#include <glm/glm.hpp>
 
-RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget *parent)
-    : QMainWindow(parent)
-	, screen(wr/2, hr/2)
+RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
+	: QMainWindow(parent)
+	, screen(wr / 2, hr / 2)
 	, scene(screen)
 	, timer(new QTimer())
 {
-	timer->start(16);
+	timer->start(32);
 	QObject::connect(timer.get(), SIGNAL(timeout()), this, SLOT(screen_refresh()));
 
-    ui.setupUi(this);
+	ui.setupUi(this);
 
-	resize(wr, hr);
+	resize(wr + 250, hr);
 
 	ui.renderLabel->resize(wr, hr);
 }
@@ -24,21 +25,19 @@ void RenderrerMainWindow::screen_refresh()
 	tp1 = tp2;
 	float deltaTime = elapsedTime.count();
 
-	qDebug() << 1.0f / deltaTime;
-
-	//qDebug() << ui.renderLabel->size().width();
-
-	//configure painter
-	float system_scale = 2; //take into account system window elements scaling 1 - 100%,2 - 200%;
+	//qDebug() << 1.0f / deltaTime;
 
 	screen.clearScreen();
 	//updating all scene
 	scene.updateCamera(camAct);
-	camAct = CameraAction::NOTHING;
+	//camAct = CameraAction::NOTHING;
 	scene.updateScene(deltaTime);
+	scene.renderScene();
+
+	glm::vec3 camPos = scene.getCamPosition();
 
 	//updating screen using colorbuffer info
-	ui.renderLabel->setPixmap(QPixmap::fromImage((* screen.getImage()).scaled(ui.renderLabel->size())));
+	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
@@ -57,4 +56,15 @@ void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 		camAct = CameraAction::ZOOMIN;
 	else if (event->key() == 'Q')
 		camAct = CameraAction::ZOOMOUT;
+}
+
+void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
+{
+	if (event->key() == 'A' ||
+		event->key() == 'W' ||
+		event->key() == 'D' ||
+		event->key() == 'S' ||
+		event->key() == 'E' ||
+		event->key() == 'Q')
+		camAct = CameraAction::NOTHING;
 }
