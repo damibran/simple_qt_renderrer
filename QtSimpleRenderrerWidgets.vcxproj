@@ -110,6 +110,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Renderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />

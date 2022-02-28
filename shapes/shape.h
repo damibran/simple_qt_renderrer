@@ -15,7 +15,7 @@ class Shape
 public:
 	Shape(Shape&) = delete;
 	Shape() = default;
-	Shape(std::unique_ptr<ShaderMeshRenderer> mr) : rndr(std::move(mr)) {}
+	Shape(std::unique_ptr<Renderer> mr) : rndr(std::move(mr)) {}
 
 	void addChild(std::shared_ptr<Shape>& s)
 	{

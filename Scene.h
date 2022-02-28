@@ -3,9 +3,9 @@
 #include "Screen.h"
 #include "Shaders/ConcreteShaders/CubeShader.h"
 #include "Shaders/ConcreteShaders/LightCubeShader.h"
-#include "Shaders/ConcreteShaders/WireframeShader.h"
 #include "shapes/Mesh.h"
 #include "shapes/shape.h"
+#include "Renderers/BezierCurveRenderer.h"
 #include "utils/camera.h"
 
 class Scene
@@ -17,27 +17,24 @@ public:
 		, cam(s)
 	{
 
-		lightCube = std::shared_ptr<Shape>(new Shape(
-			std::make_unique<ShaderMeshRenderer>(
-				screen,
-				std::make_unique<LightCubeShader>(),
-				std::make_unique<Mesh>("res/cub.obj")
-				)
-		));
+		std::array<glm::vec3, 4> arr =
+		{
+			glm::vec3(0,0,0),
+			glm::vec3(10,10,-10),
+			glm::vec3(20,-20,-20),
+			glm::vec3(30,30,-30)
+		};;
 
-		cub = std::shared_ptr<Shape>(new Shape(
-			std::make_unique<ShaderMeshRenderer>(
+		bezierCurve = std::make_shared<Shape>(
+			std::make_unique<BezierCurveRenderer>(
 				screen,
-				std::make_unique<CubeShader>(lightCube),
-				std::make_unique<Mesh>("res/cub.obj")
+				arr,
+				12
 				)
-		));
-
+			);
 		//lightCube->scale(glm::vec3(5));
-		cub->scale({ 10,10,10 });
 
-		worldObj.addChild(cub);
-		worldObj.addChild(lightCube);
+		worldObj.addChild(bezierCurve);
 	}
 
 	void updateCamera(CameraAction ca)
@@ -48,9 +45,6 @@ public:
 	void updateScene(float dt)
 	{
 		t += 0.7 * dt;
-		lightCube->setPos({ 30 * cos(t),0,30 * sin(t) });
-
-		cub->rotate(20 * dt, { 0.2,-1,0.6 });
 	}
 
 	void renderScene()
@@ -68,8 +62,7 @@ private:
 	Shape worldObj;
 	Camera cam;
 	////////
-	std::shared_ptr<Shape> cub;
-	std::shared_ptr<Shape> lightCube;
+	std::shared_ptr<Shape> bezierCurve;
 	float t = 0;
 
 };
