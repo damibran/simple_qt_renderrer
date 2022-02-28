@@ -17,7 +17,7 @@ public:
 		loadMesh(path);
 	}
 	
-	friend class MeshRenderer;
+	friend class ShaderMeshRenderer;
 
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	Mesh(std::vector<vertex> verts, std::vector<unsigned int> indes)

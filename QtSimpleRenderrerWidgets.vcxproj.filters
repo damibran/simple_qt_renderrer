@@ -54,7 +54,7 @@
     <ClInclude Include="utils\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\MeshRenderer.h">
+    <ClInclude Include="Renderers\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\MVP_mat.h">
@@ -85,6 +85,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

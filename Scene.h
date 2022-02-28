@@ -18,16 +18,18 @@ public:
 	{
 
 		lightCube = std::shared_ptr<Shape>(new Shape(
-			std::make_unique<MeshRenderer>(
-				std::make_unique<LightCubeShader>()
-				, std::make_unique<Mesh>("res/cub.obj")
+			std::make_unique<ShaderMeshRenderer>(
+				screen,
+				std::make_unique<LightCubeShader>(),
+				std::make_unique<Mesh>("res/cub.obj")
 				)
 		));
 
 		cub = std::shared_ptr<Shape>(new Shape(
-			std::make_unique<MeshRenderer>(
-				std::make_unique<CubeShader>(lightCube)
-				, std::make_unique<Mesh>("res/cub.obj")
+			std::make_unique<ShaderMeshRenderer>(
+				screen,
+				std::make_unique<CubeShader>(lightCube),
+				std::make_unique<Mesh>("res/cub.obj")
 				)
 		));
 

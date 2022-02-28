@@ -110,6 +110,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Renderers\Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
@@ -121,7 +122,7 @@
     <ClInclude Include="thread_pool.hpp" />
     <ClInclude Include="utils\camera.h" />
     <ClInclude Include="utils\input.h" />
-    <ClInclude Include="utils\MeshRenderer.h" />
+    <ClInclude Include="Renderers\MeshRenderer.h" />
     <ClInclude Include="utils\MVP_mat.h" />
     <ClInclude Include="utils\ShaderThreader.h" />
     <ClInclude Include="utils\Vertex.h" />

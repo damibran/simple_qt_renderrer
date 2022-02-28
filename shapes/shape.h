@@ -2,7 +2,8 @@
 #include"../utils/MVP_mat.h"
 #include "../Screen.h"
 #include "../shapes/Mesh.h"
-#include "../utils/MeshRenderer.h"
+#include "../Renderers/Renderer.h"
+#include "../Renderers/MeshRenderer.h"
 #include <vector>
 #include <memory>
 #include "glm/glm.hpp"
@@ -14,7 +15,7 @@ class Shape
 public:
 	Shape(Shape&) = delete;
 	Shape() = default;
-	Shape(std::unique_ptr<MeshRenderer> mr) : mshRndr(std::move(mr)) {}
+	Shape(std::unique_ptr<ShaderMeshRenderer> mr) : rndr(std::move(mr)) {}
 
 	void addChild(std::shared_ptr<Shape>& s)
 	{
@@ -64,8 +65,8 @@ private:
 		MVP_mat thisTrans(parent_trans);
 		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1),position) * rotation * glm::scale(glm::mat4(1),scaling);
 
-		if (mshRndr.get() != nullptr)
-			mshRndr->drawMesh(screen,thisTrans);
+		if (rndr.get() != nullptr)
+			rndr->drawShapeVisual(thisTrans);
 
 		for (int i = 0; i < childs.size(); ++i)
 		{
@@ -74,7 +75,7 @@ private:
 	}
 
 	std::vector<std::shared_ptr<Shape>> childs;
-	std::unique_ptr<MeshRenderer> mshRndr;
+	std::unique_ptr<Renderer> rndr;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);
 	glm::vec3 scaling = glm::vec3(1.0f);
