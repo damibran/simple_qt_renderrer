@@ -123,7 +123,6 @@
     <ClInclude Include="shapes\shape.h" />
     <ClInclude Include="thread_pool.hpp" />
     <ClInclude Include="utils\camera.h" />
-    <ClInclude Include="utils\input.h" />
     <ClInclude Include="Renderers\MeshRenderer.h" />
     <ClInclude Include="utils\LineSegment.h" />
     <ClInclude Include="utils\MVP_mat.h" />

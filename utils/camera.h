@@ -1,6 +1,5 @@
 #pragma once
 #include"../utils/MVP_mat.h"
-#include "input.h"
 #include "screen.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,37 +14,11 @@ public:
 		proj = glm::perspective(glm::radians(45.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 500.0f);
 		updateCameraVectors();
 	}
-	void moveCamera(CameraMoveAction act, float dt)
+	void moveCamera(glm::vec3 dir, float dt)
 	{
 		float tspeed = dt * speed;
-		if (act == CameraMoveAction::UP)
-			cameraPos += tspeed * Up;
-		else if (act == CameraMoveAction::DOWN)
-			cameraPos -= tspeed * Up;
-		else if (act == CameraMoveAction::LEFT)
-			cameraPos -= Right * tspeed;
-		else if (act == CameraMoveAction::RIGHT)
-			cameraPos += Right * tspeed;
-		else if (act == CameraMoveAction::ZOOMOUT)
-			cameraPos -= tspeed * Front;
-		else if (act == CameraMoveAction::ZOOMIN)
-			cameraPos += tspeed * Front;
-	}
-	void moveCamera(CameraMoveAction act)
-	{
-		float tspeed = 0.16 * speed;
-		if (act == CameraMoveAction::UP)
-			cameraPos += tspeed * Up;
-		else if (act == CameraMoveAction::DOWN)
-			cameraPos -= tspeed * Up;
-		else if (act == CameraMoveAction::LEFT)
-			cameraPos -= Right * tspeed;
-		else if (act == CameraMoveAction::RIGHT)
-			cameraPos += Right * tspeed;
-		else if (act == CameraMoveAction::ZOOMOUT)
-			cameraPos -= tspeed * Front;
-		else if (act == CameraMoveAction::ZOOMIN)
-			cameraPos += tspeed * Front;
+		glm::mat3 m = glm::mat3(Right, Up, Front);
+		cameraPos += tspeed * m * dir;
 	}
 	void rotateCamera(glm::vec2 mouseDir)
 	{
@@ -89,7 +62,7 @@ private:
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 Right;
 	glm::vec3 WorldUp = glm::vec3(0, 1, 0);
-	float MouseSensitivity = 1.0f;
+	float MouseSensitivity = 0.25f;
 	float speed = 30;
 
 	void updateCameraVectors()

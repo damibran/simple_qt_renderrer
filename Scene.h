@@ -30,7 +30,7 @@ public:
 			std::make_unique<BezierCurveRenderer>(
 				screen,
 				arr,
-				12
+				5
 				)
 			);
 
@@ -45,9 +45,13 @@ public:
 		worldObj.addChild(bezierCurve);
 	}
 
-	void updateCamera(CameraMoveAction ca,glm::vec2 mouseDir)
+	void updateCameraPos(float dt, glm::vec3 moveDir)
 	{
-		cam.moveCamera(ca);
+		cam.moveCamera(moveDir, dt);
+	}
+
+	void updateCameraRot(glm::vec2 mouseDir)
+	{
 		cam.rotateCamera(mouseDir);
 	}
 

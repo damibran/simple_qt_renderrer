@@ -30,6 +30,8 @@ private:
 		a.x = (a.x / a.w + 1) / 2 * screen.XMAX;
 		a.y = (a.y / a.w + 1) / 2 * screen.YMAX;
 
+		glm::vec2 t = glm::vec2(b.x, b.y);
+
 		b.x = (b.x / b.w + 1) / 2 * screen.XMAX;
 		b.y = (b.y / b.w + 1) / 2 * screen.YMAX;
 

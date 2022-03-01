@@ -29,7 +29,7 @@ void RenderrerMainWindow::screen_refresh()
 
 	screen.clearScreen();
 	//updating all scene
-	scene.updateCamera(camMovAct, { mouseDir.x(),mouseDir.y()});
+	scene.updateCameraPos(deltaTime, camMoveDir);
 	//camAct = CameraAction::NOTHING;
 	scene.updateScene(deltaTime);
 	scene.renderScene();
@@ -44,40 +44,51 @@ void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == 16777216)
 		this->close();
-	else if (event->key() == 'A')
-		camMovAct = CameraMoveAction::LEFT;
-	else if (event->key() == 'W')
-		camMovAct = CameraMoveAction::UP;
+
+	if (event->key() == 'A')
+		camMoveDir.x = -1;
 	else if (event->key() == 'D')
-		camMovAct = CameraMoveAction::RIGHT;
-	else if (event->key() == 'S')
-		camMovAct = CameraMoveAction::DOWN;
-	else if (event->key() == 'E')
-		camMovAct = CameraMoveAction::ZOOMIN;
+		camMoveDir.x = 1;
+
+	if (event->key() == 'S')
+		camMoveDir.y = -1;
+	else if (event->key() == 'W')
+		camMoveDir.y = 1;
+
+	if (event->key() == 'E')
+		camMoveDir.z = 1;
 	else if (event->key() == 'Q')
-		camMovAct = CameraMoveAction::ZOOMOUT;
+		camMoveDir.z = -1;
 }
 
 void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
 {
-	if (event->key() == 'A' ||
-		event->key() == 'W' ||
-		event->key() == 'D' ||
-		event->key() == 'S' ||
-		event->key() == 'E' ||
-		event->key() == 'Q')
-		camMovAct = CameraMoveAction::NOTHING;
+	if (event->key() == 'A' || event->key() == 'D')
+		camMoveDir.x = 0;
+
+	if (event->key() == 'S' || event->key() == 'W')
+		camMoveDir.y = 0;
+
+	if (event->key() == 'E' || event->key() == 'Q')
+		camMoveDir.z = 0;
 }
 
-void RenderrerMainWindow::mouseReleaseEvent(QMouseEvent* e)
+void RenderrerMainWindow::mouseMoveEvent(QMouseEvent* event)
 {
-	mouseDir = QPoint(0, 0);
-}
+	if (mousePos == QPoint(-1, -1))
+		mousePos = event->pos();
 
-void RenderrerMainWindow::mouseMoveEvent(QMouseEvent* event) {
-	if (camPos == QPoint(-1, -1))
-		camPos = event->pos();
-	mouseDir = event->pos() - camPos;
+	QPoint mouseDir = event->pos() - mousePos;
 	mouseDir.setY(-mouseDir.y());
-	camPos = event->pos();
+	mousePos = event->pos();
+
+	glm::vec2 m;
+	if (mouseDir.x() != 0 || mouseDir.y() != 0)
+		m = glm::normalize(glm::vec2(mouseDir.x(), mouseDir.y()));
+
+	else
+		m = glm::vec2(mouseDir.x(), mouseDir.y());
+
+
+	scene.updateCameraRot(m);
 }

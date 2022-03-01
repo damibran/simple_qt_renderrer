@@ -51,9 +51,6 @@
     <ClInclude Include="utils\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderers\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
