@@ -111,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderers\BezierCurveRenderer.h" />
+    <ClInclude Include="Renderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\Renderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="utils\camera.h" />
     <ClInclude Include="utils\input.h" />
     <ClInclude Include="Renderers\MeshRenderer.h" />
+    <ClInclude Include="utils\LineSegment.h" />
     <ClInclude Include="utils\MVP_mat.h" />
     <ClInclude Include="utils\ShaderThreader.h" />
     <ClInclude Include="utils\Vertex.h" />

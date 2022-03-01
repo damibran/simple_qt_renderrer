@@ -2,14 +2,10 @@
 #include "Renderer.h"
 #include"../Screen.h"
 #include "../utils/MVP_mat.h"
+#include "../utils/LineSegment.h"
 #include<array>
+#include<algorithm>
 #include <map>
-
-struct line
-{
-	glm::vec3 a;
-	glm::vec3 b;
-};
 
 class BezierCurveRenderer : public Renderer
 {
@@ -33,16 +29,15 @@ public:
 			b.x = (b.x / b.w + 1) / 2 * screen.XMAX;
 			b.y = (b.y / b.w + 1) / 2 * screen.YMAX;
 
-			if (checkPoint(a) && checkPoint(b))
-				bresenham(a.x, a.y, b.x, b.y);
+			bresenham(cropPoint(a), cropPoint(b));
 		}
 	}
 
 private:
 
-	bool checkPoint(const glm::vec4& p)
+	glm::vec2 cropPoint(const glm::vec4& p)
 	{
-		return (p.x > 0 && p.x < screen.XMAX && p.y>0 && p.y < screen.YMAX);
+		return glm::vec2(std::max(std::min(p.x, (float)screen.XMAX - 1), 0.0f), std::max(std::min(p.y, (float)screen.YMAX - 2), 0.0f));
 	}
 
 	void subDevide(float start, float end, int cur_depth)
@@ -54,7 +49,7 @@ private:
 		}
 		else
 		{
-			line n;
+			line_seg n;
 			n.a = decasteljau(start);
 			n.b = decasteljau(end);
 			curvePatch[end] = n;
@@ -75,38 +70,68 @@ private:
 		return (1 - t) * P1223 + t * P2334; // P 
 	}
 
-	void bresenham(int xa, int ya, int xb, int yb)
+	void bresenham(glm::vec2 v1, glm::vec2 v2)
 	{
-		int dx = abs(xa - xb), dy = abs(ya - yb);
-		int p = 2 * dy - dx;
-		int twoDy = 2 * dy, twoDyDx = 2 * (dy - dx);
-		int x, y, xEnd;
-		/*Determine which points to start and End */
-		if (xa > xb) {
-			x = xb;
-			y = yb;
-			xEnd = xa;
-		}
-		else {
-			x = xa; y = ya; xEnd = xb;
-		}
-		screen.put_point(x, y, { 0,0,0 });
-		while (x < xEnd) {
-			x++;
-			if (p < 0) {
-				p = p + twoDy;
-			}
-			else {
-				y++;
-				p = p + twoDyDx;
-			}
-			screen.put_point(x, y, { 0,0,0 });
+		float x1 = v1.x;
+		float y1 = v1.y;
+
+		float x2 = v2.x;
+		float y2 = v2.y;
+
+		float xdiff = (x2 - x1);
+		float ydiff = (y2 - y1);
+
+		if (xdiff == 0.0f && ydiff == 0.0f) {
+			screen.put_point(x1, y1, { 0,0,0 });
+			return;
 		}
 
+		if (fabs(xdiff) > fabs(ydiff)) {
+			float xmin, xmax;
+
+			// set xmin to the lower x value given
+			// and xmax to the higher value
+			if (x1 < x2) {
+				xmin = x1;
+				xmax = x2;
+			}
+			else {
+				xmin = x2;
+				xmax = x1;
+			}
+
+			// draw line in terms of y slope
+			float slope = ydiff / xdiff;
+			for (float x = xmin; x <= xmax; x += 1.0f) {
+				float y = y1 + ((x - x1) * slope);
+				screen.put_point(x, y, { 0,0,0 });
+			}
+		}
+		else {
+			float ymin, ymax;
+
+			// set ymin to the lower y value given
+			// and ymax to the higher value
+			if (y1 < y2) {
+				ymin = y1;
+				ymax = y2;
+			}
+			else {
+				ymin = y2;
+				ymax = y1;
+			}
+
+			// draw line in terms of x slope
+			float slope = xdiff / ydiff;
+			for (float y = ymin; y <= ymax; y += 1.0f) {
+				float x = x1 + ((y - y1) * slope);
+				screen.put_point(x, y, { 0,0,0 });
+			}
+		}
 	}
 
 	Screen& screen;
 	int depth;
 	std::array<glm::vec3, 4> controlPoints;
-	std::map<float, line> curvePatch;
+	std::map<float, line_seg> curvePatch;
 };

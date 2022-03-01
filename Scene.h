@@ -3,6 +3,7 @@
 #include "Screen.h"
 #include "Shaders/ConcreteShaders/CubeShader.h"
 #include "Shaders/ConcreteShaders/LightCubeShader.h"
+#include "Renderers/CoordSystemRenderer.h"
 #include "shapes/Mesh.h"
 #include "shapes/shape.h"
 #include "Renderers/BezierCurveRenderer.h"
@@ -32,8 +33,15 @@ public:
 				12
 				)
 			);
-		//lightCube->scale(glm::vec3(5));
 
+		coordSys = std::make_shared<Shape>(
+			std::make_unique<CoordSystemRenderer>(screen)
+			);
+
+		coordSys->scale({ 100,100,100 });
+
+		//lightCube->scale(glm::vec3(5));
+		worldObj.addChild(coordSys);
 		worldObj.addChild(bezierCurve);
 	}
 
@@ -63,6 +71,7 @@ private:
 	Camera cam;
 	////////
 	std::shared_ptr<Shape> bezierCurve;
+	std::shared_ptr<Shape> coordSys;
 	float t = 0;
 
 };

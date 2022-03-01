@@ -22,7 +22,7 @@ public:
 	void put_point(int a, int b, glm::vec3 color)
 	{
 
-		buffer->setPixel(a, YMAX - b, qRgb(color.r, color.g, color.b));
+		buffer->setPixel(a, YMAX - b - 1, qRgb(color.r, color.g, color.b));
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
