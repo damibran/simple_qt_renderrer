@@ -45,9 +45,10 @@ public:
 		worldObj.addChild(bezierCurve);
 	}
 
-	void updateCamera(CameraAction ca)
+	void updateCamera(CameraMoveAction ca,glm::vec2 mouseDir)
 	{
 		cam.moveCamera(ca);
+		cam.rotateCamera(mouseDir);
 	}
 
 	void updateScene(float dt)
@@ -73,7 +74,6 @@ private:
 	std::shared_ptr<Shape> bezierCurve;
 	std::shared_ptr<Shape> coordSys;
 	float t = 0;
-
 };
 
 #endif // SCENE_H

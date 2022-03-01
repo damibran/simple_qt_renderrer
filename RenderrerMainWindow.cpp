@@ -29,7 +29,7 @@ void RenderrerMainWindow::screen_refresh()
 
 	screen.clearScreen();
 	//updating all scene
-	scene.updateCamera(camAct);
+	scene.updateCamera(camMovAct, { mouseDir.x(),mouseDir.y()});
 	//camAct = CameraAction::NOTHING;
 	scene.updateScene(deltaTime);
 	scene.renderScene();
@@ -45,17 +45,17 @@ void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 	if (event->key() == 16777216)
 		this->close();
 	else if (event->key() == 'A')
-		camAct = CameraAction::LEFT;
+		camMovAct = CameraMoveAction::LEFT;
 	else if (event->key() == 'W')
-		camAct = CameraAction::UP;
+		camMovAct = CameraMoveAction::UP;
 	else if (event->key() == 'D')
-		camAct = CameraAction::RIGHT;
+		camMovAct = CameraMoveAction::RIGHT;
 	else if (event->key() == 'S')
-		camAct = CameraAction::DOWN;
+		camMovAct = CameraMoveAction::DOWN;
 	else if (event->key() == 'E')
-		camAct = CameraAction::ZOOMIN;
+		camMovAct = CameraMoveAction::ZOOMIN;
 	else if (event->key() == 'Q')
-		camAct = CameraAction::ZOOMOUT;
+		camMovAct = CameraMoveAction::ZOOMOUT;
 }
 
 void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
@@ -66,5 +66,18 @@ void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
 		event->key() == 'S' ||
 		event->key() == 'E' ||
 		event->key() == 'Q')
-		camAct = CameraAction::NOTHING;
+		camMovAct = CameraMoveAction::NOTHING;
+}
+
+void RenderrerMainWindow::mouseReleaseEvent(QMouseEvent* e)
+{
+	mouseDir = QPoint(0, 0);
+}
+
+void RenderrerMainWindow::mouseMoveEvent(QMouseEvent* event) {
+	if (camPos == QPoint(-1, -1))
+		camPos = event->pos();
+	mouseDir = event->pos() - camPos;
+	mouseDir.setY(-mouseDir.y());
+	camPos = event->pos();
 }

@@ -13,51 +13,95 @@ public:
 	Camera(Screen& s) :screen(s)
 	{
 		proj = glm::perspective(glm::radians(45.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 500.0f);
+		updateCameraVectors();
 	}
-	void moveCamera(CameraAction act, float dt)
+	void moveCamera(CameraMoveAction act, float dt)
 	{
 		float tspeed = dt * speed;
-		if (act == CameraAction::UP)
-			cameraPos += tspeed * cameraUp;
-		else if (act == CameraAction::DOWN)
-			cameraPos -= tspeed * cameraUp;
-		else if (act == CameraAction::LEFT)
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == CameraAction::RIGHT)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == CameraAction::ZOOMOUT)
-			cameraPos -= tspeed * cameraFront;
-		else if (act == CameraAction::ZOOMIN)
-			cameraPos += tspeed * cameraFront;
+		if (act == CameraMoveAction::UP)
+			cameraPos += tspeed * Up;
+		else if (act == CameraMoveAction::DOWN)
+			cameraPos -= tspeed * Up;
+		else if (act == CameraMoveAction::LEFT)
+			cameraPos -= Right * tspeed;
+		else if (act == CameraMoveAction::RIGHT)
+			cameraPos += Right * tspeed;
+		else if (act == CameraMoveAction::ZOOMOUT)
+			cameraPos -= tspeed * Front;
+		else if (act == CameraMoveAction::ZOOMIN)
+			cameraPos += tspeed * Front;
 	}
-	void moveCamera(CameraAction act)
+	void moveCamera(CameraMoveAction act)
 	{
 		float tspeed = 0.16 * speed;
-		if (act == CameraAction::UP)
-			cameraPos += tspeed * cameraUp;
-		else if (act == CameraAction::DOWN)
-			cameraPos -= tspeed * cameraUp;
-		else if (act == CameraAction::LEFT)
-			cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == CameraAction::RIGHT)
-			cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * tspeed;
-		else if (act == CameraAction::ZOOMOUT)
-			cameraPos -= tspeed * cameraFront;
-		else if (act == CameraAction::ZOOMIN)
-			cameraPos += tspeed * cameraFront;
+		if (act == CameraMoveAction::UP)
+			cameraPos += tspeed * Up;
+		else if (act == CameraMoveAction::DOWN)
+			cameraPos -= tspeed * Up;
+		else if (act == CameraMoveAction::LEFT)
+			cameraPos -= Right * tspeed;
+		else if (act == CameraMoveAction::RIGHT)
+			cameraPos += Right * tspeed;
+		else if (act == CameraMoveAction::ZOOMOUT)
+			cameraPos -= tspeed * Front;
+		else if (act == CameraMoveAction::ZOOMIN)
+			cameraPos += tspeed * Front;
+	}
+	void rotateCamera(glm::vec2 mouseDir)
+	{
+		float xoffset = mouseDir.x;
+		float yoffset = mouseDir.y;
+
+		xoffset *= MouseSensitivity;
+		yoffset *= MouseSensitivity;
+
+		Yaw += xoffset;
+		Pitch += yoffset;
+
+		bool constrainPitch = true;
+
+		// make sure that when pitch is out of bounds, screen doesn't get flipped
+		if (constrainPitch)
+		{
+			if (Pitch > 89.0f)
+				Pitch = 89.0f;
+			if (Pitch < -89.0f)
+				Pitch = -89.0f;
+		}
+
+		// update Front, Right and Up Vectors using the updated Euler angles
+		updateCameraVectors();
 	}
 	MVP_mat getCameraProjViewMat()const
 	{
 		MVP_mat vp;
 		vp.proj = proj;
-		vp.view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		vp.view = glm::lookAt(cameraPos, cameraPos + Front, Up);
 
 		return vp;
 	}
 private:
 	Screen& screen;
 	glm::mat4 proj;
-	glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+	float Yaw = -90;
+	float Pitch = 0;
+	glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 Right;
+	glm::vec3 WorldUp = glm::vec3(0, 1, 0);
+	float MouseSensitivity = 1.0f;
 	float speed = 30;
+
+	void updateCameraVectors()
+	{
+		// calculate the new Front vector
+		glm::vec3 front;
+		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		front.y = sin(glm::radians(Pitch));
+		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		Front = glm::normalize(front);
+		// also re-calculate the Right and Up vector
+		Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		Up = glm::normalize(glm::cross(Right, Front));
+	}
 };
