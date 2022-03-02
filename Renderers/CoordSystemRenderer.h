@@ -32,13 +32,13 @@ private:
 			clipNearInViewSpace(a, b);
 		}
 
-		a.x = (a.x / a.w + 1) / 2 * screen.XMAX;
-		a.y = (a.y / a.w + 1) / 2 * screen.YMAX;
-
 		if (b.w < 0.1f && a.w >= 0.1f)
 		{
 			clipNearInViewSpace(b, a);
 		}
+
+		a.x = (a.x / a.w + 1) / 2 * screen.XMAX;
+		a.y = (a.y / a.w + 1) / 2 * screen.YMAX;
 
 		b.x = (b.x / b.w + 1) / 2 * screen.XMAX;
 		b.y = (b.y / b.w + 1) / 2 * screen.YMAX;
