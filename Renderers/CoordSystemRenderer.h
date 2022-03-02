@@ -27,81 +27,43 @@ private:
 		glm::vec4 a = fullMat * glm::vec4(_a, 1.0f);
 		glm::vec4 b = fullMat * glm::vec4(_b, 1.0f);
 
+		if (a.w < 0.1f && b.w >= 0.1f)
+		{
+			clipNearInViewSpace(a, b);
+		}
+
 		a.x = (a.x / a.w + 1) / 2 * screen.XMAX;
 		a.y = (a.y / a.w + 1) / 2 * screen.YMAX;
 
-		glm::vec2 t = glm::vec2(b.x, b.y);
+		if (b.w < 0.1f && a.w >= 0.1f)
+		{
+			clipNearInViewSpace(b, a);
+		}
 
 		b.x = (b.x / b.w + 1) / 2 * screen.XMAX;
 		b.y = (b.y / b.w + 1) / 2 * screen.YMAX;
 
-		//bresenham(cropPoint(a), cropPoint(b));
-		bresenhamWTest(a, b);
+		if (a.w > 0 && b.w > 0)
+			bresenhamWTest(a, b);
+	}
+
+	void clipNearInHomoSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
+	{
+		float t = (b.w + b.z) / (b.w + b.z - (a.w + a.z));
+		a = b + t * (a - b);
+	}
+
+	void clipNearInViewSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
+	{
+		float d_1 = -(b.z + 0.1f);
+		float d_2 = -(a.z + 0.1f);// eqval to  float d_2 = glm::dot(glm::vec3(a) - glm::vec3(0, 0, -0.1f), glm::vec3(0, 0, -1));
+		float t = d_1 / (d_1 - d_2);
+		a = b + t * (a - b);
 	}
 
 	glm::vec2 cropPoint(const glm::vec4& p)
 	{
 		return glm::vec2(std::max(std::min(p.x, (float)screen.XMAX - 1), 0.0f), std::max(std::min(p.y, (float)screen.YMAX - 1), 1.0f));
-	}
-
-	void bresenham(glm::vec2 v1, glm::vec2 v2)
-	{
-		float x1 = v1.x;
-		float y1 = v1.y;
-
-		float x2 = v2.x;
-		float y2 = v2.y;
-
-		float xdiff = (x2 - x1);
-		float ydiff = (y2 - y1);
-
-		if (xdiff == 0.0f && ydiff == 0.0f) {
-			screen.put_point(x1, y1, { 0,0,0 });
-			return;
-		}
-
-		if (fabs(xdiff) > fabs(ydiff)) {
-			float xmin, xmax;
-
-			// set xmin to the lower x value given
-			// and xmax to the higher value
-			if (x1 < x2) {
-				xmin = x1;
-				xmax = x2;
-			}
-			else {
-				xmin = x2;
-				xmax = x1;
-			}
-
-			// draw line in terms of y slope
-			float slope = ydiff / xdiff;
-			for (float x = xmin; x <= xmax; x += 1.0f) {
-				float y = y1 + ((x - x1) * slope);
-				screen.put_point(x, y, { 0,0,0 });
-			}
-		}
-		else {
-			float ymin, ymax;
-
-			// set ymin to the lower y value given
-			// and ymax to the higher value
-			if (y1 < y2) {
-				ymin = y1;
-				ymax = y2;
-			}
-			else {
-				ymin = y2;
-				ymax = y1;
-			}
-
-			// draw line in terms of x slope
-			float slope = xdiff / ydiff;
-			for (float y = ymin; y <= ymax; y += 1.0f) {
-				float x = x1 + ((y - y1) * slope);
-				screen.put_point(x, y, { 0,0,0 });
-			}
-		}
 	}
 
 	void bresenhamWTest(glm::vec2 v1, glm::vec2 v2)
