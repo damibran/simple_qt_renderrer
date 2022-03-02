@@ -12,6 +12,26 @@ RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 
 	ui.setupUi(this);
 
+	QObject::connect(ui.P1XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P1YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P1ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
+	QObject::connect(ui.P2XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P2YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P2ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
+	QObject::connect(ui.P3XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P3YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P3ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
+	QObject::connect(ui.P4XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P4YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P4ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
+	QObject::connect(ui.P5XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P5YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+	QObject::connect(ui.P5ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
 	resize(wr + 250, hr);
 
 	ui.renderLabel->resize(wr, hr);
@@ -30,7 +50,6 @@ void RenderrerMainWindow::screen_refresh()
 	screen.clearScreen();
 	//updating all scene
 	scene.updateCameraPos(deltaTime, camMoveDir);
-	//camAct = CameraAction::NOTHING;
 	scene.updateScene(deltaTime);
 	scene.renderScene();
 
@@ -38,6 +57,11 @@ void RenderrerMainWindow::screen_refresh()
 
 	//updating screen using colorbuffer info
 	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
+}
+
+void RenderrerMainWindow::sliderValueChanged()
+{
+	qDebug() << "EY";
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)

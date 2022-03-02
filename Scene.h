@@ -18,19 +18,20 @@ public:
 		, cam(s)
 	{
 
-		std::array<glm::vec3, 4> arr =
+		std::array<glm::vec3, 5> arr =
 		{
 			glm::vec3(0,0,0),
 			glm::vec3(10,10,-10),
 			glm::vec3(20,-20,-20),
-			glm::vec3(30,30,-30)
-		};;
+			glm::vec3(30,30,-30),
+			glm::vec3(10,10,0)
+		};
 
 		bezierCurve = std::make_shared<Shape>(
 			std::make_unique<BezierCurveRenderer>(
 				screen,
 				arr,
-				5
+				6
 				)
 			);
 
@@ -40,7 +41,6 @@ public:
 
 		coordSys->scale({ 100,100,100 });
 
-		//lightCube->scale(glm::vec3(5));
 		worldObj.addChild(coordSys);
 		worldObj.addChild(bezierCurve);
 	}

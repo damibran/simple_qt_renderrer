@@ -10,7 +10,7 @@
 class BezierCurveRenderer : public Renderer
 {
 public:
-	BezierCurveRenderer(Screen& s, std::array<glm::vec3, 4> cP, int initial_depth) :screen(s), depth(initial_depth), controlPoints(cP)
+	BezierCurveRenderer(Screen& s, std::array<glm::vec3, 5> cP, int initial_depth) :screen(s), depth(initial_depth), controlPoints(cP)
 	{
 		subDevide(0, 1, 1);
 	}
@@ -46,11 +46,6 @@ public:
 
 private:
 
-	glm::vec2 cropPoint(const glm::vec4& p)
-	{
-		return glm::vec2(std::max(std::min(p.x, (float)screen.XMAX - 1), 0.0f), std::max(std::min(p.y, (float)screen.YMAX - 2), 0.0f));
-	}
-
 	void clipNearInViewSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
 		float d_1 = -(b.z + 0.1f);
@@ -75,21 +70,31 @@ private:
 		}
 	}
 
+	glm::vec3 lerp(const glm::vec3& a, const glm::vec3 b, float t)
+	{
+		return (1 - t) * a + t * b;
+	}
+
 	glm::vec3 decasteljau(float t)
 	{
 		// compute first tree points along main segments P1-P2, P2-P3 and P3-P4
-		glm::vec3 P12 = (1 - t) * controlPoints[0] + t * controlPoints[1];
-		glm::vec3 P23 = (1 - t) * controlPoints[1] + t * controlPoints[2];
-		glm::vec3 P34 = (1 - t) * controlPoints[2] + t * controlPoints[3];
+		glm::vec3 P12 = lerp(controlPoints[0], controlPoints[1],t);
+		glm::vec3 P23 = lerp(controlPoints[1],controlPoints[2],t);
+		glm::vec3 P34 = lerp(controlPoints[2],controlPoints[3],t);
+		glm::vec3 P45 = lerp(controlPoints[3], controlPoints[4], t);
 		// compute two points along segments P1P2-P2P3 and P2P3-P3P4
-		glm::vec3 P1223 = (1 - t) * P12 + t * P23;
-		glm::vec3 P2334 = (1 - t) * P23 + t * P34;
+		glm::vec3 P1223 = lerp(P12,P23,t);
+		glm::vec3 P2334 = lerp(P23,P34,t);
+		glm::vec3 P3445 = lerp(P34, P45, t);
+
+		glm::vec3 P1223_2334 = lerp(P1223, P2334, t);
+		glm::vec3 P2334_3445 = lerp(P2334, P3445, t);
 
 		// finally compute P
-		return (1 - t) * P1223 + t * P2334; // P 
+		return lerp(P1223_2334, P2334_3445,t); // P 
 	}
 
-	void bresenhamWTest(glm::vec2 v1, glm::vec2 v2)
+	void bresenhamWTest(const glm::vec2& v1, const glm::vec2& v2)
 	{
 		float x1 = v1.x;
 		float y1 = v1.y;
@@ -154,6 +159,6 @@ private:
 
 	Screen& screen;
 	int depth;
-	std::array<glm::vec3, 4> controlPoints;
+	std::array<glm::vec3, 5> controlPoints;
 	std::map<float, line_seg> curvePatch;
 };

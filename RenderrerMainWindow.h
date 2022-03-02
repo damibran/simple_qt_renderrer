@@ -16,6 +16,7 @@ public:
 
 public slots:
 	void screen_refresh();
+	void sliderValueChanged();
 
 protected:
 	void keyPressEvent(QKeyEvent* event) override;

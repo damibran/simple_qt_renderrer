@@ -22,7 +22,7 @@ public:
 
 private:
 
-	void drawAixs(glm::mat4& fullMat, glm::vec3 _a, glm::vec3 _b)
+	void drawAixs(const glm::mat4& fullMat, const glm::vec3& _a, const glm::vec3& _b)
 	{
 		glm::vec4 a = fullMat * glm::vec4(_a, 1.0f);
 		glm::vec4 b = fullMat * glm::vec4(_b, 1.0f);
@@ -66,7 +66,7 @@ private:
 		return glm::vec2(std::max(std::min(p.x, (float)screen.XMAX - 1), 0.0f), std::max(std::min(p.y, (float)screen.YMAX - 1), 1.0f));
 	}
 
-	void bresenhamWTest(glm::vec2 v1, glm::vec2 v2)
+	void bresenhamWTest(const glm::vec2& v1, const glm::vec2& v2)
 	{
 		float x1 = v1.x;
 		float y1 = v1.y;

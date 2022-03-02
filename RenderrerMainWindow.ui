@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>936</width>
-    <height>523</height>
+    <height>772</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,7 @@
       <x>10</x>
       <y>10</y>
       <width>120</width>
-      <height>421</height>
+      <height>681</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -45,6 +45,406 @@
     <property name="frameShadow">
      <enum>QFrame::Sunken</enum>
     </property>
+    <widget class="QWidget" name="P1Controls" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>120</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <widget class="QSlider" name="P1XSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="P1Label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P1</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P1YSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P1ZSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="P2Controls" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>120</y>
+       <width>120</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <widget class="QSlider" name="P2XSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="P2Label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P2</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P2YSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P2ZSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="P3Controls" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>240</y>
+       <width>120</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <widget class="QSlider" name="P3XSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="P3Label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P3</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P3YSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P3ZSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="P4Controls" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>360</y>
+       <width>120</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <widget class="QSlider" name="P4XSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="P4Label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P4</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P4YSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P4ZSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="P5Controls" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>480</y>
+       <width>120</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <widget class="QSlider" name="P5XSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>30</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="P5Label">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>49</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>P5</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P5YSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QSlider" name="P5ZSlider">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>111</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="minimum">
+       <number>-30</number>
+      </property>
+      <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
