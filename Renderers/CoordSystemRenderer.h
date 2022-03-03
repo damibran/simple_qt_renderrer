@@ -29,12 +29,12 @@ private:
 
 		if (a.w < 0.1f && b.w >= 0.1f)
 		{
-			clipNearInViewSpace(a, b);
+			clipNearInClipSpace(a, b);
 		}
 
 		if (b.w < 0.1f && a.w >= 0.1f)
 		{
-			clipNearInViewSpace(b, a);
+			clipNearInClipSpace(b, a);
 		}
 
 		a.x = (a.x / a.w + 1) / 2 * screen.XMAX;
@@ -53,7 +53,7 @@ private:
 		a = b + t * (a - b);
 	}
 
-	void clipNearInViewSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
+	void clipNearInClipSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
 		float d_1 = -(b.z + 0.1f);
 		float d_2 = -(a.z + 0.1f);// eqval to  float d_2 = glm::dot(glm::vec3(a) - glm::vec3(0, 0, -0.1f), glm::vec3(0, 0, -1));

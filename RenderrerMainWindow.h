@@ -28,8 +28,6 @@ private:
 	std::chrono::system_clock::time_point tp1 = std::chrono::system_clock::now();
 	std::chrono::system_clock::time_point tp2 = std::chrono::system_clock::now();
 	glm::vec3 camMoveDir;
-	int m_width;
-	int m_height;
 	Screen screen;
 	Scene scene;
 	QPoint mousePos = QPoint(-1, -1);

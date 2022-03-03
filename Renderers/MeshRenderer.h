@@ -65,9 +65,9 @@ private:
 		if (xmin < screen.XMAX - 1 && xmax > 0 && ymin < screen.YMAX - 1 && ymax > 0)
 		{
 			int x0 = std::max(0, (int)(std::floor(xmin)));
-			int x1 = std::min(screen.XMAX - 1, (int)(std::floor(xmax)));
+			int x1 = std::min((int) screen.XMAX - 1, (int)(std::floor(xmax)));
 			int y0 = std::max(1, (int)(std::floor(ymin)));
-			int y1 = std::min(screen.YMAX - 1, (int)(std::floor(ymax)));
+			int y1 = std::min((int) screen.YMAX - 1, (int)(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
 			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const int a, const int b) {

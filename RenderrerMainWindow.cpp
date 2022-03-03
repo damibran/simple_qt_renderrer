@@ -52,7 +52,7 @@ RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 	(*cntrlPts_ptr)[4].y = ui.P5YSlider->value();
 	(*cntrlPts_ptr)[4].z = ui.P5ZSlider->value();
 
-	resize(wr + 250, hr);
+	resize(wr + 250, hr+250);
 
 	ui.renderLabel->resize(wr, hr);
 }
