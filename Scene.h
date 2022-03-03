@@ -28,7 +28,7 @@ public:
 		};
 
 		bezierCurve = std::make_shared<Shape>(
-			std::make_unique<BezierCurveRenderer>(
+			std::make_shared<BezierCurveRenderer>(
 				screen,
 				cntrlPts_ptr,
 				bezierPathNeedUpdate,
@@ -36,7 +36,7 @@ public:
 				)
 			);
 
-		coordSys = std::make_shared<Shape>(
+		std::shared_ptr<Shape> coordSys = std::make_shared<Shape>(
 			std::make_unique<CoordSystemRenderer>(screen)
 			);
 
@@ -77,7 +77,6 @@ private:
 	Camera cam;
 	////////
 	std::shared_ptr<Shape> bezierCurve;
-	std::shared_ptr<Shape> coordSys;
 	float t = 0;
 };
 

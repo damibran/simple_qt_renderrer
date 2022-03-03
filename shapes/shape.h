@@ -15,7 +15,7 @@ class Shape
 public:
 	Shape(Shape&) = delete;
 	Shape() = default;
-	Shape(std::unique_ptr<Renderer> mr) : rndr(std::move(mr)) {}
+	Shape(std::shared_ptr<Renderer> mr) : rndr(mr) {}
 
 	void addChild(std::shared_ptr<Shape>& s)
 	{
@@ -75,7 +75,7 @@ private:
 	}
 
 	std::vector<std::shared_ptr<Shape>> childs;
-	std::unique_ptr<Renderer> rndr;
+	std::shared_ptr<Renderer> rndr;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);
 	glm::vec3 scaling = glm::vec3(1.0f);
