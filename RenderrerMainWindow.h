@@ -34,4 +34,5 @@ private:
 	std::unique_ptr<QTimer> timer;
 	std::array<glm::vec3, 5>* cntrlPts_ptr;
 	bool bezierPathNeedUpdate = true;
+	void setUpSliders();
 };
