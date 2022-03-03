@@ -73,8 +73,6 @@ void RenderrerMainWindow::screen_refresh()
 	scene.updateScene(deltaTime);
 	scene.renderScene();
 
-	glm::vec3 camPos = scene.getCamPosition();
-
 	//updating screen using colorbuffer info
 	ui.renderLabel->setPixmap(QPixmap::fromImage((*screen.getImage()).scaled(ui.renderLabel->size())));
 }
@@ -110,31 +108,37 @@ void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
 		this->close();
 
 	if (event->key() == 'A')
-		camMoveDir.x = -1;
+		camMoveDir.x += -1;
 	else if (event->key() == 'D')
-		camMoveDir.x = 1;
+		camMoveDir.x += 1;
 
 	if (event->key() == 'S')
-		camMoveDir.y = -1;
+		camMoveDir.y += -1;
 	else if (event->key() == 'W')
-		camMoveDir.y = 1;
+		camMoveDir.y += 1;
 
 	if (event->key() == 'E')
-		camMoveDir.z = 1;
+		camMoveDir.z += 1;
 	else if (event->key() == 'Q')
-		camMoveDir.z = -1;
+		camMoveDir.z += -1;
 }
 
 void RenderrerMainWindow::keyReleaseEvent(QKeyEvent* event)
 {
-	if (event->key() == 'A' || event->key() == 'D')
-		camMoveDir.x = 0;
+	if (event->key() == 'A')
+		camMoveDir.x -= -1;
+	else if (event->key() == 'D')
+		camMoveDir.x -= 1;
 
-	if (event->key() == 'S' || event->key() == 'W')
-		camMoveDir.y = 0;
+	if (event->key() == 'S')
+		camMoveDir.y -= -1;
+	else if (event->key() == 'W')
+		camMoveDir.y -= 1;
 
-	if (event->key() == 'E' || event->key() == 'Q')
-		camMoveDir.z = 0;
+	if (event->key() == 'E')
+		camMoveDir.z -= 1;
+	else if (event->key() == 'Q')
+		camMoveDir.z -= -1;
 }
 
 void RenderrerMainWindow::mouseMoveEvent(QMouseEvent* event)
