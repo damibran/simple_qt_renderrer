@@ -34,4 +34,6 @@ private:
 	Scene scene;
 	QPoint mousePos = QPoint(-1, -1);
 	std::unique_ptr<QTimer> timer;
+	std::array<glm::vec3, 5>* cntrlPts_ptr;
+	bool bezierPathNeedUpdate = true;
 };

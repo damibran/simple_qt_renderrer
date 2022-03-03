@@ -12,7 +12,7 @@
 class Scene
 {
 public:
-	Scene(Screen& s) :
+	Scene(Screen& s, std::array<glm::vec3, 5>*& cntrlPts_ptr,bool& bezierPathNeedUpdate) :
 		screen(s)
 		, worldObj()
 		, cam(s)
@@ -30,7 +30,8 @@ public:
 		bezierCurve = std::make_shared<Shape>(
 			std::make_unique<BezierCurveRenderer>(
 				screen,
-				arr,
+				cntrlPts_ptr,
+				bezierPathNeedUpdate,
 				6
 				)
 			);

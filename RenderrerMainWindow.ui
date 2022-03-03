@@ -149,6 +149,9 @@
       <property name="maximum">
        <number>30</number>
       </property>
+      <property name="value">
+       <number>10</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -181,6 +184,9 @@
       <property name="maximum">
        <number>30</number>
       </property>
+      <property name="value">
+       <number>10</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -199,6 +205,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>-10</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -228,6 +237,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>20</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -261,6 +273,9 @@
       <property name="maximum">
        <number>30</number>
       </property>
+      <property name="value">
+       <number>-20</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -279,6 +294,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>-20</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -307,6 +325,9 @@
        <number>-30</number>
       </property>
       <property name="maximum">
+       <number>30</number>
+      </property>
+      <property name="value">
        <number>30</number>
       </property>
       <property name="orientation">
@@ -341,6 +362,9 @@
       <property name="maximum">
        <number>30</number>
       </property>
+      <property name="value">
+       <number>30</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -359,6 +383,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>-30</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -388,6 +415,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>10</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -420,6 +450,9 @@
       </property>
       <property name="maximum">
        <number>30</number>
+      </property>
+      <property name="value">
+       <number>10</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>

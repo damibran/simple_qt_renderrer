@@ -4,7 +4,7 @@
 RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 	: QMainWindow(parent)
 	, screen(wr / 2, hr / 2)
-	, scene(screen)
+	, scene(screen, cntrlPts_ptr, bezierPathNeedUpdate)
 	, timer(new QTimer())
 {
 	timer->start(32);
@@ -31,6 +31,26 @@ RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 	QObject::connect(ui.P5XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
 	QObject::connect(ui.P5YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
 	QObject::connect(ui.P5ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
+
+	(*cntrlPts_ptr)[0].x = ui.P1XSlider->value();
+	(*cntrlPts_ptr)[0].y = ui.P1YSlider->value();
+	(*cntrlPts_ptr)[0].z = ui.P1ZSlider->value();
+
+	(*cntrlPts_ptr)[1].x = ui.P2XSlider->value();
+	(*cntrlPts_ptr)[1].y = ui.P2YSlider->value();
+	(*cntrlPts_ptr)[1].z = ui.P2ZSlider->value();
+
+	(*cntrlPts_ptr)[2].x = ui.P3XSlider->value();
+	(*cntrlPts_ptr)[2].y = ui.P3YSlider->value();
+	(*cntrlPts_ptr)[2].z = ui.P3ZSlider->value();
+
+	(*cntrlPts_ptr)[3].x = ui.P4XSlider->value();
+	(*cntrlPts_ptr)[3].y = ui.P4YSlider->value();
+	(*cntrlPts_ptr)[3].z = ui.P4ZSlider->value();
+
+	(*cntrlPts_ptr)[4].x = ui.P5XSlider->value();
+	(*cntrlPts_ptr)[4].y = ui.P5YSlider->value();
+	(*cntrlPts_ptr)[4].z = ui.P5ZSlider->value();
 
 	resize(wr + 250, hr);
 
@@ -61,7 +81,27 @@ void RenderrerMainWindow::screen_refresh()
 
 void RenderrerMainWindow::sliderValueChanged()
 {
-	qDebug() << "EY";
+	bezierPathNeedUpdate = true;
+
+	(*cntrlPts_ptr)[0].x = ui.P1XSlider->value();
+	(*cntrlPts_ptr)[0].y = ui.P1YSlider->value();
+	(*cntrlPts_ptr)[0].z = ui.P1ZSlider->value();
+
+	(*cntrlPts_ptr)[1].x = ui.P2XSlider->value();
+	(*cntrlPts_ptr)[1].y = ui.P2YSlider->value();
+	(*cntrlPts_ptr)[1].z = ui.P2ZSlider->value();
+
+	(*cntrlPts_ptr)[2].x = ui.P3XSlider->value();
+	(*cntrlPts_ptr)[2].y = ui.P3YSlider->value();
+	(*cntrlPts_ptr)[2].z = ui.P3ZSlider->value();
+
+	(*cntrlPts_ptr)[3].x = ui.P4XSlider->value();
+	(*cntrlPts_ptr)[3].y = ui.P4YSlider->value();
+	(*cntrlPts_ptr)[3].z = ui.P4ZSlider->value();
+
+	(*cntrlPts_ptr)[4].x = ui.P5XSlider->value();
+	(*cntrlPts_ptr)[4].y = ui.P5YSlider->value();
+	(*cntrlPts_ptr)[4].z = ui.P5ZSlider->value();
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)
