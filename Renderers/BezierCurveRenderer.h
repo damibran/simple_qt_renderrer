@@ -1,5 +1,5 @@
 #pragma once
-#include "Renderer.h"
+#include "RendererComponent.h"
 #include"../Screen.h"
 #include "../utils/MVP_mat.h"
 #include "../utils/LineSegment.h"
@@ -7,7 +7,7 @@
 #include<algorithm>
 #include <map>
 
-class BezierCurveRenderer : public Renderer
+class BezierCurveRenderer : public RendererComponent
 {
 public:
 	BezierCurveRenderer(Screen& s, std::array<glm::vec3, 5>*& cntrlPts_ptr, bool& ndUpdt, int initial_depth) :screen(s), depth(initial_depth),needUpdate(ndUpdt)

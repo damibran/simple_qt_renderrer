@@ -1,9 +1,9 @@
 #pragma once
-#include "Renderer.h"
+#include "RendererComponent.h"
 #include "../shapes/shape.h"
 #include "../Shaders/Shader.h"
 
-class ShaderMeshRenderer : public Renderer
+class ShaderMeshRenderer : public RendererComponent
 {
 public:
 	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m) : screen(s), shader(std::move(shdr)), mesh(std::move(m)), pool(4) { pool.sleep_duration = 0; }

@@ -1,12 +1,12 @@
 #pragma once
 #pragma once
-#include "Renderer.h"
+#include "RendererComponent.h"
 #include"../Screen.h"
 #include "../utils/MVP_mat.h"
 #include<array>
 #include <map>
 
-class CoordSystemRenderer : public Renderer
+class CoordSystemRenderer : public RendererComponent
 {
 public:
 	CoordSystemRenderer(Screen& s) :screen(s) {}

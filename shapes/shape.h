@@ -2,7 +2,7 @@
 #include"../utils/MVP_mat.h"
 #include "../Screen.h"
 #include "../shapes/Mesh.h"
-#include "../Renderers/Renderer.h"
+#include "../Renderers/RendererComponent.h"
 #include "../Renderers/MeshRenderer.h"
 #include <vector>
 #include <memory>
@@ -15,7 +15,7 @@ class Shape
 public:
 	Shape(Shape&) = delete;
 	Shape() = default;
-	Shape(std::shared_ptr<Renderer> mr) : rndr(mr) {}
+	Shape(std::shared_ptr<RendererComponent> mr) : rndr(mr) {}
 
 	void addChild(std::shared_ptr<Shape>& s)
 	{
@@ -81,7 +81,7 @@ private:
 	}
 
 	std::vector<std::shared_ptr<Shape>> childs;
-	std::shared_ptr<Renderer> rndr;
+	std::shared_ptr<RendererComponent> rndr;
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::mat4 rotation = glm::mat4(1.0f);
 	glm::vec3 scaling = glm::vec3(1.0f);

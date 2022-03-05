@@ -17,16 +17,6 @@ public:
 		, worldObj()
 		, cam(s)
 	{
-
-		std::array<glm::vec3, 5> arr =
-		{
-			glm::vec3(0,0,0),
-			glm::vec3(10,10,-10),
-			glm::vec3(20,-20,-20),
-			glm::vec3(30,30,-30),
-			glm::vec3(10,10,0)
-		};
-
 		bezierCurve = std::make_shared<Shape>(
 			std::make_shared<BezierCurveRenderer>(
 				screen,

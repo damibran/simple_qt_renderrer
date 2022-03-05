@@ -112,7 +112,7 @@
   <ItemGroup>
     <ClInclude Include="Renderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\CoordSystemRenderer.h" />
-    <ClInclude Include="Renderers\Renderer.h" />
+    <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
