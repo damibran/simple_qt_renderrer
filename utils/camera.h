@@ -1,16 +1,16 @@
 #pragma once
 #include"../utils/MVP_mat.h"
 #include "screen.h"
+#include "../shapes/shape.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-class Camera
+class Camera :public Shape
 {
 public:
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 60.0f);
-
 	Camera(Screen& s) :screen(s)
 	{
+		rotation = glm::vec3(0, -90, 0);
 		proj = glm::perspective(glm::radians(45.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 500.0f);
 		updateCameraVectors();
 	}
@@ -18,7 +18,7 @@ public:
 	{
 		float tspeed = dt * speed;
 		glm::mat3 m = glm::mat3(Right, Up, Front);
-		cameraPos += tspeed * m * dir;
+		position += tspeed * m * dir;
 	}
 	void rotateCamera(glm::vec2 mouseDir)
 	{
@@ -28,18 +28,18 @@ public:
 		xoffset *= MouseSensitivity;
 		yoffset *= MouseSensitivity;
 
-		Yaw += xoffset;
-		Pitch += yoffset;
+		rotation.y += xoffset;
+		rotation.x += yoffset;
 
 		bool constrainPitch = true;
 
 		// make sure that when pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch)
 		{
-			if (Pitch > 89.0f)
-				Pitch = 89.0f;
-			if (Pitch < -89.0f)
-				Pitch = -89.0f;
+			if (rotation.x > 89.0f)
+				rotation.x = 89.0f;
+			if (rotation.x < -89.0f)
+				rotation.x = -89.0f;
 		}
 
 		// update Front, Right and Up Vectors using the updated Euler angles
@@ -49,15 +49,13 @@ public:
 	{
 		MVP_mat vp;
 		vp.proj = proj;
-		vp.view = glm::lookAt(cameraPos, cameraPos + Front, Up);
+		vp.view = glm::lookAt(position, position + Front, Up);
 
 		return vp;
 	}
 private:
 	Screen& screen;
 	glm::mat4 proj;
-	float Yaw = -90;
-	float Pitch = 0;
 	glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 Right;
@@ -69,9 +67,9 @@ private:
 	{
 		// calculate the new Front vector
 		glm::vec3 front;
-		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
-		front.y = sin(glm::radians(Pitch));
-		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		front.x = cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
+		front.y = sin(glm::radians(rotation.x));
+		front.z = sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
 		Front = glm::normalize(front);
 		// also re-calculate the Right and Up vector
 		Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.

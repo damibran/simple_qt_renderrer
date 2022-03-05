@@ -60,7 +60,7 @@ public:
 		scaling = v;
 	}
 
-private:
+protected:
 
 	void drawChild(Screen& screen, const MVP_mat& parent_trans)const
 	{

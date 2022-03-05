@@ -15,8 +15,11 @@ public:
 	Scene(Screen& s, std::array<glm::vec3, 5>*& cntrlPts_ptr,bool& bezierPathNeedUpdate) :
 		screen(s)
 		, worldObj()
-		, cam(s)
+		, cam(std::make_unique<Camera>(s))
 	{
+
+		cam->translate({ 0,0,60 });
+
 		bezierCurve = std::make_shared<Shape>(
 			std::make_shared<BezierCurveRenderer>(
 				screen,
@@ -38,12 +41,12 @@ public:
 
 	void updateCameraPos(float dt, glm::vec3 moveDir)
 	{
-		cam.moveCamera(moveDir, dt);
+		cam->moveCamera(moveDir, dt);
 	}
 
 	void updateCameraRot(glm::vec2 mouseDir)
 	{
-		cam.rotateCamera(mouseDir);
+		cam->rotateCamera(mouseDir);
 	}
 
 	void setCurveRotation(float xRot, float yRot)
@@ -58,19 +61,15 @@ public:
 
 	void renderScene()
 	{
-		worldObj.drawShape(screen, cam.getCameraProjViewMat());
-	}
-
-	glm::vec3 getCamPosition()
-	{
-		return cam.cameraPos;
+		worldObj.drawShape(screen, cam->getCameraProjViewMat());
 	}
 
 private:
 	Screen& screen;
 	Shape worldObj;
-	Camera cam;
+	//Camera cam;
 	////////
+	std::shared_ptr<Camera> cam;
 	std::shared_ptr<Shape> bezierCurve;
 	float t = 0;
 };
