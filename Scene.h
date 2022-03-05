@@ -56,6 +56,13 @@ public:
 		cam.rotateCamera(mouseDir);
 	}
 
+	void setCurveRotation(float xRot, float yRot)
+	{
+		glm::mat4 r = glm::rotate(glm::mat4(1), glm::radians(xRot), { 1,0,0 });
+		r = glm::rotate(r, glm::radians(yRot), { 0,1,0 });
+		bezierCurve->setRotation(r);
+	}
+
 	void updateScene(float dt)
 	{
 		t += 0.7 * dt;

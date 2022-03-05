@@ -12,6 +12,9 @@ RenderrerMainWindow::RenderrerMainWindow(int wr, int hr, QWidget* parent)
 
 	ui.setupUi(this);
 
+	QObject::connect(ui.XRotationValue, SIGNAL(editingFinished()), this, SLOT(curveRotationChanged()));
+	QObject::connect(ui.YRotationValue, SIGNAL(editingFinished()), this, SLOT(curveRotationChanged()));
+
 	setUpSliders();
 
 	resize(wr + 250, hr+250);
@@ -62,6 +65,11 @@ void RenderrerMainWindow::sliderValueChanged()
 	(*cntrlPts_ptr)[4].x = ui.P5XSlider->value();
 	(*cntrlPts_ptr)[4].y = ui.P5YSlider->value();
 	(*cntrlPts_ptr)[4].z = ui.P5ZSlider->value();
+}
+
+void RenderrerMainWindow::curveRotationChanged()
+{
+	scene.setCurveRotation(ui.XRotationValue->text().toFloat(), ui.YRotationValue->text().toFloat());
 }
 
 void RenderrerMainWindow::keyPressEvent(QKeyEvent* event)

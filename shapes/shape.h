@@ -41,11 +41,20 @@ public:
 	{
 		position = v;
 	}
+	glm::vec3 getPos()const
+	{
+		return position;
+	}
 	
 	void rotate(float angle, glm::vec3 v)
 	{
 		rotation = glm::rotate(rotation, glm::radians(angle), v);
 	}
+	void setRotation(const glm::mat4& m)
+	{
+		rotation = m;
+	}
+
 	void scale(const glm::vec3& factor)
 	{
 		scaling *= factor;
@@ -54,10 +63,7 @@ public:
 	{
 		scaling = v;
 	}
-	glm::vec3 getPos()const
-	{
-		return position;
-	}
+
 private:
 
 	void drawChild(Screen &screen,const MVP_mat& parent_trans)const
