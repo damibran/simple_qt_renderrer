@@ -21,11 +21,11 @@ public:
 	{
 		childs.push_back(s);
 	}
-	
-	void drawShape(Screen &screen,const MVP_mat& parent_trans)const //meant to be used only with world obj
+
+	void drawShape(Screen& screen, const MVP_mat& parent_trans)const //meant to be used only with world obj
 	{
 		MVP_mat thisTrans(parent_trans);
-		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position) * rotation * glm::scale(glm::mat4(1), scaling);
+		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position) * getRotationMatrix() * glm::scale(glm::mat4(1), scaling);
 
 		for (int i = 0; i < childs.size(); ++i)
 		{
@@ -35,7 +35,7 @@ public:
 
 	void translate(const glm::vec3& v)
 	{
-		position = glm::translate(glm::mat4(1), v)*glm::vec4(position, 1);
+		position = glm::translate(glm::mat4(1), v) * glm::vec4(position, 1);
 	}
 	void setPos(const glm::vec3& v)
 	{
@@ -45,14 +45,10 @@ public:
 	{
 		return position;
 	}
-	
-	void rotate(float angle, glm::vec3 v)
+
+	void setRotationDegrees(const glm::vec3 v)
 	{
-		rotation = glm::rotate(rotation, glm::radians(angle), v);
-	}
-	void setRotation(const glm::mat4& m)
-	{
-		rotation = m;
+		rotation = v;
 	}
 
 	void scale(const glm::vec3& factor)
@@ -66,24 +62,33 @@ public:
 
 private:
 
-	void drawChild(Screen &screen,const MVP_mat& parent_trans)const
+	void drawChild(Screen& screen, const MVP_mat& parent_trans)const
 	{
 		MVP_mat thisTrans(parent_trans);
-		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1),position) * rotation * glm::scale(glm::mat4(1),scaling);
+		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position) * getRotationMatrix() * glm::scale(glm::mat4(1), scaling);
 
 		if (rndr.get() != nullptr)
 			rndr->drawShapeVisual(thisTrans);
 
 		for (int i = 0; i < childs.size(); ++i)
 		{
-			childs[i]->drawChild(screen,thisTrans);
+			childs[i]->drawChild(screen, thisTrans);
 		}
+	}
+
+	glm::mat4 getRotationMatrix()const
+	{
+		glm::mat4 m(1.);
+		m = glm::rotate(m, glm::radians(rotation.x), { 1,0,0 });
+		m = glm::rotate(m, glm::radians(rotation.y), { 0,1,0 });
+		m = glm::rotate(m, glm::radians(rotation.z), { 0,0,1 });
+		return m;
 	}
 
 	std::vector<std::shared_ptr<Shape>> childs;
 	std::shared_ptr<RendererComponent> rndr;
 	glm::vec3 position = glm::vec3(0.0f);
-	glm::mat4 rotation = glm::mat4(1.0f);
+	glm::vec3 rotation = glm::vec3(0.f); // pitch, yaw, roll in degrees
 	glm::vec3 scaling = glm::vec3(1.0f);
 };
 

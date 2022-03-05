@@ -48,9 +48,7 @@ public:
 
 	void setCurveRotation(float xRot, float yRot)
 	{
-		glm::mat4 r = glm::rotate(glm::mat4(1), glm::radians(xRot), { 1,0,0 });
-		r = glm::rotate(r, glm::radians(yRot), { 0,1,0 });
-		bezierCurve->setRotation(r);
+		bezierCurve->setRotationDegrees(glm::vec3(xRot,yRot,0.));
 	}
 
 	void updateScene(float dt)
