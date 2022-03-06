@@ -48,10 +48,10 @@
     <ClInclude Include="Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\camera.h">
+    <ClInclude Include="utils\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\MeshRenderer.h">
+    <ClInclude Include="Renderers\ConcreteRenderers\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\MVPMat.h">
@@ -60,10 +60,10 @@
     <ClInclude Include="utils\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shapes\Mesh.h">
+    <ClInclude Include="utils\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shapes\shape.h">
+    <ClInclude Include="Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Shader.h">
@@ -84,10 +84,10 @@
     <ClInclude Include="Renderers\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\BezierCurveRenderer.h">
+    <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\CoordSystemRenderer.h">
+    <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\LineSegment.h">

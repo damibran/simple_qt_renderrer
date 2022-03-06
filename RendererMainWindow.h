@@ -15,7 +15,7 @@ public:
 public slots:
 	void screen_refresh();
 	void sliderValueChanged();
-	void curveRotationChanged();
+	void curveRotationChanged() const;
 
 
 protected:

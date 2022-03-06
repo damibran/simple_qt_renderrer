@@ -3,7 +3,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "screen.h"
-#include "../shapes/shape.h"
 #include"../utils/MVPMat.h"
 
 class Camera :public Shape

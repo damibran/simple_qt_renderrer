@@ -1,6 +1,5 @@
 #pragma once
 #pragma once
-#include "RendererComponent.h"
 #include"../Screen.h"
 #include "../utils/MVPMat.h"
 
