@@ -29,10 +29,10 @@
     <QtUic Include="RenderrerMainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="RenderrerMainWindow.h">
+    <QtMoc Include="RendererMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="RenderrerMainWindow.cpp">
+    <ClCompile Include="RendererMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,10 +54,7 @@
     <ClInclude Include="Renderers\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\MVP_mat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\ShaderThreader.h">
+    <ClInclude Include="utils\MVPMat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Vertex.h">

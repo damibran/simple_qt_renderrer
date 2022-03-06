@@ -105,8 +105,8 @@
   <ItemGroup>
     <QtRcc Include="RenderrerMainWindow.qrc" />
     <QtUic Include="RenderrerMainWindow.ui" />
-    <QtMoc Include="RenderrerMainWindow.h" />
-    <ClCompile Include="RenderrerMainWindow.cpp" />
+    <QtMoc Include="RendererMainWindow.h" />
+    <ClCompile Include="RendererMainWindow.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -125,8 +125,7 @@
     <ClInclude Include="utils\camera.h" />
     <ClInclude Include="Renderers\MeshRenderer.h" />
     <ClInclude Include="utils\LineSegment.h" />
-    <ClInclude Include="utils\MVP_mat.h" />
-    <ClInclude Include="utils\ShaderThreader.h" />
+    <ClInclude Include="utils\MVPMat.h" />
     <ClInclude Include="utils\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

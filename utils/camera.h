@@ -1,78 +1,80 @@
 #pragma once
-#include"../utils/MVP_mat.h"
-#include "screen.h"
-#include "../shapes/shape.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include "screen.h"
+#include "../shapes/shape.h"
+#include"../utils/MVPMat.h"
 
 class Camera :public Shape
 {
 public:
-	Camera(Screen& s) :screen(s)
+	explicit Camera(Screen& s) :screen_(s)
 	{
-		rotation = glm::vec3(0, -90, 0);
-		proj = glm::perspective(glm::radians(45.0f), (float)screen.XMAX / (float)screen.YMAX, 0.1f, 500.0f);
+		rotation_ = glm::vec3(0, -90, 0);
+		proj_ = glm::perspective(glm::radians(45.0f), static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
 		updateCameraVectors();
 	}
-	void moveCamera(glm::vec3 dir, float dt)
+	void moveCamera(const glm::vec3 dir, const float dt)
 	{
-		float tspeed = dt * speed;
-		glm::mat3 m = glm::mat3(Right, Up, Front);
-		position += tspeed * m * dir;
+		const float tspeed = dt * speed_;
+		const glm::mat3 m = glm::mat3(right_, up_, front_);
+		position_ += tspeed * m * dir;
 	}
-	void rotateCamera(glm::vec2 mouseDir)
+	void rotateCamera(const glm::vec2 mouse_dir)
 	{
-		float xoffset = mouseDir.x;
-		float yoffset = mouseDir.y;
+		float xoffset = mouse_dir.x;
+		float yoffset = mouse_dir.y;
 
-		xoffset *= MouseSensitivity;
-		yoffset *= MouseSensitivity;
+		xoffset *= mouse_sensitivity_;
+		yoffset *= mouse_sensitivity_;
 
-		rotation.y += xoffset;
-		rotation.x += yoffset;
+		rotation_.y += xoffset;
+		rotation_.x += yoffset;
 
-		bool constrainPitch = true;
+		const bool constrainPitch = true;
 
 		// make sure that when pitch is out of bounds, screen doesn't get flipped
 		if (constrainPitch)
 		{
-			if (rotation.x > 89.0f)
-				rotation.x = 89.0f;
-			if (rotation.x < -89.0f)
-				rotation.x = -89.0f;
+			if (rotation_.x > 89.0f)
+				rotation_.x = 89.0f;
+			if (rotation_.x < -89.0f)
+				rotation_.x = -89.0f;
 		}
 
 		// update Front, Right and Up Vectors using the updated Euler angles
 		updateCameraVectors();
 	}
-	MVP_mat getCameraProjViewMat()const
+
+	[[nodiscard]] MVPMat getCameraProjViewMat()const
 	{
-		MVP_mat vp;
-		vp.proj = proj;
-		vp.view = glm::lookAt(position, position + Front, Up);
+		MVPMat vp;
+		vp.proj = proj_;
+		vp.view = glm::lookAt(position_, position_ + front_, up_);
 
 		return vp;
 	}
 private:
-	Screen& screen;
-	glm::mat4 proj;
-	glm::vec3 Front = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 Right;
-	glm::vec3 WorldUp = glm::vec3(0, 1, 0);
-	float MouseSensitivity = 0.25f;
-	float speed = 30;
+	Screen& screen_;
+	glm::mat4 proj_;
+	glm::vec3 front_ = glm::vec3(0.0f, 0.0f, -1.0f);
+	glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::vec3 right_;
+	glm::vec3 world_up_ = glm::vec3(0, 1, 0);
+	float mouse_sensitivity_ = 0.25f;
+	float speed_ = 30;
 
 	void updateCameraVectors()
 	{
 		// calculate the new Front vector
 		glm::vec3 front;
-		front.x = cos(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
-		front.y = sin(glm::radians(rotation.x));
-		front.z = sin(glm::radians(rotation.y)) * cos(glm::radians(rotation.x));
-		Front = glm::normalize(front);
+		front.x = cos(glm::radians(rotation_.y)) * cos(glm::radians(rotation_.x));
+		front.y = sin(glm::radians(rotation_.x));
+		front.z = sin(glm::radians(rotation_.y)) * cos(glm::radians(rotation_.x));
+		front_ = glm::normalize(front);
 		// also re-calculate the Right and Up vector
-		Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-		Up = glm::normalize(glm::cross(Right, Front));
+		right_ = glm::normalize(glm::cross(front_, world_up_));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		up_ = glm::normalize(glm::cross(right_, front_));
 	}
 };

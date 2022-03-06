@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct vertex
+struct Vertex
 {
 	glm::vec3 pos;
 	glm::vec3 norm;

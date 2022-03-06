@@ -1,8 +1,9 @@
 #pragma once
-#include "../utils/MVP_mat.h"
+#include "../utils/MVPMat.h"
 
 class RendererComponent
 {
 public:
-	virtual void drawShapeVisual(const MVP_mat& trans) = 0;
+	virtual ~RendererComponent() = default;
+	virtual void drawShapeVisual(const MVPMat& trans) = 0;
 };

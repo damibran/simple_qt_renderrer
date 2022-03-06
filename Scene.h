@@ -1,8 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "Screen.h"
-#include "Shaders/ConcreteShaders/CubeShader.h"
-#include "Shaders/ConcreteShaders/LightCubeShader.h"
 #include "Renderers/CoordSystemRenderer.h"
 #include "shapes/Mesh.h"
 #include "shapes/shape.h"
@@ -12,66 +10,66 @@
 class Scene
 {
 public:
-	Scene(Screen& s, std::array<glm::vec3, 5>*& cntrlPts_ptr,bool& bezierPathNeedUpdate) :
-		screen(s)
-		, worldObj()
-		, cam(std::make_unique<Camera>(s))
+	Scene(Screen& s, std::array<glm::vec3, 5>*& cntrl_pts_ptr,bool& bezier_path_need_update) :
+		screen_(s)
+		, world_obj_()
+		, cam_(std::make_unique<Camera>(s))
 	{
 
-		cam->translate({ 0,0,60 });
+		cam_->translate({ 0,0,60 });
 
-		bezierCurve = std::make_shared<Shape>(
+		bezier_curve_ = std::make_shared<Shape>(
 			std::make_shared<BezierCurveRenderer>(
-				screen,
-				cntrlPts_ptr,
-				bezierPathNeedUpdate,
+				screen_,
+				cntrl_pts_ptr,
+				bezier_path_need_update,
 				6
 				)
 			);
 
-		std::shared_ptr<Shape> coordSys = std::make_shared<Shape>(
-			std::make_unique<CoordSystemRenderer>(screen)
+		const std::shared_ptr<Shape> coordSys = std::make_shared<Shape>(
+			std::make_unique<CoordSystemRenderer>(screen_)
 			);
 
 		coordSys->scale({ 100,100,100 });
 
-		worldObj.addChild(coordSys);
-		worldObj.addChild(bezierCurve);
+		world_obj_.addChild(coordSys);
+		world_obj_.addChild(bezier_curve_);
 	}
 
-	void updateCameraPos(float dt, glm::vec3 moveDir)
+	void updateCameraPos(const float dt, const glm::vec3 move_dir) const
 	{
-		cam->moveCamera(moveDir, dt);
+		cam_->moveCamera(move_dir, dt);
 	}
 
-	void updateCameraRot(glm::vec2 mouseDir)
+	void updateCameraRot(const glm::vec2 mouse_dir) const
 	{
-		cam->rotateCamera(mouseDir);
+		cam_->rotateCamera(mouse_dir);
 	}
 
-	void setCurveRotation(float xRot, float yRot)
+	void setCurveRotation(const float x_rot, const float y_rot) const
 	{
-		bezierCurve->setRotationDegrees(glm::vec3(xRot,yRot,0.));
+		bezier_curve_->setRotationDegrees(glm::vec3(x_rot,y_rot,0.));
 	}
 
 	void updateScene(float dt)
 	{
-		t += 0.7 * dt;
+		t_ += dt * 0.7;
 	}
 
-	void renderScene()
+	void renderScene() const
 	{
-		worldObj.drawShape(screen, cam->getCameraProjViewMat());
+		world_obj_.drawShape(screen_, cam_->getCameraProjViewMat());
 	}
 
 private:
-	Screen& screen;
-	Shape worldObj;
+	Screen& screen_;
+	Shape world_obj_;
 	//Camera cam;
 	////////
-	std::shared_ptr<Camera> cam;
-	std::shared_ptr<Shape> bezierCurve;
-	float t = 0;
+	std::shared_ptr<Camera> cam_;
+	std::shared_ptr<Shape> bezier_curve_;
+	float t_ = 0;
 };
 
 #endif // SCENE_H

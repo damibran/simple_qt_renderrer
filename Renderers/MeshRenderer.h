@@ -1,81 +1,85 @@
 #pragma once
+#include "../Screen.h"
+#include "../shapes/Mesh.h"
 #include "RendererComponent.h"
-#include "../shapes/shape.h"
 #include "../Shaders/Shader.h"
 
-class ShaderMeshRenderer : public RendererComponent
+class ShaderMeshRenderer final : public RendererComponent
 {
 public:
-	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m) : screen(s), shader(std::move(shdr)), mesh(std::move(m)), pool(4) { pool.sleep_duration = 0; }
-	void drawShapeVisual(const MVP_mat& trans) override
+	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m) : screen_(s),
+		shader_(std::move(shdr)), mesh_(std::move(m)), pool_(4) { pool_.sleep_duration = 0; }
+
+	void drawShapeVisual(const MVPMat& trans) override
 	{
-		drawMesh(screen, trans, mesh);
+		drawMesh(screen_, trans, mesh_);
 	}
+
 private:
-
-	void drawMesh(Screen& screen, const MVP_mat& trans, std::unique_ptr<Mesh> const& _mesh)
+	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
-
-		for (int i = 0; _mesh->indices.size() != 0 && i <= _mesh->indices.size() - 3; i += 3)
+		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
-			process_trngl(shader, trans, _mesh->vertices[_mesh->indices[i]], _mesh->vertices[_mesh->indices[i + 1]], _mesh->vertices[_mesh->indices[i + 2]]);
+			process_trngl(shader_, trans, mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]],
+			              mesh->vertices[mesh->indices[i + 2]]);
 		}
 
-		for (int i = 0; i < _mesh->childs.size(); ++i)
+		for (auto& i : mesh->childs)
 		{
-			drawMesh(screen, trans, _mesh->childs[i]);
+			drawMesh(screen, trans, i);
 		}
 	}
 
-
-	void process_trngl(std::unique_ptr<Shader>& shader, const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)
+	void process_trngl(std::unique_ptr<Shader>& shader, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
+	                   const Vertex& v2)
 	{
-		triangleClipPos abc = shader->computeVertexShader(trans, v0, v1, v2);
+		TriangleClipPos abc = shader->computeVertexShader(trans, v0, v1, v2);
 
 		glm::vec3 a;
 		glm::vec3 b;
 		glm::vec3 c;
 
 		//calculating raster positions
-		a.x = (abc.v1.x / abc.v1.w + 1) / 2 * screen.XMAX;
-		a.y = (abc.v1.y / abc.v1.w + 1) / 2 * screen.YMAX;
+		a.x = static_cast<float>(screen_.XMAX) * ((abc.v1.x / abc.v1.w + 1) / 2);
+		a.y = static_cast<float>(screen_.YMAX) * ((abc.v1.y / abc.v1.w + 1) / 2);
 		a.z = abc.v1.w;
 
-		b.x = (abc.v2.x / abc.v2.w + 1) / 2 * screen.XMAX;
-		b.y = (abc.v2.y / abc.v2.w + 1) / 2 * screen.YMAX;
+		b.x = static_cast<float>(screen_.XMAX) * ((abc.v2.x / abc.v2.w + 1) / 2);
+		b.y = static_cast<float>(screen_.YMAX) * ((abc.v2.y / abc.v2.w + 1) / 2);
 		b.z = abc.v2.w;
 
-		c.x = (abc.v3.x / abc.v3.w + 1) / 2 * screen.XMAX;
-		c.y = (abc.v3.y / abc.v3.w + 1) / 2 * screen.YMAX;
+		c.x = static_cast<float>(screen_.XMAX) * ((abc.v3.x / abc.v3.w + 1) / 2);
+		c.y = static_cast<float>(screen_.YMAX) * ((abc.v3.y / abc.v3.w + 1) / 2);
 		c.z = abc.v3.w;
 
 		if (abc.v1.z <= abc.v1.w && abc.v1.z >= -abc.v1.w &&
 			abc.v2.z <= abc.v2.w && abc.v2.z >= -abc.v2.w &&
-			abc.v3.z <= abc.v3.w && abc.v3.z >= -abc.v3.w)//kinda_Cliping
+			abc.v3.z <= abc.v3.w && abc.v3.z >= -abc.v3.w) //kinda Clipping
 			put_triangle(shader, a, b, c);
 	}
 
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
-		float xmin = min3(v0.x, v1.x, v2.x);
-		float ymin = min3(v0.y, v1.y, v2.y);
-		float xmax = max3(v0.x, v1.x, v2.x);
-		float ymax = max3(v0.y, v1.y, v2.y);
+		const float xmin = min3(v0.x, v1.x, v2.x);
+		const float ymin = min3(v0.y, v1.y, v2.y);
+		const float xmax = max3(v0.x, v1.x, v2.x);
+		const float ymax = max3(v0.y, v1.y, v2.y);
 
-		if (xmin < screen.XMAX - 1 && xmax > 0 && ymin < screen.YMAX - 1 && ymax > 0)
+		if (xmin < static_cast<float>(screen_.XMAX - 1) && xmax > 0 && ymin < static_cast<float>(screen_.YMAX - 1) && ymax > 0)
 		{
-			int x0 = std::max(0, (int)(std::floor(xmin)));
-			int x1 = std::min((int) screen.XMAX - 1, (int)(std::floor(xmax)));
-			int y0 = std::max(1, (int)(std::floor(ymin)));
-			int y1 = std::min((int) screen.YMAX - 1, (int)(std::floor(ymax)));
+			uint x0 = std::max(0u, static_cast<uint>(std::floor(xmin)));
+			uint x1 = std::min(screen_.XMAX - 1, static_cast<uint>(std::floor(xmax)));
+			const uint y0 = std::max(1u, static_cast<uint>(std::floor(ymin)));
+			const uint y1 = std::min(screen_.YMAX - 1, static_cast<uint>(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const int a, const int b) {
-				for (int y = a; y <= b; ++y)
+			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const uint a, const uint b)
+			{
+				for (uint y = a; y <= b; ++y)
 				{
-					for (int x = x0; x <= x1; ++x)
+					for (uint x = x0; x <= x1; ++x)
 					{
-						glm::vec2 pixel = { x + 0.5,y + 0.5 };
+						glm::vec2 pixel = {x + 0.5, y + 0.5};
 
 						float w0 = edgeFunction(v1, v2, pixel);
 						float w1 = edgeFunction(v2, v0, pixel);
@@ -87,7 +91,7 @@ private:
 							w1 /= area;
 							w2 /= area;
 
-							float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
+							const float corr = w0 / v0.z + w1 / v1.z + w2 / v2.z;
 
 							w0 /= v0.z;
 							w1 /= v1.z;
@@ -97,42 +101,43 @@ private:
 							w1 /= corr;
 							w2 /= corr;
 
-							float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
+							const float z = w0 * v0.z + w1 * v1.z + w2 * v2.z;
 
-							if (z < screen.getZBufferAt(y * screen.XMAX + x))
+							if (z < screen_.getZBufferAt(y * screen_.XMAX + x))
 							{
-								screen.setZBufferAt(y * screen.XMAX + x, z);
+								screen_.setZBufferAt(y * screen_.XMAX + x, z);
 
 								glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
 								color.r = glm::clamp<float>(color.r, 0, 255);
 								color.g = glm::clamp<float>(color.g, 0, 255);
 								color.b = glm::clamp<float>(color.b, 0, 255);
-								screen.put_point(x, y, color);
+								screen_.put_point(x, y, color);
 							}
 						}
 					}
-
 				}
 			};
-			pool.parallelize_loop(y0, y1, loop, (y1 - y0) / pool.get_thread_count());
+			pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
 		}
 	}
 
-	thread_pool pool; // not like this !!!!
-	Screen& screen;
-	std::unique_ptr<Shader> shader;
-	const std::unique_ptr<Mesh> mesh;
+	Screen& screen_;
+	std::unique_ptr<Shader> shader_;
+	const std::unique_ptr<Mesh> mesh_;
+	thread_pool pool_; // not like this !!!!
 
-	float min3(const float& a, const float& b, const float& c)const
+	float min3(const float& a, const float& b, const float& c) const
 	{
 		return std::min(a, std::min(b, c));
 	}
-	float max3(const float& a, const float& b, const float& c)const
+
+	float max3(const float& a, const float& b, const float& c) const
 	{
 		return std::max(a, std::max(b, c));
 	}
-	float edgeFunction(const glm::vec3& a, const  glm::vec3& b, const  glm::vec2& c)const
+
+	float edgeFunction(const glm::vec3& a, const glm::vec3& b, const glm::vec2& c) const
 	{
 		return -((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x));
 	}

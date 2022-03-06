@@ -1,6 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
-struct line_seg
+struct LineSeg
 {
 	glm::vec3 a;
 	glm::vec3 b;
