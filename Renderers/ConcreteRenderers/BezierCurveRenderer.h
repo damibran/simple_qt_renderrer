@@ -1,5 +1,5 @@
 #pragma once
-#include"../Screen.h"
+#include"../MyMain/Screen.h"
 #include "../utils/MVPMat.h"
 #include "../utils/LineSegment.h"
 #include<array>

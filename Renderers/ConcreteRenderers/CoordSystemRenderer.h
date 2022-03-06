@@ -1,6 +1,6 @@
 #pragma once
 #pragma once
-#include"../Screen.h"
+#include"../MyMain/Screen.h"
 #include "../utils/MVPMat.h"
 
 class CoordSystemRenderer : public RendererComponent

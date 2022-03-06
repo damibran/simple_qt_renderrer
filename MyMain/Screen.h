@@ -3,7 +3,7 @@
 #include <QtGui>
 #include<vector>
 #include<glm/glm.hpp>
-#include "thread_pool.hpp"
+#include "../utils/thread_pool.hpp"
 
 class Screen
 {

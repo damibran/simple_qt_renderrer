@@ -1,6 +1,6 @@
 #pragma once
 #include"../utils/MVPMat.h"
-#include "../Screen.h"
+#include "Screen.h"
 #include "../Renderers/RendererComponent.h"
 #include <vector>
 #include <memory>

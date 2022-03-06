@@ -1,5 +1,4 @@
-#include "RendererMainWindow.h"
-#include <QtWidgets/QApplication>
+#include "QtMain/RendererMainWindow.h"
 
 int main(int argc, char *argv[])
 {

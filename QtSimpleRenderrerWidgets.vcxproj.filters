@@ -23,16 +23,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="RenderrerMainWindow.qrc">
+    <QtRcc Include="QtMain\RenderrerMainWindow.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="RenderrerMainWindow.ui">
+    <QtUic Include="QtMain\RenderrerMainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="RendererMainWindow.h">
+    <QtMoc Include="QtMain\RendererMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="RendererMainWindow.cpp">
+    <ClCompile Include="QtMain\RendererMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,10 +42,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="MyMain\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Screen.h">
+    <ClInclude Include="MyMain\Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Camera.h">
@@ -63,7 +63,7 @@
     <ClInclude Include="utils\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shape.h">
+    <ClInclude Include="MyMain\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Shader.h">
@@ -75,7 +75,7 @@
     <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="thread_pool.hpp">
+    <ClInclude Include="utils\thread_pool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h">

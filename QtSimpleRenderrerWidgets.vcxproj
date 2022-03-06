@@ -103,25 +103,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <QtRcc Include="RenderrerMainWindow.qrc" />
-    <QtUic Include="RenderrerMainWindow.ui" />
-    <QtMoc Include="RendererMainWindow.h" />
-    <ClCompile Include="RendererMainWindow.cpp" />
+    <QtRcc Include="QtMain\RenderrerMainWindow.qrc" />
+    <QtUic Include="QtMain\RenderrerMainWindow.ui" />
+    <QtMoc Include="QtMain\RendererMainWindow.h" />
+    <ClCompile Include="QtMain\RendererMainWindow.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="Screen.h" />
+    <ClInclude Include="MyMain\Scene.h" />
+    <ClInclude Include="MyMain\Screen.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="utils\Mesh.h" />
-    <ClInclude Include="Shape.h" />
-    <ClInclude Include="thread_pool.hpp" />
+    <ClInclude Include="MyMain\Shape.h" />
+    <ClInclude Include="utils\thread_pool.hpp" />
     <ClInclude Include="utils\Camera.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\MeshRenderer.h" />
     <ClInclude Include="utils\LineSegment.h" />

@@ -2,9 +2,9 @@
 #define SCENE_H
 #include "Screen.h"
 #include "shape.h"
-#include "Renderers/ConcreteRenderers/BezierCurveRenderer.h"
-#include "Renderers/ConcreteRenderers/CoordSystemRenderer.h"
-#include "utils/camera.h"
+#include "../Renderers/ConcreteRenderers/BezierCurveRenderer.h"
+#include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
+#include "../utils/Camera.h"
 
 class Scene
 {

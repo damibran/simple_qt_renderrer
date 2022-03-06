@@ -1,8 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "Screen.h"
-#include "Scene.h"
+#include "../MyMain/Screen.h"
+#include "../MyMain/Scene.h"
 #include "ui_RenderrerMainWindow.h"
 
 class RendererMainWindow final : public QMainWindow
