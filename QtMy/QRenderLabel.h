@@ -8,14 +8,23 @@ class QRenderLabel : public QLabel
 public:
 	explicit QRenderLabel(QWidget* parent = nullptr) : QLabel(parent)
 	{
-		mTimer.setInterval(20);
+		m_timer_.setInterval(20);
 		//mTimer.setSingleShot(true);
-		connect(&mTimer, &QTimer::timeout, [this]
+		connect(&m_timer_, &QTimer::timeout, [this]
 		{
-			cam_rot_dir_ = glm::vec2(0);
-			mouse_pos_ = QPoint(-1, -1);
 			QPoint this_glob_pos = mapToGlobal(pos());
-			SetCursorPos(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
+			QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
+
+			cam_rot_dir_ = glm::vec2(0);
+
+			if (QCursor::pos() != widget_center)
+			{
+				QPoint mouse_dir = QCursor::pos() - widget_center;
+				mouse_dir.setY(-mouse_dir.y());
+				cam_rot_dir_ = glm::vec2(mouse_dir.x(), mouse_dir.y());
+			}
+
+			SetCursorPos(widget_center.x(), widget_center.y());
 		});
 	}
 
@@ -52,7 +61,7 @@ protected:
 	{
 		if (event->key() == 16777216)
 		{
-			mTimer.stop();
+			m_timer_.stop();
 			setCursor(QCursor(Qt::ArrowCursor));
 		}
 
@@ -75,14 +84,8 @@ protected:
 	void mouseMoveEvent(QMouseEvent* event) override
 	{
 		QLabel::mouseMoveEvent(event);
-		if (mouse_pos_ == QPoint(-1, -1))
-			mouse_pos_ = event->pos();
-
-		QPoint mouse_dir = event->pos() - mouse_pos_;
-		mouse_dir.setY(-mouse_dir.y());
-		mouse_pos_ = event->pos();
-
-		cam_rot_dir_ = glm::vec2(mouse_dir.x(), mouse_dir.y());
+		//if (mouse_pos_ == QPoint(-1, -1))
+		//	mouse_pos_ = event->pos();
 	}
 
 	void mouseReleaseEvent(QMouseEvent* ev) override
@@ -95,14 +98,21 @@ protected:
 
 	void focusInEvent(QFocusEvent* ev) override
 	{
-		mTimer.start();
 		QLabel::focusInEvent(ev);
+		m_timer_.start();
+
+		QPoint this_glob_pos = mapToGlobal(pos());
+		QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
+		SetCursorPos(widget_center.x(), widget_center.y());
+
+		cam_rot_dir_ = glm::vec2(0);
+		cam_move_dir_ = glm::vec3(0);
+
 		setCursor(QCursor(Qt::BlankCursor));
 	}
 
 private:
 	glm::vec3 cam_move_dir_;
 	glm::vec2 cam_rot_dir_;
-	QPoint mouse_pos_ = QPoint(-1, -1);
-	QTimer mTimer;
+	QTimer m_timer_;
 };
