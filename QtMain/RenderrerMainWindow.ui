@@ -17,7 +17,7 @@
    <property name="focusPolicy">
     <enum>Qt::ClickFocus</enum>
    </property>
-   <widget class="QLabel" name="renderLabel">
+   <widget class="QRenderLabel" name="renderLabel">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -581,6 +581,11 @@
    <class>QAxisSlider</class>
    <extends>QSlider</extends>
    <header>../QtMy/QAxisSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QRenderLabel</class>
+   <extends>QLabel</extends>
+   <header>../QtMy/QRenderLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

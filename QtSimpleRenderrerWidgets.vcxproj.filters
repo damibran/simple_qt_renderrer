@@ -102,5 +102,11 @@
     <ClInclude Include="Scripts\ConcreteScripts\BezierScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="QtMy\QRenderLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 class BezierScript final : public Script
 {
 public:
-	BezierScript(Ui::RenderrerMainWindowClass& ui, BezierCurveRenderer* bezier_renderer, Shape* bezierShape): shape_(
+	BezierScript(Ui::RenderrerMainWindowClass& ui, BezierCurveRenderer* bezier_renderer, Shape* bezierShape): bezier_shape_(
 		bezierShape)
 	{
 		x_rot_line_edit_ = ui.XRotationValue;
@@ -39,11 +39,11 @@ public:
 
 	void updateScript(float dt) override
 	{
-		shape_->setRotationDegrees({x_rot_line_edit_->text().toFloat(), y_rot_line_edit_->text().toFloat(), 0});
+		bezier_shape_->setRotationDegrees({x_rot_line_edit_->text().toFloat(), y_rot_line_edit_->text().toFloat(), 0});
 	}
 
 private:
 	QLineEdit* x_rot_line_edit_;
 	QLineEdit* y_rot_line_edit_;
-	Shape* shape_;
+	Shape* bezier_shape_;
 };
