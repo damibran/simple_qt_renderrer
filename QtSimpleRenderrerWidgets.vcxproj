@@ -110,11 +110,14 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="QtMy\QAxisSlider.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\BezierScript.h" />
+    <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h" />

@@ -8,10 +8,9 @@
 class BezierCurveRenderer : public RendererComponent
 {
 public:
-	BezierCurveRenderer(Screen& s, std::array<glm::vec3, 5>*& cntrl_pts_ptr, bool& ndUpdt,
-	                    const int initial_depth) : screen_(s), depth_(initial_depth), need_update_(ndUpdt)
+	BezierCurveRenderer(Screen& s,
+	                    const int initial_depth) : screen_(s), depth_(initial_depth)
 	{
-		cntrl_pts_ptr = &control_points_;
 		//subDivide(0, 1, 1);
 	}
 
@@ -49,6 +48,16 @@ public:
 			if (a.w > 0 && b.w > 0)
 				bresenhamWTest(a, b);
 		}
+	}
+
+	std::array<glm::vec3, 5>* getControlPointsPtr()
+	{
+		return &control_points_;
+	}
+
+	bool* getNeedUpdatePtr()
+	{
+		return &need_update_;
 	}
 
 private:
@@ -176,7 +185,7 @@ private:
 
 	Screen& screen_;
 	int depth_;
-	bool& need_update_;
+	bool need_update_;
 	std::array<glm::vec3, 5> control_points_;
 	std::map<float, LineSeg> curve_patch_;
 };

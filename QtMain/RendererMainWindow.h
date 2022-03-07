@@ -14,9 +14,6 @@ public:
 
 public slots:
 	void screen_refresh();
-	void sliderValueChanged();
-	void curveRotationChanged() const;
-
 
 protected:
 	void keyPressEvent(QKeyEvent* event) override;
@@ -32,7 +29,4 @@ private:
 	Scene scene_;
 	QPoint mouse_pos_ = QPoint(-1, -1);
 	std::unique_ptr<QTimer> timer_;
-	std::array<glm::vec3, 5>* cntrl_pts_ptr_;
-	bool bezier_path_need_update_ = true;
-	void setUpSliders() const;
 };

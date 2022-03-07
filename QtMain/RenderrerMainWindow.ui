@@ -57,7 +57,7 @@
        <height>121</height>
       </rect>
      </property>
-     <widget class="QSlider" name="P1XSlider">
+     <widget class="QAxisSlider" name="P1XSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -89,7 +89,7 @@
        <string>P1</string>
       </property>
      </widget>
-     <widget class="QSlider" name="P1YSlider">
+     <widget class="QAxisSlider" name="P1YSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -108,7 +108,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="P1ZSlider">
+     <widget class="QAxisSlider" name="P1ZSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -137,7 +137,7 @@
        <height>121</height>
       </rect>
      </property>
-     <widget class="QSlider" name="P2XSlider">
+     <widget class="QAxisSlider" name="P2XSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -172,7 +172,7 @@
        <string>P2</string>
       </property>
      </widget>
-     <widget class="QSlider" name="P2YSlider">
+     <widget class="QAxisSlider" name="P2YSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -194,7 +194,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="P2ZSlider">
+     <widget class="QAxisSlider" name="P2ZSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -226,7 +226,7 @@
        <height>121</height>
       </rect>
      </property>
-     <widget class="QSlider" name="P3XSlider">
+     <widget class="QAxisSlider" name="P3XSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -261,7 +261,7 @@
        <string>P3</string>
       </property>
      </widget>
-     <widget class="QSlider" name="P3YSlider">
+     <widget class="QAxisSlider" name="P3YSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -283,7 +283,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="P3ZSlider">
+     <widget class="QAxisSlider" name="P3ZSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -315,7 +315,7 @@
        <height>121</height>
       </rect>
      </property>
-     <widget class="QSlider" name="P4XSlider">
+     <widget class="QAxisSlider" name="P4XSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -350,7 +350,7 @@
        <string>P4</string>
       </property>
      </widget>
-     <widget class="QSlider" name="P4YSlider">
+     <widget class="QAxisSlider" name="P4YSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -372,7 +372,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="P4ZSlider">
+     <widget class="QAxisSlider" name="P4ZSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -404,7 +404,7 @@
        <height>121</height>
       </rect>
      </property>
-     <widget class="QSlider" name="P5XSlider">
+     <widget class="QAxisSlider" name="P5XSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -439,7 +439,7 @@
        <string>P5</string>
       </property>
      </widget>
-     <widget class="QSlider" name="P5YSlider">
+     <widget class="QAxisSlider" name="P5YSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -461,7 +461,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="P5ZSlider">
+     <widget class="QAxisSlider" name="P5ZSlider">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -576,6 +576,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QAxisSlider</class>
+   <extends>QSlider</extends>
+   <header>../QtMy/QAxisSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="RenderrerMainWindow.qrc"/>
  </resources>

@@ -4,7 +4,7 @@
 RendererMainWindow::RendererMainWindow(int wr, int hr, QWidget* parent)
 	: QMainWindow(parent)
 	  , screen_(wr / 2, hr / 2)
-	  , scene_(screen_, cntrl_pts_ptr_, bezier_path_need_update_)
+	  , scene_(screen_)
 	  , timer_(new QTimer())
 {
 	timer_->start(32);
@@ -12,10 +12,7 @@ RendererMainWindow::RendererMainWindow(int wr, int hr, QWidget* parent)
 
 	ui_.setupUi(this);
 
-	connect(ui_.XRotationValue, SIGNAL(editingFinished()), this, SLOT(curveRotationChanged()));
-	connect(ui_.YRotationValue, SIGNAL(editingFinished()), this, SLOT(curveRotationChanged()));
-
-	setUpSliders();
+	scene_.setupScene(ui_);
 
 	resize(wr + 250, hr + 250);
 
@@ -40,36 +37,6 @@ void RendererMainWindow::screen_refresh()
 
 	//updating screen using color buffer info
 	ui_.renderLabel->setPixmap(QPixmap::fromImage((*screen_.getImage()).scaled(ui_.renderLabel->size())));
-}
-
-void RendererMainWindow::sliderValueChanged()
-{
-	bezier_path_need_update_ = true;
-
-	(*cntrl_pts_ptr_)[0].x = ui_.P1XSlider->value();
-	(*cntrl_pts_ptr_)[0].y = ui_.P1YSlider->value();
-	(*cntrl_pts_ptr_)[0].z = ui_.P1ZSlider->value();
-
-	(*cntrl_pts_ptr_)[1].x = ui_.P2XSlider->value();
-	(*cntrl_pts_ptr_)[1].y = ui_.P2YSlider->value();
-	(*cntrl_pts_ptr_)[1].z = ui_.P2ZSlider->value();
-
-	(*cntrl_pts_ptr_)[2].x = ui_.P3XSlider->value();
-	(*cntrl_pts_ptr_)[2].y = ui_.P3YSlider->value();
-	(*cntrl_pts_ptr_)[2].z = ui_.P3ZSlider->value();
-
-	(*cntrl_pts_ptr_)[3].x = ui_.P4XSlider->value();
-	(*cntrl_pts_ptr_)[3].y = ui_.P4YSlider->value();
-	(*cntrl_pts_ptr_)[3].z = ui_.P4ZSlider->value();
-
-	(*cntrl_pts_ptr_)[4].x = ui_.P5XSlider->value();
-	(*cntrl_pts_ptr_)[4].y = ui_.P5YSlider->value();
-	(*cntrl_pts_ptr_)[4].z = ui_.P5ZSlider->value();
-}
-
-void RendererMainWindow::curveRotationChanged() const
-{
-	scene_.setCurveRotation(ui_.XRotationValue->text().toFloat(), ui_.YRotationValue->text().toFloat());
 }
 
 void RendererMainWindow::keyPressEvent(QKeyEvent* event)
@@ -109,49 +76,6 @@ void RendererMainWindow::keyReleaseEvent(QKeyEvent* event)
 		cam_move_dir_.z -= 1;
 	else if (event->key() == 'Q')
 		cam_move_dir_.z -= -1;
-}
-
-void RendererMainWindow::setUpSliders() const
-{
-	connect(ui_.P1XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P1YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P1ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-
-	connect(ui_.P2XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P2YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P2ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-
-	connect(ui_.P3XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P3YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P3ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-
-	connect(ui_.P4XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P4YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P4ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-
-	connect(ui_.P5XSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P5YSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-	connect(ui_.P5ZSlider, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged()));
-
-	(*cntrl_pts_ptr_)[0].x = ui_.P1XSlider->value();
-	(*cntrl_pts_ptr_)[0].y = ui_.P1YSlider->value();
-	(*cntrl_pts_ptr_)[0].z = ui_.P1ZSlider->value();
-
-	(*cntrl_pts_ptr_)[1].x = ui_.P2XSlider->value();
-	(*cntrl_pts_ptr_)[1].y = ui_.P2YSlider->value();
-	(*cntrl_pts_ptr_)[1].z = ui_.P2ZSlider->value();
-
-	(*cntrl_pts_ptr_)[2].x = ui_.P3XSlider->value();
-	(*cntrl_pts_ptr_)[2].y = ui_.P3YSlider->value();
-	(*cntrl_pts_ptr_)[2].z = ui_.P3ZSlider->value();
-
-	(*cntrl_pts_ptr_)[3].x = ui_.P4XSlider->value();
-	(*cntrl_pts_ptr_)[3].y = ui_.P4YSlider->value();
-	(*cntrl_pts_ptr_)[3].z = ui_.P4ZSlider->value();
-
-	(*cntrl_pts_ptr_)[4].x = ui_.P5XSlider->value();
-	(*cntrl_pts_ptr_)[4].y = ui_.P5YSlider->value();
-	(*cntrl_pts_ptr_)[4].z = ui_.P5ZSlider->value();
 }
 
 void RendererMainWindow::mouseMoveEvent(QMouseEvent* event)
