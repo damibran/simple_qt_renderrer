@@ -13,37 +13,31 @@ public:
 		std::unique_ptr<Transform> t(new Transform);
 		auto shp = std::make_unique<Shape>(std::move(t));
 
-		shp->setScript(std::make_unique<CameraScript>(ui,screen, shp->getTransformPtr()));
+		shp->setScript(std::make_unique<CameraScript>(ui, screen, shp->getTransformPtr()));
 
 		return shp;
 	}
-	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s,Transform* transform):ui_(ui),screen_(s), transform_(transform)
-	{
-		transform_->translate({ 0,0,60 });
-		transform_->setRotationDegrees({ 0,-90,0 });
 
-		proj_ = glm::perspective(glm::radians(45.0f), static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
+	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, Transform* transform) : ui_(ui), screen_(s),
+		transform_(transform)
+	{
+		transform_->translate({0, 0, 60});
+		transform_->setRotationDegrees({0, -90, 0});
+
+		proj_ = glm::perspective(glm::radians(45.0f),
+		                         static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
 
 		updateCameraVectors();
-
-		ui.renderLabel->bindLabelToCamScript(&cam_pos_need_update_, &cam_rot_need_update_);
 	}
 
 	void updateScript(float dt) override
 	{
-		if(cam_pos_need_update_)
-		{
-			cam_pos_need_update_ = false;
-			moveCamera(ui_.renderLabel->getMoveDir(), dt);
-		}
-		if(cam_rot_need_update_)
-		{
-			cam_rot_need_update_ = false;
-			rotateCamera(ui_.renderLabel->getRotDir());
-		}
+		moveCamera(ui_.renderLabel->getMoveDir(), dt);
+
+		rotateCamera(ui_.renderLabel->getRotDir());
 	}
 
-	[[nodiscard]] MVPMat getCameraProjViewMat()const
+	[[nodiscard]] MVPMat getCameraProjViewMat() const
 	{
 		MVPMat vp;
 		vp.proj = proj_;
@@ -51,6 +45,7 @@ public:
 
 		return vp;
 	}
+
 private:
 	void moveCamera(const glm::vec3 dir, const float dt)
 	{
@@ -58,9 +53,10 @@ private:
 		const glm::mat3 m = glm::mat3(right_, up_, front_);
 		transform_->translate(tspeed * m * dir);
 	}
+
 	void rotateCamera(const glm::vec2 mouse_dir)
 	{
-		glm::vec2 offset(mouse_dir.y,mouse_dir.x);
+		glm::vec2 offset(mouse_dir.y, mouse_dir.x);
 
 		offset *= mouse_sensitivity_;
 
@@ -90,14 +86,12 @@ private:
 	Ui::RenderrerMainWindowClass& ui_;
 	Screen& screen_;
 	Transform* transform_;
-	bool cam_pos_need_update_ = false;
-	bool cam_rot_need_update_ = false;
 	glm::mat4 proj_;
 	glm::vec3 front_ = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 right_;
 	glm::vec3 world_up_ = glm::vec3(0, 1, 0);
-	float mouse_sensitivity_ = 0.25f;
+	float mouse_sensitivity_ = 0.5f;
 	float speed_ = 30;
 
 	void updateCameraVectors()
@@ -110,7 +104,8 @@ private:
 		front.z = sin(glm::radians(rot.y)) * cos(glm::radians(rot.x));
 		front_ = glm::normalize(front);
 		// also re-calculate the Right and Up vector
-		right_ = glm::normalize(glm::cross(front_, world_up_));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		right_ = glm::normalize(glm::cross(front_, world_up_));
+		// normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 		up_ = glm::normalize(glm::cross(right_, front_));
 	}
 };

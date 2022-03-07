@@ -8,11 +8,6 @@ class QRenderLabel: public QLabel
 public:
 	explicit QRenderLabel(QWidget* parent = nullptr) : QLabel(parent) {
 	}
-	void bindLabelToCamScript(bool* cam_pos_flag, bool* cam_rot_flag)
-	{
-		cam_pos_need_update_flag_ptr = cam_pos_flag;
-		cam_rot_need_update_flag_ptr = cam_rot_flag;
-	}
 
 	void keyReleaseEvent(QKeyEvent* event) override
 	{
@@ -30,8 +25,6 @@ public:
 			cam_move_dir_.z -= 1;
 		else if (event->key() == 'Q')
 			cam_move_dir_.z -= -1;
-
-		*cam_pos_need_update_flag_ptr = true;
 	}
 
 	void keyPressEvent(QKeyEvent* event) override
@@ -51,8 +44,6 @@ public:
 			cam_move_dir_.z += 1;
 		else if (event->key() == 'Q')
 			cam_move_dir_.z += -1;
-
-		*cam_pos_need_update_flag_ptr = true;
 	}
 
 	void mouseMoveEvent(QMouseEvent* event) override
@@ -73,22 +64,26 @@ public:
 
 
 		cam_rot_dir_ = m;
-		*cam_rot_need_update_flag_ptr = true;
 	}
 
-	glm::vec3 getMoveDir()
+	glm::vec3 getMoveDir() const
 	{
 		return cam_move_dir_;
 	}
 
-	glm::vec2 getRotDir()
+	glm::vec2 getRotDir() const
 	{
 		return cam_rot_dir_;
 	}
 
+protected:
+	void mouseReleaseEvent(QMouseEvent* ev) override
+	{
+		QLabel::mouseReleaseEvent(ev);
+
+		cam_rot_dir_ = glm::vec2(0, 0);
+	}
 private:
-	bool* cam_pos_need_update_flag_ptr=nullptr;
-	bool* cam_rot_need_update_flag_ptr = nullptr;
 	glm::vec3 cam_move_dir_;
 	glm::vec2 cam_rot_dir_;
 	QPoint mouse_pos_ = QPoint(-1, -1);
