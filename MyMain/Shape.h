@@ -7,32 +7,47 @@
 #include <memory>
 #include "glm/glm.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "../utils/Transform.h"
 
 class Shape
 {
 public:
 	Shape(Shape&) = delete;
-	Shape() = default;
 
-	explicit Shape(const std::shared_ptr<RendererComponent>& mr,
-	               std::unique_ptr<Script> script = nullptr) : rndr_(mr), script_(std::move(script))
+	explicit Shape(std::unique_ptr<Transform> transform = nullptr,
+	               std::unique_ptr<RendererComponent> mr = nullptr,
+		std::unique_ptr<Script> script = nullptr
+
+	) : transform_(std::move(transform)),
+	    renderer_(std::move(mr)),
+	    script_(std::move(script))
 	{
+		if (!transform_)
+			transform_ = std::make_unique<Transform>();
 	}
 
-	void addChild(const std::shared_ptr<Shape>& s)
+	void addChild(std::unique_ptr<Shape> s)
 	{
-		childs_.push_back(s);
+		childs_.push_back(std::move(s));
 	}
 
-	void drawShape(Screen& screen, const MVPMat& parent_trans) const //meant to be used only with world obj
+	Script* addChildAndGetScriptPtr(std::unique_ptr<Shape> s)
+	{
+		childs_.push_back(std::move(s));
+		return (childs_.end() - 1)->get()->getScriptPtr();
+	}
+
+	void drawShape(Screen& screen, const MVPMat& parent_trans) const
 	{
 		MVPMat this_trans(parent_trans);
-		this_trans.model = parent_trans.model * glm::translate(glm::mat4(1), position_) * getRotationMatrix() *
-			glm::scale(glm::mat4(1), scaling_);
+		this_trans.model = parent_trans.model * transform_->getFullModelMatrix();
+
+		if (renderer_)
+			renderer_->drawShapeVisual(this_trans);
 
 		for (auto& i : childs_)
 		{
-			i->drawChild(screen, this_trans);
+			i->drawShape(screen, this_trans);
 		}
 	}
 
@@ -41,74 +56,33 @@ public:
 		if (script_)
 			script_->updateScript(dt);
 
-		for (auto i : childs_)
+		for (auto& i : childs_)
 			i->updateScript(dt);
 	}
 
-	void setScript(std::shared_ptr<Script> s)
+	void setScript(std::unique_ptr<Script> s)
 	{
-		script_ = s;
+		script_ = std::move(s);
 	}
 
-	void translate(const glm::vec3& v)
+	Script* getScriptPtr()
 	{
-		position_ = glm::translate(glm::mat4(1), v) * glm::vec4(position_, 1);
+		return script_.get();
 	}
 
-	void setPos(const glm::vec3& v)
+	Transform* getTransformPtr()
 	{
-		position_ = v;
+		return transform_.get();
 	}
 
-	[[nodiscard]] glm::vec3 getPos() const
+	RendererComponent* getRenderComponent()
 	{
-		return position_;
-	}
-
-	void setRotationDegrees(const glm::vec3 v)
-	{
-		rotation_ = v;
-	}
-
-	void scale(const glm::vec3& factor)
-	{
-		scaling_ *= factor;
-	}
-
-	void setScale(const glm::vec3& v)
-	{
-		scaling_ = v;
+		return renderer_.get();
 	}
 
 protected:
-	void drawChild(Screen& screen, const MVPMat& parent_trans) const
-	{
-		MVPMat thisTrans(parent_trans);
-		thisTrans.model = parent_trans.model * glm::translate(glm::mat4(1), position_) * getRotationMatrix() *
-			glm::scale(glm::mat4(1), scaling_);
-
-		if (rndr_ != nullptr)
-			rndr_->drawShapeVisual(thisTrans);
-
-		for (auto& i : childs_)
-		{
-			i->drawChild(screen, thisTrans);
-		}
-	}
-
-	[[nodiscard]] glm::mat4 getRotationMatrix() const
-	{
-		glm::mat4 m(1.);
-		m = glm::rotate(m, glm::radians(rotation_.x), {1, 0, 0});
-		m = glm::rotate(m, glm::radians(rotation_.y), {0, 1, 0});
-		m = glm::rotate(m, glm::radians(rotation_.z), {0, 0, 1});
-		return m;
-	}
-
-	std::vector<std::shared_ptr<Shape>> childs_;
-	std::shared_ptr<RendererComponent> rndr_;
-	std::shared_ptr<Script> script_;
-	glm::vec3 position_ = glm::vec3(0.0f);
-	glm::vec3 rotation_ = glm::vec3(0.f); // pitch, yaw, roll in degrees
-	glm::vec3 scaling_ = glm::vec3(1.0f);
+	std::vector<std::unique_ptr<Shape>> childs_;
+	std::unique_ptr<Transform> transform_;
+	std::unique_ptr<RendererComponent> renderer_;
+	std::unique_ptr<Script> script_;
 };

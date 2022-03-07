@@ -1,4 +1,5 @@
 #pragma once
+#include "../MyMain/Shape.h"
 #include "../Script.h"
 #include "ui_RenderrerMainWindow.h"
 #include "../Renderers/ConcreteRenderers/BezierCurveRenderer.h"
@@ -7,8 +8,17 @@
 class BezierScript final : public Script
 {
 public:
-	BezierScript(Ui::RenderrerMainWindowClass& ui, BezierCurveRenderer* bezier_renderer, Shape* bezierShape): bezier_shape_(
-		bezierShape)
+	static std::unique_ptr<Shape> createShape(Ui::RenderrerMainWindowClass& ui,Screen& screen,int initial_d)
+	{
+		std::unique_ptr<Transform> t(new Transform);
+		std::unique_ptr<RendererComponent> bcr(new BezierCurveRenderer(screen, initial_d));
+		auto shp = std::make_unique<Shape>(std::move(t), std::move(bcr));
+
+		shp->setScript(std::make_unique<BezierScript>(ui, dynamic_cast<BezierCurveRenderer*>(shp->getRenderComponent()), shp->getTransformPtr()));
+
+		return shp;
+	}
+	BezierScript(Ui::RenderrerMainWindowClass& ui, BezierCurveRenderer* bezier_renderer, Transform* bezier_transform): bezier_transform_(bezier_transform)
 	{
 		x_rot_line_edit_ = ui.XRotationValue;
 		y_rot_line_edit_ = ui.YRotationValue;
@@ -39,11 +49,11 @@ public:
 
 	void updateScript(float dt) override
 	{
-		bezier_shape_->setRotationDegrees({x_rot_line_edit_->text().toFloat(), y_rot_line_edit_->text().toFloat(), 0});
+		bezier_transform_->setRotationDegrees({x_rot_line_edit_->text().toFloat(), y_rot_line_edit_->text().toFloat(), 0});
 	}
 
 private:
 	QLineEdit* x_rot_line_edit_;
 	QLineEdit* y_rot_line_edit_;
-	Shape* bezier_shape_;
+	Transform* bezier_transform_;
 };
