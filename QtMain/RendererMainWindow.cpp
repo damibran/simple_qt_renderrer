@@ -3,7 +3,7 @@
 
 RendererMainWindow::RendererMainWindow(int wr, int hr, QWidget* parent)
 	: QMainWindow(parent)
-	  , screen_(wr / 2, hr / 2)
+	  , screen_(wr, hr)
 	  , scene_(screen_)
 	  , timer_(new QTimer())
 {
