@@ -62,6 +62,9 @@ protected:
 		if (event->key() == 16777216)
 		{
 			m_timer_.stop();
+			clearFocus();
+			cam_rot_dir_ = glm::vec2(0);
+			cam_move_dir_ = glm::vec3(0);
 			setCursor(QCursor(Qt::ArrowCursor));
 		}
 
@@ -81,21 +84,6 @@ protected:
 			cam_move_dir_.z += -1;
 	}
 
-	void mouseMoveEvent(QMouseEvent* event) override
-	{
-		QLabel::mouseMoveEvent(event);
-		//if (mouse_pos_ == QPoint(-1, -1))
-		//	mouse_pos_ = event->pos();
-	}
-
-	void mouseReleaseEvent(QMouseEvent* ev) override
-	{
-		QLabel::mouseReleaseEvent(ev);
-
-		QPoint this_glob_pos = mapToGlobal(pos());
-		SetCursorPos(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
-	}
-
 	void focusInEvent(QFocusEvent* ev) override
 	{
 		QLabel::focusInEvent(ev);
@@ -104,9 +92,6 @@ protected:
 		QPoint this_glob_pos = mapToGlobal(pos());
 		QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
 		SetCursorPos(widget_center.x(), widget_center.y());
-
-		cam_rot_dir_ = glm::vec2(0);
-		cam_move_dir_ = glm::vec3(0);
 
 		setCursor(QCursor(Qt::BlankCursor));
 	}

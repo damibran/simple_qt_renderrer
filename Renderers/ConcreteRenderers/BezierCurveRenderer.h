@@ -185,7 +185,7 @@ private:
 
 	Screen& screen_;
 	int depth_;
-	bool need_update_;
+	bool need_update_=true;
 	std::array<glm::vec3, 5> control_points_;
 	std::map<float, LineSeg> curve_patch_;
 };
