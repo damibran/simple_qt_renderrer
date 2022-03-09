@@ -5,53 +5,139 @@
 #include<array>
 #include <map>
 
+struct cmpPairBezierTs
+{
+	bool operator()(const std::pair<float, float>& a, const std::pair<float, float>& b) const
+	{
+		if (a.second - a.first == b.second - b.first)
+		{
+			return a.first < b.first;
+		}
+		return a.second - a.first > b.second - b.first;
+	}
+};
+
 class BezierCurveRenderer : public RendererComponent
 {
 public:
-	BezierCurveRenderer(Screen& s, std::array<glm::vec3, 5>*& cntrl_pts_ptr, bool& ndUpdt,
-	                    const int initial_depth) : screen_(s), depth_(initial_depth), need_update_(ndUpdt)
+	BezierCurveRenderer(Screen& s,
+	                    const int initial_depth) : screen_(s), depth_(initial_depth)
 	{
-		cntrl_pts_ptr = &control_points_;
-		//subDivide(0, 1, 1);
+		curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, 0};
+	}
+
+	void render(std::map<std::pair<float, float>, std::pair<LineSeg, int>>::iterator cur, const glm::mat4& fullMat,
+	            float cur_level)
+	{
+		float start = cur->first.first;
+		float end = cur->first.second;
+
+		const float threshold = 10;
+		const float min_level = 5;
+
+		glm::vec4 a = fullMat * glm::vec4(cur->second.first.a, 1.);
+		glm::vec4 b = fullMat * glm::vec4(cur->second.first.b, 1.);
+
+		if (a.w < 0.1f && b.w >= 0.1f)
+		{
+			clipNearInClipSpace(a, b);
+		}
+
+		if (b.w < 0.1f && a.w >= 0.1f)
+		{
+			clipNearInClipSpace(b, a);
+		}
+
+		a.x = static_cast<float>(screen_.XMAX) * ((a.x / a.w + 1) / 2);
+		a.y = static_cast<float>(screen_.YMAX) * ((a.y / a.w + 1) / 2);
+
+		b.x = static_cast<float>(screen_.XMAX) * ((b.x / b.w + 1) / 2);
+		b.y = static_cast<float>(screen_.YMAX) * ((b.y / b.w + 1) / 2);
+
+		if (glm::length(a - b) > threshold && (onScreen(a) || onScreen(b)) ||
+			cur_level < min_level)
+		{
+			const float centr = start + (end - start) / 2;
+			auto left = curve_patch_.find({start, centr});
+			if (left == curve_patch_.end())
+			{
+				left = curve_patch_.insert(cur,{
+					{start, centr}, {{decasteljau(start), decasteljau(centr)}, last_update}
+				});
+			}
+			if (left->second.second < last_update)
+			{
+				left->second.first.a = decasteljau(start);
+				left->second.first.b = decasteljau(centr);
+				left->second.second = last_update;
+			}
+			auto right = curve_patch_.find({centr, end});
+			if (right == curve_patch_.end())
+			{
+				right = curve_patch_.insert(cur,{
+					{centr, end}, {{decasteljau(centr), decasteljau(end)}, last_update}
+				});
+			}
+			if (right->second.second < last_update)
+			{
+				right->second.first.a = decasteljau(centr);
+				right->second.first.b = decasteljau(end);
+				right->second.second = last_update;
+			}
+			render(left, fullMat, ++cur_level);
+			render(right, fullMat, ++cur_level);
+		}
+		else
+		{
+			if (a.w > 0 && b.w > 0)
+				bresenhamWTest(a, b);
+		}
 	}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
 		glm::mat4 fullMat = trans.proj * trans.view * trans.model;
 
-		if (need_update_)
+		if (!need_update_)
 		{
-			need_update_ = false;
-			subDivide(0, 1, 1);
+			render(curve_patch_.begin(), fullMat, 1);
 		}
-
-		for (auto& i : curve_patch_)
+		else
 		{
-			glm::vec4 a = fullMat * glm::vec4(i.second.a, 1.0f);
-			glm::vec4 b = fullMat * glm::vec4(i.second.b, 1.0f);
-
-			if (a.w < 0.1f && b.w >= 0.1f)
-			{
-				clipNearInClipSpace(a, b);
-			}
-
-			if (b.w < 0.1f && a.w >= 0.1f)
-			{
-				clipNearInClipSpace(b, a);
-			}
-
-			a.x = static_cast<float>(screen_.XMAX) * ((a.x / a.w + 1) / 2);
-			a.y = static_cast<float>(screen_.YMAX) * ((a.y / a.w + 1) / 2);
-
-			b.x = static_cast<float>(screen_.XMAX) * ((b.x / b.w + 1) / 2);
-			b.y = static_cast<float>(screen_.YMAX) * ((b.y / b.w + 1) / 2);
-
-			if (a.w > 0 && b.w > 0)
-				bresenhamWTest(a, b);
+			++last_update;
+			need_update_ = false;
+			curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, last_update};
+			render(curve_patch_.begin(), fullMat, 1);
 		}
 	}
 
+	std::array<glm::vec3, 5>* getControlPointsPtr()
+	{
+		return &control_points_;
+	}
+
+	bool* getNeedUpdatePtr()
+	{
+		return &need_update_;
+	}
+
 private:
+
+	bool xInBounds(glm::vec2 a)
+	{
+		return a.x > 0 && a.x < screen_.XMAX;
+	}
+
+	bool yInBounds(glm::vec2 a)
+	{
+		return a.y > 0 && a.y < screen_.YMAX;
+	}
+
+	bool onScreen(glm::vec2 a)
+	{
+		return xInBounds(a) && yInBounds(a);
+	}
+
 	static void clipNearInClipSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
 		float d_1 = -(b.z + 0.1f);
@@ -59,23 +145,6 @@ private:
 		// eqval to  float d_2 = glm::dot(glm::vec3(a) - glm::vec3(0, 0, -0.1f), glm::vec3(0, 0, -1));
 		float t = d_1 / (d_1 - d_2);
 		a = b + t * (a - b);
-	}
-
-	void subDivide(float start, float end, int cur_depth)
-	{
-		if (cur_depth != depth_)
-		{
-			const float centr = start + (end - start) / 2;
-			subDivide(start, centr, cur_depth + 1);
-			subDivide(centr, end, cur_depth + 1);
-		}
-		else
-		{
-			LineSeg n;
-			n.a = decasteljau(start);
-			n.b = decasteljau(end);
-			curve_patch_[end] = n;
-		}
 	}
 
 	static glm::vec3 lerp(const glm::vec3& a, const glm::vec3 b, float t)
@@ -176,7 +245,8 @@ private:
 
 	Screen& screen_;
 	int depth_;
-	bool& need_update_;
+	int last_update = 0;
+	bool need_update_ = true;
 	std::array<glm::vec3, 5> control_points_;
-	std::map<float, LineSeg> curve_patch_;
+	std::map<std::pair<float, float>, std::pair<LineSeg, int>, cmpPairBezierTs> curve_patch_;
 };

@@ -1,59 +1,38 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "Screen.h"
-#include "shape.h"
+#include "Shape.h"
 #include "../Renderers/ConcreteRenderers/BezierCurveRenderer.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
-#include "../utils/Camera.h"
+#include "../Scripts/ConcreteScripts/BezierScript.h"
+#include "../Scripts/ConcreteScripts/CameraScript.h"
+#include "ui_RenderrerMainWindow.h"
 
 class Scene
 {
 public:
-	Scene(Screen& s, std::array<glm::vec3, 5>*& cntrl_pts_ptr,bool& bezier_path_need_update) :
+	explicit Scene(Screen& s) :
 		screen_(s)
-		, world_obj_()
-		, cam_(std::make_unique<Camera>(s))
 	{
+	}
 
-		cam_->translate({ 0,0,60 });
+	void setupScene(Ui::RenderrerMainWindowClass& ui)
+	{
+		std::unique_ptr<Transform> t(new Transform());
+		t->scale({ 100,100,100 });
 
-		bezier_curve_ = std::make_shared<Shape>(
-			std::make_shared<BezierCurveRenderer>(
-				screen_,
-				cntrl_pts_ptr,
-				bezier_path_need_update,
-				6
-				)
-			);
-
-		const std::shared_ptr<Shape> coordSys = std::make_shared<Shape>(
+		world_obj_.addChild(std::make_unique<Shape>(
+			std::move(t),
 			std::make_unique<CoordSystemRenderer>(screen_)
-			);
+			));
 
-		coordSys->scale({ 100,100,100 });
-
-		world_obj_.addChild(coordSys);
-		world_obj_.addChild(bezier_curve_);
+		world_obj_.addChild(BezierScript::createShape(ui, screen_, 6));
+		cam_ = dynamic_cast<CameraScript*>(world_obj_.addChildAndGetScriptPtr(CameraScript::createObject(ui, screen_)));
 	}
 
-	void updateCameraPos(const float dt, const glm::vec3 move_dir) const
+	void updateScene(float dt) const
 	{
-		cam_->moveCamera(move_dir, dt);
-	}
-
-	void updateCameraRot(const glm::vec2 mouse_dir) const
-	{
-		cam_->rotateCamera(mouse_dir);
-	}
-
-	void setCurveRotation(const float x_rot, const float y_rot) const
-	{
-		bezier_curve_->setRotationDegrees(glm::vec3(x_rot,y_rot,0.));
-	}
-
-	void updateScene(float dt)
-	{
-		t_ += dt * 0.7;
+		world_obj_.updateScript(dt);
 	}
 
 	void renderScene() const
@@ -64,11 +43,8 @@ public:
 private:
 	Screen& screen_;
 	Shape world_obj_;
-	//Camera cam;
 	////////
-	std::shared_ptr<Camera> cam_;
-	std::shared_ptr<Shape> bezier_curve_;
-	float t_ = 0;
+	CameraScript* cam_;
 };
 
 #endif // SCENE_H

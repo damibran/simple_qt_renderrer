@@ -94,7 +94,7 @@
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -110,11 +110,16 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="QtMy\QAxisSlider.h" />
+    <ClInclude Include="QtMy\QRenderLabel.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\BezierScript.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
+    <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h" />
@@ -122,10 +127,10 @@
     <ClInclude Include="utils\Mesh.h" />
     <ClInclude Include="MyMain\Shape.h" />
     <ClInclude Include="utils\thread_pool.hpp" />
-    <ClInclude Include="utils\Camera.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\MeshRenderer.h" />
     <ClInclude Include="utils\LineSegment.h" />
     <ClInclude Include="utils\MVPMat.h" />
+    <ClInclude Include="utils\Transform.h" />
     <ClInclude Include="utils\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

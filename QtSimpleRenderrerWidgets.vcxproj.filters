@@ -48,9 +48,6 @@
     <ClInclude Include="MyMain\Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderers\ConcreteRenderers\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -91,6 +88,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\LineSegment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtMy\QAxisSlider.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\BezierScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtMy\QRenderLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
