@@ -21,21 +21,22 @@ class BezierCurveRenderer : public RendererComponent
 {
 public:
 	BezierCurveRenderer(Screen& s,
-		const int initial_depth) : screen_(s), depth_(initial_depth)
+	                    const int initial_depth) : screen_(s), depth_(initial_depth)
 	{
-		curve_patch_[{0, 1}] = { control_points_[0],control_points_[4] };
+		curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, 0};
 	}
 
-	void render(std::map<std::pair<float, float>, LineSeg>::iterator cur, const glm::mat4& fullMat, float cur_level)
+	void render(std::map<std::pair<float, float>, std::pair<LineSeg, int>>::iterator cur, const glm::mat4& fullMat,
+	            float cur_level)
 	{
 		float start = cur->first.first;
 		float end = cur->first.second;
 
 		const float threshold = 10;
-		const float min_level = 2;
+		const float min_level = 5;
 
-		glm::vec4 a = fullMat * glm::vec4(cur->second.a, 1.);
-		glm::vec4 b = fullMat * glm::vec4(cur->second.b, 1.);
+		glm::vec4 a = fullMat * glm::vec4(cur->second.first.a, 1.);
+		glm::vec4 b = fullMat * glm::vec4(cur->second.first.b, 1.);
 
 		if (a.w < 0.1f && b.w >= 0.1f)
 		{
@@ -53,30 +54,35 @@ public:
 		b.x = static_cast<float>(screen_.XMAX) * ((b.x / b.w + 1) / 2);
 		b.y = static_cast<float>(screen_.YMAX) * ((b.y / b.w + 1) / 2);
 
-		if (glm::length(a - b) > threshold && ( (onScreen(a) || onScreen(b)) ||
-			intersectScreenRectangle({a,b})) ||
-			cur_level<min_level)
+		if (glm::length(a - b) > threshold && (onScreen(a) || onScreen(b)) ||
+			cur_level < min_level)
 		{
 			const float centr = start + (end - start) / 2;
-			auto left = curve_patch_.find({ start, centr });
+			auto left = curve_patch_.find({start, centr});
 			if (left == curve_patch_.end())
 			{
-				left = curve_patch_.insert({ { start,centr }, {decasteljau(start),decasteljau(centr)} }).first;
+				left = curve_patch_.insert({
+					{start, centr}, {{decasteljau(start), decasteljau(centr)}, last_update}
+				}).first;
 			}
-			if (need_update_)
+			if (left->second.second < last_update)
 			{
-				left->second.a = decasteljau(start);
-				left->second.b = decasteljau(centr);
+				left->second.first.a = decasteljau(start);
+				left->second.first.b = decasteljau(centr);
+				left->second.second = last_update;
 			}
-			auto right = curve_patch_.find({ centr, end });
+			auto right = curve_patch_.find({centr, end});
 			if (right == curve_patch_.end())
 			{
-				right = curve_patch_.insert({ { centr,end }, {decasteljau(centr),decasteljau(end)} }).first;
+				right = curve_patch_.insert({
+					{centr, end}, {{decasteljau(centr), decasteljau(end)}, last_update}
+				}).first;
 			}
-			if (need_update_)
+			if (right->second.second < last_update)
 			{
-				right->second.a = decasteljau(centr);
-				right->second.b = decasteljau(end);
+				right->second.first.a = decasteljau(centr);
+				right->second.first.b = decasteljau(end);
+				right->second.second = last_update;
 			}
 			render(left, fullMat, ++cur_level);
 			render(right, fullMat, ++cur_level);
@@ -98,10 +104,10 @@ public:
 		}
 		else
 		{
-			curve_patch_[{0, 1}] = { control_points_[0],control_points_[4] };
-			render(curve_patch_.begin(), fullMat, 1);
+			++last_update;
 			need_update_ = false;
-
+			curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, last_update};
+			render(curve_patch_.begin(), fullMat, 1);
 		}
 	}
 
@@ -116,13 +122,12 @@ public:
 	}
 
 private:
-
 	bool intersectScreenRectangle(LineSeg seg)
 	{
-		return doIntersect({ 0,0 }, { screen_.XMAX, 0 }, seg.a, seg.b) ||
-			doIntersect({ 0,0 }, { 0, screen_.YMAX }, seg.a, seg.b) ||
-			doIntersect({ 0,screen_.YMAX }, { screen_.XMAX,screen_.YMAX }, seg.a, seg.b) ||
-			doIntersect({ screen_.XMAX , 0 }, { screen_.XMAX,screen_.YMAX }, seg.a, seg.b);
+		return doIntersect({0, 0}, {screen_.XMAX, 0}, seg.a, seg.b) ||
+			doIntersect({0, 0}, {0, screen_.YMAX}, seg.a, seg.b) ||
+			doIntersect({0, screen_.YMAX}, {screen_.XMAX, screen_.YMAX}, seg.a, seg.b) ||
+			doIntersect({screen_.XMAX, 0}, {screen_.XMAX, screen_.YMAX}, seg.a, seg.b);
 	}
 
 	bool onSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r)
@@ -141,7 +146,7 @@ private:
 		int val = (q.y - p.y) * (r.x - q.x) -
 			(q.x - p.x) * (r.y - q.y);
 
-		if (val == 0) return 0;  // collinear
+		if (val == 0) return 0; // collinear
 
 		return (val > 0) ? 1 : 2; // clock or counterclock wise
 	}
@@ -237,7 +242,7 @@ private:
 		if (xdiff == 0.0f && ydiff == 0.0f)
 		{
 			if (x1 > 0 && x1 < static_cast<float>(screen_.XMAX) && y1 > 0 && y1 < static_cast<float>(screen_.YMAX))
-				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), { 0, 0, 0 });
+				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), {0, 0, 0});
 			return;
 		}
 
@@ -264,7 +269,7 @@ private:
 			{
 				float y = y1 + ((x - x1) * slope);
 				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), { 0, 0, 0 });
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
 			}
 		}
 		else
@@ -290,14 +295,15 @@ private:
 			{
 				float x = x1 + ((y - y1) * slope);
 				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), { 0, 0, 0 });
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
 			}
 		}
 	}
 
 	Screen& screen_;
 	int depth_;
+	int last_update = 0;
 	bool need_update_ = true;
 	std::array<glm::vec3, 5> control_points_;
-	std::map<std::pair<float, float>, LineSeg, cmpPairBezierTs> curve_patch_;
+	std::map<std::pair<float, float>, std::pair<LineSeg, int>, cmpPairBezierTs> curve_patch_;
 };
