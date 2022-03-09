@@ -5,48 +5,103 @@
 #include<array>
 #include <map>
 
+struct cmpPairBezierTs
+{
+	bool operator()(const std::pair<float, float>& a, const std::pair<float, float>& b) const
+	{
+		if (a.second - a.first == b.second - b.first)
+		{
+			return a.first < b.first;
+		}
+		return a.second - a.first > b.second - b.first;
+	}
+};
+
 class BezierCurveRenderer : public RendererComponent
 {
 public:
 	BezierCurveRenderer(Screen& s,
-	                    const int initial_depth) : screen_(s), depth_(initial_depth)
+		const int initial_depth) : screen_(s), depth_(initial_depth)
 	{
-		//subDivide(0, 1, 1);
+		curve_patch_[{0, 1}] = { control_points_[0],control_points_[4] };
+	}
+
+	void render(std::map<std::pair<float, float>, LineSeg>::iterator cur, const glm::mat4& fullMat, float cur_level)
+	{
+		float start = cur->first.first;
+		float end = cur->first.second;
+
+		const float threshold = 10;
+		const float min_level = 2;
+
+		glm::vec4 a = fullMat * glm::vec4(cur->second.a, 1.);
+		glm::vec4 b = fullMat * glm::vec4(cur->second.b, 1.);
+
+		if (a.w < 0.1f && b.w >= 0.1f)
+		{
+			clipNearInClipSpace(a, b);
+		}
+
+		if (b.w < 0.1f && a.w >= 0.1f)
+		{
+			clipNearInClipSpace(b, a);
+		}
+
+		a.x = static_cast<float>(screen_.XMAX) * ((a.x / a.w + 1) / 2);
+		a.y = static_cast<float>(screen_.YMAX) * ((a.y / a.w + 1) / 2);
+
+		b.x = static_cast<float>(screen_.XMAX) * ((b.x / b.w + 1) / 2);
+		b.y = static_cast<float>(screen_.YMAX) * ((b.y / b.w + 1) / 2);
+
+		if (glm::length(a - b) > threshold && ( (onScreen(a) || onScreen(b)) ||
+			intersectScreenRectangle({a,b})) ||
+			cur_level<min_level)
+		{
+			const float centr = start + (end - start) / 2;
+			auto left = curve_patch_.find({ start, centr });
+			if (left == curve_patch_.end())
+			{
+				left = curve_patch_.insert({ { start,centr }, {decasteljau(start),decasteljau(centr)} }).first;
+			}
+			if (need_update_)
+			{
+				left->second.a = decasteljau(start);
+				left->second.b = decasteljau(centr);
+			}
+			auto right = curve_patch_.find({ centr, end });
+			if (right == curve_patch_.end())
+			{
+				right = curve_patch_.insert({ { centr,end }, {decasteljau(centr),decasteljau(end)} }).first;
+			}
+			if (need_update_)
+			{
+				right->second.a = decasteljau(centr);
+				right->second.b = decasteljau(end);
+			}
+			render(left, fullMat, ++cur_level);
+			render(right, fullMat, ++cur_level);
+		}
+		else
+		{
+			if (a.w > 0 && b.w > 0)
+				bresenhamWTest(a, b);
+		}
 	}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
 		glm::mat4 fullMat = trans.proj * trans.view * trans.model;
 
-		if (need_update_)
+		if (!need_update_)
 		{
-			need_update_ = false;
-			subDivide(0, 1, 1);
+			render(curve_patch_.begin(), fullMat, 1);
 		}
-
-		for (auto& i : curve_patch_)
+		else
 		{
-			glm::vec4 a = fullMat * glm::vec4(i.second.a, 1.0f);
-			glm::vec4 b = fullMat * glm::vec4(i.second.b, 1.0f);
+			curve_patch_[{0, 1}] = { control_points_[0],control_points_[4] };
+			render(curve_patch_.begin(), fullMat, 1);
+			need_update_ = false;
 
-			if (a.w < 0.1f && b.w >= 0.1f)
-			{
-				clipNearInClipSpace(a, b);
-			}
-
-			if (b.w < 0.1f && a.w >= 0.1f)
-			{
-				clipNearInClipSpace(b, a);
-			}
-
-			a.x = static_cast<float>(screen_.XMAX) * ((a.x / a.w + 1) / 2);
-			a.y = static_cast<float>(screen_.YMAX) * ((a.y / a.w + 1) / 2);
-
-			b.x = static_cast<float>(screen_.XMAX) * ((b.x / b.w + 1) / 2);
-			b.y = static_cast<float>(screen_.YMAX) * ((b.y / b.w + 1) / 2);
-
-			if (a.w > 0 && b.w > 0)
-				bresenhamWTest(a, b);
 		}
 	}
 
@@ -61,6 +116,80 @@ public:
 	}
 
 private:
+
+	bool intersectScreenRectangle(LineSeg seg)
+	{
+		return doIntersect({ 0,0 }, { screen_.XMAX, 0 }, seg.a, seg.b) ||
+			doIntersect({ 0,0 }, { 0, screen_.YMAX }, seg.a, seg.b) ||
+			doIntersect({ 0,screen_.YMAX }, { screen_.XMAX,screen_.YMAX }, seg.a, seg.b) ||
+			doIntersect({ screen_.XMAX , 0 }, { screen_.XMAX,screen_.YMAX }, seg.a, seg.b);
+	}
+
+	bool onSegment(glm::vec2 p, glm::vec2 q, glm::vec2 r)
+	{
+		if (q.x <= std::max(p.x, r.x) && q.x >= std::min(p.x, r.x) &&
+			q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
+			return true;
+
+		return false;
+	}
+
+	int orientation(glm::vec2 p, glm::vec2 q, glm::vec2 r)
+	{
+		// See https://www.geeksforgeeks.org/orientation-3-ordered-points/
+		// for details of below formula.
+		int val = (q.y - p.y) * (r.x - q.x) -
+			(q.x - p.x) * (r.y - q.y);
+
+		if (val == 0) return 0;  // collinear
+
+		return (val > 0) ? 1 : 2; // clock or counterclock wise
+	}
+
+	bool doIntersect(glm::vec2 p1, glm::vec2 q1, glm::vec2 p2, glm::vec2 q2)
+	{
+		// Find the four orientations needed for general and
+		// special cases
+		int o1 = orientation(p1, q1, p2);
+		int o2 = orientation(p1, q1, q2);
+		int o3 = orientation(p2, q2, p1);
+		int o4 = orientation(p2, q2, q1);
+
+		// General case
+		if (o1 != o2 && o3 != o4)
+			return true;
+
+		// Special Cases
+		// p1, q1 and p2 are collinear and p2 lies on segment p1q1
+		if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+
+		// p1, q1 and q2 are collinear and q2 lies on segment p1q1
+		if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+
+		// p2, q2 and p1 are collinear and p1 lies on segment p2q2
+		if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+
+		// p2, q2 and q1 are collinear and q1 lies on segment p2q2
+		if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+
+		return false; // Doesn't fall in any of the above cases
+	}
+
+	bool xInBounds(glm::vec2 a)
+	{
+		return a.x > 0 && a.x < screen_.XMAX;
+	}
+
+	bool yInBounds(glm::vec2 a)
+	{
+		return a.y > 0 && a.y < screen_.YMAX;
+	}
+
+	bool onScreen(glm::vec2 a)
+	{
+		return xInBounds(a) && yInBounds(a);
+	}
+
 	static void clipNearInClipSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
 		float d_1 = -(b.z + 0.1f);
@@ -68,23 +197,6 @@ private:
 		// eqval to  float d_2 = glm::dot(glm::vec3(a) - glm::vec3(0, 0, -0.1f), glm::vec3(0, 0, -1));
 		float t = d_1 / (d_1 - d_2);
 		a = b + t * (a - b);
-	}
-
-	void subDivide(float start, float end, int cur_depth)
-	{
-		if (cur_depth != depth_)
-		{
-			const float centr = start + (end - start) / 2;
-			subDivide(start, centr, cur_depth + 1);
-			subDivide(centr, end, cur_depth + 1);
-		}
-		else
-		{
-			LineSeg n;
-			n.a = decasteljau(start);
-			n.b = decasteljau(end);
-			curve_patch_[end] = n;
-		}
 	}
 
 	static glm::vec3 lerp(const glm::vec3& a, const glm::vec3 b, float t)
@@ -125,7 +237,7 @@ private:
 		if (xdiff == 0.0f && ydiff == 0.0f)
 		{
 			if (x1 > 0 && x1 < static_cast<float>(screen_.XMAX) && y1 > 0 && y1 < static_cast<float>(screen_.YMAX))
-				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), {0, 0, 0});
+				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), { 0, 0, 0 });
 			return;
 		}
 
@@ -152,7 +264,7 @@ private:
 			{
 				float y = y1 + ((x - x1) * slope);
 				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), { 0, 0, 0 });
 			}
 		}
 		else
@@ -178,14 +290,14 @@ private:
 			{
 				float x = x1 + ((y - y1) * slope);
 				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), { 0, 0, 0 });
 			}
 		}
 	}
 
 	Screen& screen_;
 	int depth_;
-	bool need_update_=true;
+	bool need_update_ = true;
 	std::array<glm::vec3, 5> control_points_;
-	std::map<float, LineSeg> curve_patch_;
+	std::map<std::pair<float, float>, LineSeg, cmpPairBezierTs> curve_patch_;
 };

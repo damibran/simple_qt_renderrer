@@ -24,5 +24,5 @@ private:
 	std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
 	Screen screen_;
 	Scene scene_;
-	std::unique_ptr<QTimer> timer_;
+	QTimer timer_;
 };

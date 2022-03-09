@@ -5,10 +5,9 @@ RendererMainWindow::RendererMainWindow(int wr, int hr, QWidget* parent)
 	: QMainWindow(parent)
 	  , screen_(wr, hr)
 	  , scene_(screen_)
-	  , timer_(new QTimer())
 {
-	timer_->start(32);
-	connect(timer_.get(), SIGNAL(timeout()), this, SLOT(screen_refresh()));
+	timer_.start(32);
+	connect(&timer_, SIGNAL(timeout()), this, SLOT(screen_refresh()));
 
 	ui_.setupUi(this);
 
@@ -35,7 +34,7 @@ void RendererMainWindow::screen_refresh()
 	scene_.renderScene();
 
 	//updating screen using color buffer info
-	ui_.renderLabel->setPixmap(QPixmap::fromImage((*screen_.getImage()).scaled(ui_.renderLabel->size())));
+	ui_.renderLabel->setPixmap(QPixmap::fromImage(screen_.getImage().scaled(ui_.renderLabel->size())));
 }
 
 void RendererMainWindow::keyPressEvent(QKeyEvent* event)
