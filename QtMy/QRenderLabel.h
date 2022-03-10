@@ -13,7 +13,7 @@ public:
 		connect(&m_timer_, &QTimer::timeout, [this]
 		{
 			QPoint this_glob_pos = mapToGlobal(pos());
-			QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
+			QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2-150, this_glob_pos.y() + height() / 2);
 
 			cam_rot_dir_ = glm::vec2(0);
 
@@ -24,7 +24,7 @@ public:
 				cam_rot_dir_ = glm::vec2(mouse_dir.x(), mouse_dir.y());
 			}
 
-			SetCursorPos(widget_center.x(), widget_center.y());
+			QCursor::setPos({ widget_center.x(), widget_center.y() });
 		});
 	}
 
@@ -90,8 +90,8 @@ protected:
 		m_timer_.start();
 
 		QPoint this_glob_pos = mapToGlobal(pos());
-		QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2 - 150, this_glob_pos.y() + height() / 2);
-		SetCursorPos(widget_center.x(), widget_center.y());
+		QPoint widget_center = QPoint(this_glob_pos.x() + width() / 2-150, this_glob_pos.y() + height() / 2);
+		QCursor::setPos({ widget_center.x(), widget_center.y() });
 
 		setCursor(QCursor(Qt::BlankCursor));
 	}
