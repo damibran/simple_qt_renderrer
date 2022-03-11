@@ -1,7 +1,7 @@
 #include "RendererMainWindow.h"
 #include <glm/glm.hpp>
 
-RendererMainWindow::RendererMainWindow(int wr, int hr, QWidget* parent)
+RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* parent)
 	: QMainWindow(parent)
 	  , screen_(wr, hr)
 	  , scene_(screen_)

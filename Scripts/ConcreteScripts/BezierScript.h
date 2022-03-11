@@ -14,7 +14,7 @@ public:
 		std::unique_ptr<RendererComponent> bcr(new BezierCurveRenderer(screen, initial_d));
 		auto shp = std::make_unique<Shape>(std::move(t), std::move(bcr));
 
-		shp->setScript(std::make_unique<BezierScript>(ui, dynamic_cast<BezierCurveRenderer*>(shp->getRenderComponent()), shp->getTransformPtr()));
+		shp->setScript(std::make_unique<BezierScript>(ui, dynamic_cast<BezierCurveRenderer*>(shp->getRenderComponentPtr()), shp->getTransformPtr()));
 
 		return shp;
 	}

@@ -5,7 +5,7 @@
 #include<array>
 #include <map>
 
-struct cmpPairBezierTs
+struct CmpPairBezierTs
 {
 	bool operator()(const std::pair<float, float>& a, const std::pair<float, float>& b) const
 	{
@@ -17,7 +17,7 @@ struct cmpPairBezierTs
 	}
 };
 
-class BezierCurveRenderer : public RendererComponent
+class BezierCurveRenderer final : public RendererComponent
 {
 public:
 	BezierCurveRenderer(Screen& s,
@@ -26,7 +26,7 @@ public:
 		curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, 0};
 	}
 
-	void render(std::map<std::pair<float, float>, std::pair<LineSeg, int>>::iterator cur, const glm::mat4& fullMat,
+	void render(const std::map<std::pair<float, float>, std::pair<LineSeg, int>>::iterator cur, const glm::mat4& full_mat,
 	            float cur_level)
 	{
 		float start = cur->first.first;
@@ -35,8 +35,8 @@ public:
 		const float threshold = 10;
 		const float min_level = 5;
 
-		glm::vec4 a = fullMat * glm::vec4(cur->second.first.a, 1.);
-		glm::vec4 b = fullMat * glm::vec4(cur->second.first.b, 1.);
+		glm::vec4 a = full_mat * glm::vec4(cur->second.first.a, 1.);
+		glm::vec4 b = full_mat * glm::vec4(cur->second.first.b, 1.);
 
 		if (a.w < 0.1f && b.w >= 0.1f)
 		{
@@ -62,30 +62,30 @@ public:
 			if (left == curve_patch_.end())
 			{
 				left = curve_patch_.insert(cur,{
-					{start, centr}, {{decasteljau(start), decasteljau(centr)}, last_update}
+					{start, centr}, {{decasteljau(start), decasteljau(centr)}, last_update_}
 				});
 			}
-			if (left->second.second < last_update)
+			if (left->second.second < last_update_)
 			{
 				left->second.first.a = decasteljau(start);
 				left->second.first.b = decasteljau(centr);
-				left->second.second = last_update;
+				left->second.second = last_update_;
 			}
 			auto right = curve_patch_.find({centr, end});
 			if (right == curve_patch_.end())
 			{
 				right = curve_patch_.insert(cur,{
-					{centr, end}, {{decasteljau(centr), decasteljau(end)}, last_update}
+					{centr, end}, {{decasteljau(centr), decasteljau(end)}, last_update_}
 				});
 			}
-			if (right->second.second < last_update)
+			if (right->second.second < last_update_)
 			{
 				right->second.first.a = decasteljau(centr);
 				right->second.first.b = decasteljau(end);
-				right->second.second = last_update;
+				right->second.second = last_update_;
 			}
-			render(left, fullMat, ++cur_level);
-			render(right, fullMat, ++cur_level);
+			render(left, full_mat, ++cur_level);
+			render(right, full_mat, ++cur_level);
 		}
 		else
 		{
@@ -104,9 +104,9 @@ public:
 		}
 		else
 		{
-			++last_update;
+			++last_update_;
 			need_update_ = false;
-			curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, last_update};
+			curve_patch_[{0, 1}] = {{control_points_[0], control_points_[4]}, last_update_};
 			render(curve_patch_.begin(), fullMat, 1);
 		}
 	}
@@ -123,27 +123,27 @@ public:
 
 private:
 
-	bool xInBounds(glm::vec2 a)
+	bool xInBounds(const glm::vec2& a) const
 	{
 		return a.x > 0 && a.x < screen_.XMAX;
 	}
 
-	bool yInBounds(glm::vec2 a)
+	bool yInBounds(const glm::vec2& a) const
 	{
 		return a.y > 0 && a.y < screen_.YMAX;
 	}
 
-	bool onScreen(glm::vec2 a)
+	bool onScreen(const glm::vec2& a) const
 	{
 		return xInBounds(a) && yInBounds(a);
 	}
 
 	static void clipNearInClipSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
-		float d_1 = -(b.z + 0.1f);
-		float d_2 = -(a.z + 0.1f);
+		const float d_1 = -(b.z + 0.1f);
+		const float d_2 = -(a.z + 0.1f);
 		// eqval to  float d_2 = glm::dot(glm::vec3(a) - glm::vec3(0, 0, -0.1f), glm::vec3(0, 0, -1));
-		float t = d_1 / (d_1 - d_2);
+		const float t = d_1 / (d_1 - d_2);
 		a = b + t * (a - b);
 	}
 
@@ -245,8 +245,8 @@ private:
 
 	Screen& screen_;
 	int depth_;
-	int last_update = 0;
+	int last_update_ = 0;
 	bool need_update_ = true;
 	std::array<glm::vec3, 5> control_points_;
-	std::map<std::pair<float, float>, std::pair<LineSeg, int>, cmpPairBezierTs> curve_patch_;
+	std::map<std::pair<float, float>, std::pair<LineSeg, int>, CmpPairBezierTs> curve_patch_;
 };

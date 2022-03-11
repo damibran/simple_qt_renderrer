@@ -15,7 +15,7 @@ public:
 	}
 
 protected:
-	void sliderChange(SliderChange change) override
+	void sliderChange(const SliderChange change) override
 	{
 		QSlider::sliderChange(change);
 		if (change == SliderValueChange && axis_value_!=nullptr)

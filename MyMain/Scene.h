@@ -44,7 +44,7 @@ private:
 	Screen& screen_;
 	Shape world_obj_;
 	////////
-	CameraScript* cam_;
+	CameraScript* cam_=nullptr;
 };
 
 #endif // SCENE_H

@@ -3,20 +3,20 @@
 #include"../MyMain/Screen.h"
 #include "../utils/MVPMat.h"
 
-class CoordSystemRenderer : public RendererComponent
+class CoordSystemRenderer final : public RendererComponent
 {
 public:
-	CoordSystemRenderer(Screen& s) : screen(s)
+	explicit CoordSystemRenderer(Screen& s) : screen_(s)
 	{
 	}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
-		glm::mat4 fullMat = trans.proj * trans.view * trans.model;
+		const glm::mat4 full_mat = trans.proj * trans.view * trans.model;
 
-		drawAxis(fullMat, {1, 0, 0}, {-1, 0, 0});
-		drawAxis(fullMat, {0, 1, 0}, {0, -1, 0});
-		drawAxis(fullMat, {0, 0, 1}, {0, 0, -1});
+		drawAxis(full_mat, {1, 0, 0}, {-1, 0, 0});
+		drawAxis(full_mat, {0, 1, 0}, {0, -1, 0});
+		drawAxis(full_mat, {0, 0, 1}, {0, 0, -1});
 	}
 
 private:
@@ -35,11 +35,11 @@ private:
 			clipNearInClipSpace(b_res, a_res);
 		}
 
-		a_res.x = (a_res.x / a_res.w + 1) / 2 * static_cast<float>(screen.XMAX);
-		a_res.y = (a_res.y / a_res.w + 1) / 2 * static_cast<float>(screen.YMAX);
+		a_res.x = (a_res.x / a_res.w + 1) / 2 * static_cast<float>(screen_.XMAX);
+		a_res.y = (a_res.y / a_res.w + 1) / 2 * static_cast<float>(screen_.YMAX);
 
-		b_res.x = (b_res.x / b_res.w + 1) / 2 * static_cast<float>(screen.XMAX);
-		b_res.y = (b_res.y / b_res.w + 1) / 2 * static_cast<float>(screen.YMAX);
+		b_res.x = (b_res.x / b_res.w + 1) / 2 * static_cast<float>(screen_.XMAX);
+		b_res.y = (b_res.y / b_res.w + 1) / 2 * static_cast<float>(screen_.YMAX);
 
 		if (a_res.w > 0 && b_res.w > 0)
 			bresenhamWTest(a_res, b_res);
@@ -47,7 +47,7 @@ private:
 
 	static void clipNearInHomoSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
 	{
-		float t = (b.w + b.z) / (b.w + b.z - (a.w + a.z));
+		const float t = (b.w + b.z) / (b.w + b.z - (a.w + a.z));
 		a = b + t * (a - b);
 	}
 
@@ -73,8 +73,8 @@ private:
 
 		if (xdiff == 0.0f && ydiff == 0.0f)
 		{
-			if (x1 > 0 && x1 < static_cast<float>(screen.XMAX) && y1 > 0 && y1 < static_cast<float>(screen.YMAX))
-				screen.put_point(static_cast<uint>(x1), static_cast<uint>(y1), {0, 0, 0});
+			if (x1 > 0 && x1 < static_cast<float>(screen_.XMAX) && y1 > 0 && y1 < static_cast<float>(screen_.YMAX))
+				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), {0, 0, 0});
 			return;
 		}
 
@@ -100,8 +100,8 @@ private:
 			for (float x = xmin; x <= xmax; x += 1.0f)
 			{
 				float y = y1 + ((x - x1) * slope);
-				if (x > 0 && x < static_cast<float>(screen.XMAX) && y > 0 && y < static_cast<float>(screen.YMAX))
-					screen.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
+				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
 			}
 		}
 		else
@@ -126,11 +126,11 @@ private:
 			for (float y = ymin; y <= ymax; y += 1.0f)
 			{
 				float x = x1 + ((y - y1) * slope);
-				if (x > 0 && x < static_cast<float>(screen.XMAX) && y > 0 && y < static_cast<float>(screen.YMAX))
-					screen.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
+				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
+					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), {0, 0, 0});
 			}
 		}
 	}
 
-	Screen& screen;
+	Screen& screen_;
 };

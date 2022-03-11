@@ -65,17 +65,17 @@ public:
 		script_ = std::move(s);
 	}
 
-	Script* getScriptPtr()
+	Script* getScriptPtr() const
 	{
 		return script_.get();
 	}
 
-	Transform* getTransformPtr()
+	Transform* getTransformPtr() const
 	{
 		return transform_.get();
 	}
 
-	RendererComponent* getRenderComponent()
+	RendererComponent* getRenderComponentPtr() const
 	{
 		return renderer_.get();
 	}
