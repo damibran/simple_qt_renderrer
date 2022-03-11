@@ -13,7 +13,7 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 
 	scene_.setupScene(ui_);
 
-	resize(wr + 250, hr + 250);
+	resize(wr + 250, hr);
 
 	ui_.renderLabel->resize(wr, hr);
 }

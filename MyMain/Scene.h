@@ -4,7 +4,6 @@
 #include "Shape.h"
 #include "../Renderers/ConcreteRenderers/BezierCurveRenderer.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
-#include "../Scripts/ConcreteScripts/BezierScript.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
 #include "ui_RenderrerMainWindow.h"
 
@@ -26,7 +25,6 @@ public:
 			std::make_unique<CoordSystemRenderer>(screen_)
 			));
 
-		world_obj_.addChild(BezierScript::createShape(ui, screen_, 6));
 		cam_ = dynamic_cast<CameraScript*>(world_obj_.addChildAndGetScriptPtr(CameraScript::createObject(ui, screen_)));
 	}
 
