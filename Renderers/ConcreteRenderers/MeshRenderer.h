@@ -1,7 +1,7 @@
 #pragma once
-#include "../Screen.h"
-#include "../shapes/Mesh.h"
-#include "RendererComponent.h"
+#include "../MyMain/Screen.h"
+#include "../utils/Mesh.h"
+#include "../RendererComponent.h"
 #include "../Shaders/Shader.h"
 
 class ShaderMeshRenderer final : public RendererComponent
