@@ -1,15 +1,15 @@
 #pragma once
-#include "../shapes/shape.h"
+#include "../MyMain/shape.h"
 #include "../Shader.h"
 
-class LightCubeShader : public Shader
+class LightSourceShader : public Shader
 {
 
 	glm::vec3 objColor = glm::vec3(255, 255, 255);
 
 public:
 
-	LightCubeShader() {}
+	LightSourceShader() {}
 
 	TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
 	{

@@ -6,9 +6,6 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 	  , screen_(wr, hr)
 	  , scene_(screen_)
 {
-	timer_.start(32);
-	connect(&timer_, SIGNAL(timeout()), this, SLOT(screen_refresh()));
-
 	ui_.setupUi(this);
 
 	scene_.setupScene(ui_);
@@ -16,6 +13,9 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 	resize(wr + 250, hr);
 
 	ui_.renderLabel->resize(wr, hr);
+
+	timer_.start(32);
+	connect(&timer_, SIGNAL(timeout()), this, SLOT(screen_refresh()));
 }
 
 void RendererMainWindow::screen_refresh()

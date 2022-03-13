@@ -37,6 +37,12 @@ public:
 		return (childs_.end() - 1)->get()->getScriptPtr();
 	}
 
+	Transform* addChildAndGetTransform(std::unique_ptr<Shape> s)
+	{
+		childs_.push_back(std::move(s));
+		return (childs_.end() - 1)->get()->getTransformPtr();
+	}
+
 	void drawShape(Screen& screen, const MVPMat& parent_trans) const
 	{
 		MVPMat this_trans(parent_trans);

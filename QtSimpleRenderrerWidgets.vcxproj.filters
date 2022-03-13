@@ -66,10 +66,10 @@
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h">
+    <ClInclude Include="Shaders\ConcreteShaders\OneSourceLitShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h">
+    <ClInclude Include="Shaders\ConcreteShaders\LightSourceShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\thread_pool.hpp">
@@ -100,6 +100,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\BezierSurfaceScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

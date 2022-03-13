@@ -1,4 +1,5 @@
 #pragma once
+#include "../RendererComponent.h"
 #include"../MyMain/Screen.h"
 #include "../utils/MVPMat.h"
 #include "../utils/LineSegment.h"

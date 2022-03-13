@@ -1,8 +1,8 @@
 #pragma once
-#include "../shapes/shape.h"
+#include "../MyMain//Shape.h"
 #include "../Shader.h"
 
-class CubeShader final : public Shader
+class OneSourceLitShader final : public Shader
 {
 private:
 	struct vrtx
@@ -23,12 +23,12 @@ private:
 
 	glm::vec3 objColor = glm::vec3(255, 255, 84);
 
-	std::shared_ptr<Shape> light_obj;
+	Transform* light_obj;
 
 public:
 
-	CubeShader(std::shared_ptr<Shape> lo) : light_obj(lo) {}
-	CubeShader() = delete;
+	OneSourceLitShader(Transform* lo) : light_obj(lo) {}
+	OneSourceLitShader() = delete;
 
 	TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
 	{
