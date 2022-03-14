@@ -63,9 +63,10 @@ public:
 		return acos(dot(a, b) / (length(a) * length(b)));
 	}
 
-	static void calc_mesh_normals(std::vector<glm::vec3>& normals, const std::vector<glm::vec3>& verts, const std::vector<unsigned int>& faces)
+	static void calc_mesh_normals(std::vector<glm::vec3>& normals, const std::vector<glm::vec3>& verts,
+	                              const std::vector<unsigned int>& faces)
 	{
-		for (int i = 0; i < faces.size()/3; ++i)
+		for (int i = 0; i < faces.size() / 3; ++i)
 		{
 			glm::vec3 v1 = verts[faces[i * 3 + 0]];
 			glm::vec3 v2 = verts[faces[i * 3 + 1]];
@@ -90,7 +91,7 @@ public:
 	// u corresponds to x, v to y
 	{
 		const Mesh control_mesh = Mesh(control_mesh_path);
-		int resolution_u_v = 5; // count of vertex per side, not cells, cells would be val - 1 
+		int resolution_u_v = 4; // count of columns/rows per side, count of vertices would be +1 
 
 		std::vector<glm::vec3> controlVertices;
 		controlVertices.reserve(control_mesh.childs[0]->vertices.size());
@@ -107,24 +108,24 @@ public:
 
 		std::vector<glm::vec3> unique_bezier_vertices;
 		unique_bezier_vertices.reserve(resolution_u_v * resolution_u_v);
-		std::vector<unsigned int> face_indices((resolution_u_v-1) * (resolution_u_v-1) * 6);
+		std::vector<unsigned int> face_indices(resolution_u_v * resolution_u_v * 6);
 
-		for (int i = 0, k = 0; i < resolution_u_v; ++i)
+		for (int i = 0, k = 0; i <= resolution_u_v; ++i)
 		{
-			float u = i / static_cast<float>(resolution_u_v);
-			for (int j = 0; j < resolution_u_v; ++j)
+			float v = i / static_cast<float>(resolution_u_v);
+			for (int j = 0; j <= resolution_u_v; ++j)
 			{
-				float v = j / static_cast<float>(resolution_u_v);
+				float u = j / static_cast<float>(resolution_u_v);
 				unique_bezier_vertices.push_back(evalBezierPatch(controlVertices, patch_u, patch_v, u, v));
 				if (i > 0 && j > 0)
 				{
-					face_indices[k] = i * resolution_u_v + j-1;
-					face_indices[k + 1] = (i - 1) * resolution_u_v + j - 1;
-					face_indices[k+2] = (i - 1) * resolution_u_v + j;
+					face_indices[k] = i * (resolution_u_v + 1) + j;
+					face_indices[k + 1] = i * (resolution_u_v + 1) + j - 1;
+					face_indices[k + 2] = (i - 1) * (resolution_u_v + 1) + j - 1;
 
-					face_indices[k+3] = i * resolution_u_v + j;
-					face_indices[k+4] =  i * resolution_u_v + j - 1;
-					face_indices[k+5] = (i - 1) * resolution_u_v + j;
+					face_indices[k + 3] = i * (resolution_u_v + 1) + j;
+					face_indices[k + 4] = (i - 1) * (resolution_u_v + 1) + j - 1;
+					face_indices[k + 5] = (i - 1) * (resolution_u_v + 1) + j;
 
 					k += 6;
 				}
@@ -137,13 +138,13 @@ public:
 
 		std::vector<Vertex> vertices(unique_bezier_vertices.size());
 
-		for(int i=0;i<unique_bezier_vertices.size();++i)
+		for (int i = 0; i < unique_bezier_vertices.size(); ++i)
 		{
 			vertices[i].pos = unique_bezier_vertices[i];
 			vertices[i].norm = normals[i];
 		}
 
-		return std::make_unique<Mesh>(vertices,face_indices);
+		return std::make_unique<Mesh>(vertices, face_indices);
 	}
 
 private:

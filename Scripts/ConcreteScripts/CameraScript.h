@@ -21,8 +21,8 @@ public:
 	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, Transform* transform) : ui_(ui), screen_(s),
 		transform_(transform)
 	{
-		transform_->translate({0, 0, 60});
-		transform_->setRotationDegrees({0, -90, 0});
+		transform_->translate({0, 10, 0});
+		transform_->setRotationDegrees({-90, 0, 0});
 
 		proj_ = glm::perspective(glm::radians(45.0f),
 		                         static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
@@ -92,7 +92,7 @@ private:
 	glm::vec3 right_;
 	glm::vec3 world_up_ = glm::vec3(0, 1, 0);
 	float mouse_sensitivity_ = 0.15f;
-	float speed_ = 30;
+	float speed_ = 10;
 
 	void updateCameraVectors()
 	{

@@ -18,6 +18,7 @@ public:
 private:
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
+		glob_put_trngl = 0;
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
 			process_trngl(shader_, trans, mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]],
@@ -58,8 +59,11 @@ private:
 			put_triangle(shader, a, b, c);
 	}
 
+	int glob_put_trngl=0;
+
 	void put_triangle(std::unique_ptr<Shader>& shader, const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
+		glob_put_trngl += 1;
 		const float xmin = min3(v0.x, v1.x, v2.x);
 		const float ymin = min3(v0.y, v1.y, v2.y);
 		const float xmax = max3(v0.x, v1.x, v2.x);
@@ -73,9 +77,9 @@ private:
 			const uint y1 = std::min(screen_.YMAX - 1, static_cast<uint>(std::floor(ymax)));
 
 			float area = edgeFunction(v0, v1, v2);
-			auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const uint a, const uint b)
-			{
-				for (uint y = a; y <= b; ++y)
+			//auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const uint a, const uint b)
+			//{
+				for (uint y = y0; y <= y1; ++y)
 				{
 					for (uint x = x0; x <= x1; ++x)
 					{
@@ -117,8 +121,8 @@ private:
 						}
 					}
 				}
-			};
-			pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
+			//};
+			//pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
 		}
 	}
 
