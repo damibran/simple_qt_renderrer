@@ -88,7 +88,7 @@ public:
 	}
 
 	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, int patch_u, int patch_v)
-	// u corresponds to x, v to y
+	// u corresponds to z, v to x in vertex data
 	{
 		const Mesh control_mesh = Mesh(control_mesh_path);
 		int resolution_u_v = 4; // count of columns/rows per side, count of vertices would be +1 
@@ -102,16 +102,18 @@ public:
 		std::sort(controlVertices.begin(), controlVertices.end(),
 		          [](const glm::vec3& a, const glm::vec3& b)
 		          {
-			          float eps = 0.1f;
-			          if (!(abs(a.x - b.x) < eps))
-				          return (a.x < b.x);
-
-			          if (!(abs(a.z - b.z) < eps))
-				          return (a.z < b.z);
-
-			          return (a.y < b.y);
+				          return (a.x <= b.x);
 		          });
+		for (int i = 0; i < controlVertices.size() / patch_u;++i)
+		{
+			std::sort(controlVertices.begin() + patch_u * i, controlVertices.begin() + patch_u * i + patch_u,
+				[](const glm::vec3& a, const glm::vec3& b)
+				{
+					return (a.z <= b.z);
+				});
+		}
 		// after this indices data not valid
+
 
 		std::vector<glm::vec3> unique_bezier_vertices;
 		unique_bezier_vertices.reserve(resolution_u_v * resolution_u_v);
