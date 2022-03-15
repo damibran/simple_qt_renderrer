@@ -50,11 +50,14 @@ public:
 	                                 const float& u, const float& v)
 	{
 		std::vector<glm::vec3> u_curve(patch_v);
+		std::vector<glm::vec3> temp(patch_u);
 
 		for (int i = 0; i < patch_v; ++i)
-			u_curve[i] = evalBezierCurve(
-				std::vector(control_points.begin() + patch_u * i, control_points.begin() + patch_u * i + patch_u),
-				u);
+		{
+			for (int j = 0; j < patch_u; ++j)
+				temp[j] = control_points[i + patch_v * j];
+			u_curve[i] = evalBezierCurve(temp, u);
+		}
 		return evalBezierCurve(u_curve, v);
 	}
 
@@ -87,12 +90,11 @@ public:
 			normals[i] = normalize(normals[i]);
 	}
 
-	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, int patch_u, int patch_v)
-	// u corresponds to z, v to x in vertex data in blender it is y and x
+	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, const int patch_u, const int patch_v, const int res_u, const int res_v)
+	// u corresponds to x, v to z in obj vertex data, in blender it is x and y
+	// resolution is count of rows/columns per side count of vertices =+1 
 	{
 		const Mesh control_mesh = Mesh(control_mesh_path);
-		int res_u = 5,res_v = 4; // count of columns/rows per side, count of vertices would be +1
-
 
 		std::vector<glm::vec3> controlVertices;
 		controlVertices.reserve(control_mesh.childs[0]->vertices.size());
@@ -103,22 +105,21 @@ public:
 		std::sort(controlVertices.begin(), controlVertices.end(),
 		          [](const glm::vec3& a, const glm::vec3& b)
 		          {
-				          return (a.x < b.x);
+			          return (a.x < b.x);
 		          });
-		for (int i = 0; i < controlVertices.size() / patch_u;++i)
+		for (int i = 0; i < patch_u; ++i)
 		{
-			std::sort(controlVertices.begin() + patch_u * i, controlVertices.begin() + patch_u * i + patch_u,
-				[](const glm::vec3& a, const glm::vec3& b)
-				{
-					return (a.z < b.z);
-				});
+			std::sort(controlVertices.begin() + patch_v * i, controlVertices.begin() + patch_v * i + patch_v,
+			          [](const glm::vec3& a, const glm::vec3& b)
+			          {
+				          return (a.z < b.z);
+			          });
 		}
 		// after this indices data not valid
 
-
 		std::vector<glm::vec3> unique_bezier_vertices;
-		unique_bezier_vertices.reserve(res_u * res_v);
-		std::vector<unsigned int> face_indices(res_u * res_v  * 6);
+		unique_bezier_vertices.reserve((res_u + 1) * (res_v + 1));
+		std::vector<unsigned int> face_indices(res_u * res_v * 6);
 
 		for (int i = 0, k = 0; i <= res_u; ++i)
 		{
@@ -130,11 +131,11 @@ public:
 				if (i > 0 && j > 0)
 				{
 					face_indices[k] = i * (res_v + 1) + j;
-					face_indices[k + 1] =  (i - 1) * (res_v + 1) + j - 1;
-					face_indices[k + 2] = i * (res_v + 1) + j - 1;
+					face_indices[k + 1] = (i - 1) * (res_v + 1) + j - 1;
+					face_indices[k + 2] = (i - 1) * (res_v + 1) + j;
 
 					face_indices[k + 3] = i * (res_v + 1) + j;
-					face_indices[k + 4] = (i - 1) * (res_v + 1) + j;
+					face_indices[k + 4] = i * (res_v + 1) + j - 1;
 					face_indices[k + 5] = (i - 1) * (res_v + 1) + j - 1;
 
 					k += 6;
