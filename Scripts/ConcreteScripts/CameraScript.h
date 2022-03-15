@@ -22,7 +22,7 @@ public:
 		transform_(transform)
 	{
 		transform_->translate({0, 10, 0});
-		transform_->setRotationDegrees({-90, 0, 0});
+		transform_->setRotationDegrees({-90, -90, 0});
 
 		proj_ = glm::perspective(glm::radians(45.0f),
 		                         static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
