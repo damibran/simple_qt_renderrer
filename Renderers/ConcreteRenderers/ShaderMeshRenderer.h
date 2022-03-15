@@ -88,7 +88,7 @@ private:
 					float w1 = edgeFunction(v2, v0, pixel);
 					float w2 = edgeFunction(v0, v1, pixel);
 
-					if (w0 >= 0 && w1 >= 0 && w2 >= 0)
+					if (w0 >= 0 && w1 >= 0 && w2 >= 0 || w0<=0 && w1<=0 && w2<=0)
 					{
 						w0 /= area;
 						w1 /= area;

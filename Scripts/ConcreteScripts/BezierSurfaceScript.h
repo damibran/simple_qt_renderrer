@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include "../Shaders/ConcreteShaders/OneSourceLitShader.h"
+#include "../Shaders/ConcreteShaders/OnePointSourceLitShader.h"
+#include "../Shaders/ConcreteShaders/OnePointSourceLitShaderWithWireframe.h"
 #include "../Renderers/ConcreteRenderers/ShaderMeshRenderer.h"
 #include "../MyMain/Shape.h"
 #include "../Script.h"
@@ -14,7 +15,7 @@ public:
 		std::unique_ptr<Transform> t(new Transform);
 		t->translate({ 0,0,0 });
 		t->scale({ 10,10,10 });
-		auto shader = std::make_unique<OneSourceLitShader>(light_source_transform);
+		auto shader = std::make_unique<OnePointSourceLitShaderWithWireframe>(light_source_transform);
 		auto renderer = std::make_unique<ShaderMeshRenderer>(s, std::move(shader), generateBezierSurface(control_mesh_path, patch_u, patch_v, res_u, res_v));
 
 		return std::make_unique<Shape>(std::move(t), std::move(renderer));
