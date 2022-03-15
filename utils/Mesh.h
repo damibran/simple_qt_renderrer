@@ -88,10 +88,11 @@ public:
 	}
 
 	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, int patch_u, int patch_v)
-	// u corresponds to z, v to x in vertex data
+	// u corresponds to z, v to x in vertex data in blender it is y and x
 	{
 		const Mesh control_mesh = Mesh(control_mesh_path);
-		int resolution_u_v = 4; // count of columns/rows per side, count of vertices would be +1 
+		int res_u = 5,res_v = 4; // count of columns/rows per side, count of vertices would be +1
+
 
 		std::vector<glm::vec3> controlVertices;
 		controlVertices.reserve(control_mesh.childs[0]->vertices.size());
@@ -102,39 +103,39 @@ public:
 		std::sort(controlVertices.begin(), controlVertices.end(),
 		          [](const glm::vec3& a, const glm::vec3& b)
 		          {
-				          return (a.x <= b.x);
+				          return (a.x < b.x);
 		          });
 		for (int i = 0; i < controlVertices.size() / patch_u;++i)
 		{
 			std::sort(controlVertices.begin() + patch_u * i, controlVertices.begin() + patch_u * i + patch_u,
 				[](const glm::vec3& a, const glm::vec3& b)
 				{
-					return (a.z <= b.z);
+					return (a.z < b.z);
 				});
 		}
 		// after this indices data not valid
 
 
 		std::vector<glm::vec3> unique_bezier_vertices;
-		unique_bezier_vertices.reserve(resolution_u_v * resolution_u_v);
-		std::vector<unsigned int> face_indices(resolution_u_v * resolution_u_v * 6);
+		unique_bezier_vertices.reserve(res_u * res_v);
+		std::vector<unsigned int> face_indices(res_u * res_v  * 6);
 
-		for (int i = 0, k = 0; i <= resolution_u_v; ++i)
+		for (int i = 0, k = 0; i <= res_u; ++i)
 		{
-			float u = i / static_cast<float>(resolution_u_v);
-			for (int j = 0; j <= resolution_u_v; ++j)
+			float u = i / static_cast<float>(res_u);
+			for (int j = 0; j <= res_v; ++j)
 			{
-				float v = j / static_cast<float>(resolution_u_v);
+				float v = j / static_cast<float>(res_v);
 				unique_bezier_vertices.push_back(evalBezierPatch(controlVertices, patch_u, patch_v, u, v));
 				if (i > 0 && j > 0)
 				{
-					face_indices[k] = i * (resolution_u_v + 1) + j;
-					face_indices[k + 1] =  (i - 1) * (resolution_u_v + 1) + j - 1;
-					face_indices[k + 2] = i * (resolution_u_v + 1) + j - 1;
+					face_indices[k] = i * (res_v + 1) + j;
+					face_indices[k + 1] =  (i - 1) * (res_v + 1) + j - 1;
+					face_indices[k + 2] = i * (res_v + 1) + j - 1;
 
-					face_indices[k + 3] = i * (resolution_u_v + 1) + j;
-					face_indices[k + 4] = (i - 1) * (resolution_u_v + 1) + j;
-					face_indices[k + 5] = (i - 1) * (resolution_u_v + 1) + j - 1;
+					face_indices[k + 3] = i * (res_v + 1) + j;
+					face_indices[k + 4] = (i - 1) * (res_v + 1) + j;
+					face_indices[k + 5] = (i - 1) * (res_v + 1) + j - 1;
 
 					k += 6;
 				}
