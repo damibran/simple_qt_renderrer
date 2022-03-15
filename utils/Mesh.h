@@ -49,13 +49,13 @@ public:
 	static glm::vec3 evalBezierPatch(const std::vector<glm::vec3>& control_points, int patch_u, const int patch_v,
 	                                 const float& u, const float& v)
 	{
-		std::vector<glm::vec3> uCurve(patch_v);
+		std::vector<glm::vec3> u_curve(patch_v);
 
 		for (int i = 0; i < patch_v; ++i)
-			uCurve[i] = evalBezierCurve(
+			u_curve[i] = evalBezierCurve(
 				std::vector(control_points.begin() + patch_u * i, control_points.begin() + patch_u * i + patch_u),
 				u);
-		return evalBezierCurve(uCurve, v);
+		return evalBezierCurve(u_curve, v);
 	}
 
 	static float angle(glm::vec3 a, glm::vec3 b)
@@ -102,7 +102,14 @@ public:
 		std::sort(controlVertices.begin(), controlVertices.end(),
 		          [](const glm::vec3& a, const glm::vec3& b)
 		          {
-			          return a.x < b.x || a.x == b.x && a.z < b.z || a.x == b.x && a.z==b.z && a.y < b.y ;
+			          float eps = 0.1f;
+			          if (!(abs(a.x - b.x) < eps))
+				          return (a.x < b.x);
+
+			          if (!(abs(a.z - b.z) < eps))
+				          return (a.z < b.z);
+
+			          return (a.y < b.y);
 		          });
 		// after this indices data not valid
 
@@ -112,20 +119,20 @@ public:
 
 		for (int i = 0, k = 0; i <= resolution_u_v; ++i)
 		{
-			float v = i / static_cast<float>(resolution_u_v);
+			float u = i / static_cast<float>(resolution_u_v);
 			for (int j = 0; j <= resolution_u_v; ++j)
 			{
-				float u = j / static_cast<float>(resolution_u_v);
+				float v = j / static_cast<float>(resolution_u_v);
 				unique_bezier_vertices.push_back(evalBezierPatch(controlVertices, patch_u, patch_v, u, v));
 				if (i > 0 && j > 0)
 				{
 					face_indices[k] = i * (resolution_u_v + 1) + j;
-					face_indices[k + 1] = i * (resolution_u_v + 1) + j - 1;
-					face_indices[k + 2] = (i - 1) * (resolution_u_v + 1) + j - 1;
+					face_indices[k + 1] =  (i - 1) * (resolution_u_v + 1) + j - 1;
+					face_indices[k + 2] = i * (resolution_u_v + 1) + j - 1;
 
 					face_indices[k + 3] = i * (resolution_u_v + 1) + j;
-					face_indices[k + 4] = (i - 1) * (resolution_u_v + 1) + j - 1;
-					face_indices[k + 5] = (i - 1) * (resolution_u_v + 1) + j;
+					face_indices[k + 4] = (i - 1) * (resolution_u_v + 1) + j;
+					face_indices[k + 5] = (i - 1) * (resolution_u_v + 1) + j - 1;
 
 					k += 6;
 				}
