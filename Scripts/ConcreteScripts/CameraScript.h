@@ -11,6 +11,10 @@ public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& screen)
 	{
 		std::unique_ptr<Transform> t(new Transform);
+
+		t->translate({ 0, 0, 60 });
+		t->setRotationDegrees({ 0, -90, 0 });
+
 		auto shp = std::make_unique<Shape>(std::move(t));
 
 		shp->setScript(std::make_unique<CameraScript>(ui, screen, shp->getTransformPtr()));
@@ -21,12 +25,8 @@ public:
 	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, Transform* transform) : ui_(ui), screen_(s),
 		transform_(transform)
 	{
-		transform_->translate({0, 10, 0});
-		transform_->setRotationDegrees({-90, -90, 0});
-
 		proj_ = glm::perspective(glm::radians(45.0f),
 		                         static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
-
 		updateCameraVectors();
 	}
 

@@ -48,7 +48,7 @@
     <ClInclude Include="MyMain\Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Renderers\ConcreteRenderers\MeshRenderer.h">
+    <ClInclude Include="Renderers\ConcreteRenderers\ShaderMeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\MVPMat.h">

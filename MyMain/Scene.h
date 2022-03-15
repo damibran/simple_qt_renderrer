@@ -34,7 +34,7 @@ public:
 			std::make_unique<ShaderMeshRenderer>(screen_, std::make_unique<LightSourceShader>(),
 			                                     std::make_unique<Mesh>("res/cub.obj"))));
 
-		world_obj_.addChild(BezierSurfaceScript::createObject(screen_, light_transform, 5, 6,5,6, "res/Simplest5x6BezierSurface.obj"));
+		world_obj_.addChild(BezierSurfaceScript::createObject(screen_, light_transform, 5, 6,6,7, "res/Simplest5x6BezierSurface.obj"));
 
 		cam_ = dynamic_cast<CameraScript*>(world_obj_.addChildAndGetScriptPtr(CameraScript::createObject(ui, screen_)));
 	}

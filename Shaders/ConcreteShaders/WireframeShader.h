@@ -1,5 +1,5 @@
 #pragma once
-#include "../shapes/shape.h"
+#include "../MyMain/Shape.h"
 #include "../Shader.h"
 
 class WireFrameShader : public Shader

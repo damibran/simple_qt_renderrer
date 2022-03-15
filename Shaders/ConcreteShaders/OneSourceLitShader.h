@@ -53,12 +53,12 @@ public:
 	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
 	{
 		glm::vec3 view_pixel_pos = w0 * a.view_pos + w1 * b.view_pos + w2 * c.view_pos;
-		float z = -view_pixel_pos.z;
-		float line_width = 0.003;
-		if (w0 < line_width * z || w1 < line_width * z || w2 < line_width * z)
-			return glm::vec3(0, 0, 0);
-		else
-		{
+		//float z = -view_pixel_pos.z;
+		//float line_width = 0.003;
+		//if (w0 < line_width * z || w1 < line_width * z || w2 < line_width * z)
+		//	return glm::vec3(0, 0, 0);
+		//else
+		//{
 			glm::vec3 norm_pixel = glm::normalize(w0 * a.view_norm + w1 * b.view_norm + w2 * c.view_norm);
 			glm::vec3 lightDir = glm::normalize(view_light_pos - view_pixel_pos);
 
@@ -70,7 +70,7 @@ public:
 
 			glm::vec3 color = objColor * (ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3);
 			return color;
-		}
+		//}
 
 	}
 };
