@@ -127,13 +127,28 @@ public:
 				unique_bezier_vertices.push_back(evalBezierPatch(controlVertices, patch_u, patch_v, u, v));
 				if (i > 0 && j > 0)
 				{
-					face_indices[k] = i * (res_v + 1) + j;
-					face_indices[k + 1] = (i - 1) * (res_v + 1) + j - 1;
-					face_indices[k + 2] = (i - 1) * (res_v + 1) + j;
+					glm::vec3 v1 = unique_bezier_vertices[i * (res_v + 1) + j] - unique_bezier_vertices[(i - 1) * (res_v + 1) + j - 1];
+					glm::vec3 v2 = unique_bezier_vertices[(i - 1) * (res_v + 1) + j] - unique_bezier_vertices[i * (res_v + 1) + j - 1];
 
-					face_indices[k + 3] = i * (res_v + 1) + j;
-					face_indices[k + 4] = i * (res_v + 1) + j - 1;
-					face_indices[k + 5] = (i - 1) * (res_v + 1) + j - 1;
+					if (glm::length(v1) >= glm::length(v2))
+					{
+						face_indices[k] = i * (res_v + 1) + j;
+						face_indices[k + 1] = (i - 1) * (res_v + 1) + j - 1;
+						face_indices[k + 2] = (i - 1) * (res_v + 1) + j;
+
+						face_indices[k + 3] = i * (res_v + 1) + j;
+						face_indices[k + 4] = i * (res_v + 1) + j - 1;
+						face_indices[k + 5] = (i - 1) * (res_v + 1) + j - 1;
+					}else
+					{
+						face_indices[k] = i * (res_v + 1) + j;
+						face_indices[k + 1] = i * (res_v + 1) + j - 1;
+						face_indices[k + 2] = (i - 1) * (res_v + 1) + j;
+
+						face_indices[k + 3] = (i - 1) * (res_v + 1) + j - 1;
+						face_indices[k + 4] = (i - 1) * (res_v + 1) + j;
+						face_indices[k + 5] = i * (res_v + 1) + j - 1;
+					}
 
 					k += 6;
 				}
