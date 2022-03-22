@@ -34,7 +34,7 @@ public:
 		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 		scene_root_.push_back(
 			BezierSurfaceScript::createObject(ui, screen_, light_transform, 5, 5, 10, 10,
-			                                  "res/BiggerAsymmetricWavy5x5.obj"));
+			                                  "res/BiggerWavy5x5.obj"));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));

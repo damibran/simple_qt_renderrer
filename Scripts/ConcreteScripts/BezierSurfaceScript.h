@@ -112,6 +112,7 @@ private:
 	// u corresponds to x, v to z in obj vertex data, in blender it is x and y
 	// resolution is count of rows/columns per side count of vertices =+1 
 	{
+		// copy control vertices
 		const Mesh control_mesh = Mesh(control_mesh_path);
 
 		std::vector<glm::vec3> controlVertices;
@@ -120,6 +121,7 @@ private:
 		for (auto& i : control_mesh.getChildVerticesRef(0))
 			controlVertices.push_back(i.pos);
 
+		// order vertices to form surface
 		std::sort(controlVertices.begin(), controlVertices.end(),
 		          [](const glm::vec3& a, const glm::vec3& b)
 		          {
@@ -133,8 +135,8 @@ private:
 				          return (a.z < b.z);
 			          });
 		}
-		// after this indices data not valid
 
+		// form bezier surface with given resolution
 		std::vector<glm::vec3> unique_bezier_vertices;
 		unique_bezier_vertices.reserve((res_u + 1) * (res_v + 1));
 		std::vector<unsigned int> face_indices(res_u * res_v * 6);
@@ -179,12 +181,14 @@ private:
 			}
 		}
 
+		// calculate smooth normals
 		std::vector<glm::vec3> normals(unique_bezier_vertices.size());
 
 		calc_mesh_normals(normals, unique_bezier_vertices, face_indices);
 
 		std::vector<Vertex> vertices(unique_bezier_vertices.size());
 
+		// copy to normals and positions to Vertex datastr
 		for (int i = 0; i < unique_bezier_vertices.size(); ++i)
 		{
 			vertices[i].pos = unique_bezier_vertices[i];
