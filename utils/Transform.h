@@ -5,6 +5,11 @@
 class Transform
 {
 public:
+	Transform(glm::vec3 init_Pos = glm::vec3(0), glm::vec3 init_scale = glm::vec3(1)): position_(init_Pos),
+		scaling_(init_scale)
+	{
+	}
+
 	void translate(const glm::vec3& v)
 	{
 		position_ = glm::translate(glm::mat4(1), v) * glm::vec4(position_, 1);
@@ -48,9 +53,9 @@ public:
 	[[nodiscard]] glm::mat4 getRotationMatrix() const
 	{
 		glm::mat4 m(1.);
-		m = glm::rotate(m, glm::radians(rotation_.x), { 1, 0, 0 });
-		m = glm::rotate(m, glm::radians(rotation_.y), { 0, 1, 0 });
-		m = glm::rotate(m, glm::radians(rotation_.z), { 0, 0, 1 });
+		m = glm::rotate(m, glm::radians(rotation_.x), {1, 0, 0});
+		m = glm::rotate(m, glm::radians(rotation_.y), {0, 1, 0});
+		m = glm::rotate(m, glm::radians(rotation_.z), {0, 0, 1});
 		return m;
 	}
 
@@ -61,7 +66,7 @@ public:
 	}
 
 private:
-	glm::vec3 position_ = glm::vec3(0.0f);
+	glm::vec3 position_;
 	glm::vec3 rotation_ = glm::vec3(0.f); // pitch, yaw, roll in degrees
-	glm::vec3 scaling_ = glm::vec3(1.0f);
+	glm::vec3 scaling_;
 };

@@ -18,26 +18,23 @@ public:
 
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
-		std::unique_ptr<Transform> t(new Transform());
-
 		// Make CoordSys shape
-		t->scale({100, 100, 100});
 		scene_root_.push_back(std::make_unique<Shape>(
-			std::move(t),
+			std::make_unique<Transform>(glm::vec3(0), glm::vec3(100)),
 			std::make_unique<CoordSystemRenderer>(screen_)
 		));
 
 		// Make Light source shape
-		t = std::make_unique<Transform>();
-		t->setPos({0, 20, 0});
 		scene_root_.push_back(std::make_unique<Shape>(
-			std::move(t),
+			std::make_unique<Transform>(glm::vec3(0, 20, 0)),
 			std::make_unique<ShaderMeshRenderer>(screen_, std::make_unique<LightSourceShader>(),
 			                                     std::make_unique<Mesh>("res/cub.obj"))));
 
 		// Make Bezier Surface shape
 		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
-		scene_root_.push_back(BezierSurfaceScript::createObject(ui,screen_, light_transform, 5, 5,10,10, "res/BiggerAsymmetricWavy5x5.obj"));
+		scene_root_.push_back(
+			BezierSurfaceScript::createObject(ui, screen_, light_transform, 5, 5, 10, 10,
+			                                  "res/BiggerAsymmetricWavy5x5.obj"));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
