@@ -1,4 +1,5 @@
 #pragma once
+#include <QSlider>
 #include <memory>
 #include "../Shaders/ConcreteShaders/OnePointSourceLitShader.h"
 #include "../Shaders/ConcreteShaders/OnePointSourceLitShaderWithWireframe.h"
@@ -9,18 +10,37 @@
 class BezierSurfaceScript final : public Script
 {
 public:
+	BezierSurfaceScript(QSlider* xrot,QSlider* yrot,Transform* t): x_rot_slider_(xrot), y_rot_slider_(yrot),trans_(t)
+	{}
 
-	std::unique_ptr<Shape> static createObject(Screen& s, Transform* light_source_transform, const int patch_u, const int patch_v, const int res_u, const int res_v, const std::string& control_mesh_path)
+	std::unique_ptr<Shape> static createObject(Ui::RenderrerMainWindowClass& ui, Screen& s,
+	                                           Transform* light_source_transform, const int patch_u, const int patch_v,
+	                                           const int res_u, const int res_v, const std::string& control_mesh_path)
 	{
 		std::unique_ptr<Transform> t(new Transform);
-		t->translate({ 0,0,0 });
-		t->scale({ 10,10,10 });
+		t->translate({0, 0, 0});
+		t->scale({10, 10, 10});
 		auto shader = std::make_unique<OnePointSourceLitShaderWithWireframe>(light_source_transform);
-		auto renderer = std::make_unique<ShaderMeshRenderer>(s, std::move(shader), generateBezierSurface(control_mesh_path, patch_u, patch_v, res_u, res_v));
+		auto renderer = std::make_unique<ShaderMeshRenderer>(s, std::move(shader),
+		                                                     generateBezierSurface(
+			                                                     control_mesh_path, patch_u, patch_v, res_u, res_v));
 
-		return std::make_unique<Shape>(std::move(t), std::move(renderer));
+		auto shp = std::make_unique<Shape>(std::move(t), std::move(renderer));
+
+		shp->setScript(std::make_unique<BezierSurfaceScript>(ui.XRotSlider, ui.YRotSlider, shp->getTransformPtr()));
+
+		return shp;
 	}
 
+	void updateScript(float dt) override
+	{
+		trans_->setRotationDegrees({ x_rot_slider_->value(), y_rot_slider_->value(), 0 });
+	}
+
+private:
+	QSlider* x_rot_slider_;
+	QSlider* y_rot_slider_;
+	Transform* trans_;
 
 	static glm::vec3 lerp(const glm::vec3& a, const glm::vec3 b, float t)
 	{
@@ -44,7 +64,7 @@ public:
 	}
 
 	static glm::vec3 evalBezierPatch(const std::vector<glm::vec3>& control_points, int patch_u, const int patch_v,
-		const float& u, const float& v)
+	                                 const float& u, const float& v)
 	{
 		std::vector<glm::vec3> u_curve(patch_v);
 		std::vector<glm::vec3> temp(patch_u);
@@ -64,7 +84,7 @@ public:
 	}
 
 	static void calc_mesh_normals(std::vector<glm::vec3>& normals, const std::vector<glm::vec3>& verts,
-		const std::vector<unsigned int>& faces)
+	                              const std::vector<unsigned int>& faces)
 	{
 		for (int i = 0; i < faces.size() / 3; ++i)
 		{
@@ -87,9 +107,10 @@ public:
 			normals[i] = normalize(normals[i]);
 	}
 
-	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, const int patch_u, const int patch_v, const int res_u, const int res_v)
-		// u corresponds to x, v to z in obj vertex data, in blender it is x and y
-		// resolution is count of rows/columns per side count of vertices =+1 
+	static std::unique_ptr<Mesh> generateBezierSurface(const std::string& control_mesh_path, const int patch_u,
+	                                                   const int patch_v, const int res_u, const int res_v)
+	// u corresponds to x, v to z in obj vertex data, in blender it is x and y
+	// resolution is count of rows/columns per side count of vertices =+1 
 	{
 		const Mesh control_mesh = Mesh(control_mesh_path);
 
@@ -100,17 +121,17 @@ public:
 			controlVertices.push_back(i.pos);
 
 		std::sort(controlVertices.begin(), controlVertices.end(),
-			[](const glm::vec3& a, const glm::vec3& b)
-			{
-				return (a.x < b.x);
-			});
+		          [](const glm::vec3& a, const glm::vec3& b)
+		          {
+			          return (a.x < b.x);
+		          });
 		for (int i = 0; i < patch_u; ++i)
 		{
 			std::sort(controlVertices.begin() + patch_v * i, controlVertices.begin() + patch_v * i + patch_v,
-				[](const glm::vec3& a, const glm::vec3& b)
-				{
-					return (a.z < b.z);
-				});
+			          [](const glm::vec3& a, const glm::vec3& b)
+			          {
+				          return (a.z < b.z);
+			          });
 		}
 		// after this indices data not valid
 
@@ -127,8 +148,10 @@ public:
 				unique_bezier_vertices.push_back(evalBezierPatch(controlVertices, patch_u, patch_v, u, v));
 				if (i > 0 && j > 0)
 				{
-					glm::vec3 v1 = unique_bezier_vertices[i * (res_v + 1) + j] - unique_bezier_vertices[(i - 1) * (res_v + 1) + j - 1];
-					glm::vec3 v2 = unique_bezier_vertices[(i - 1) * (res_v + 1) + j] - unique_bezier_vertices[i * (res_v + 1) + j - 1];
+					glm::vec3 v1 = unique_bezier_vertices[i * (res_v + 1) + j] - unique_bezier_vertices[(i - 1) * (res_v
+						+ 1) + j - 1];
+					glm::vec3 v2 = unique_bezier_vertices[(i - 1) * (res_v + 1) + j] - unique_bezier_vertices[i * (res_v
+						+ 1) + j - 1];
 
 					if (glm::length(v1) >= glm::length(v2))
 					{
@@ -139,7 +162,8 @@ public:
 						face_indices[k + 3] = i * (res_v + 1) + j;
 						face_indices[k + 4] = i * (res_v + 1) + j - 1;
 						face_indices[k + 5] = (i - 1) * (res_v + 1) + j - 1;
-					}else
+					}
+					else
 					{
 						face_indices[k] = i * (res_v + 1) + j;
 						face_indices[k + 1] = i * (res_v + 1) + j - 1;
@@ -168,10 +192,5 @@ public:
 		}
 
 		return std::make_unique<Mesh>(vertices, face_indices);
-	}
-
-	void updateScript(float dt) override
-	{
-		
 	}
 };
