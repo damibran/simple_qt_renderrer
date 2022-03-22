@@ -6,6 +6,7 @@
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
 #include "../Scripts/ConcreteScripts/BezierSurfaceScript.h"
+#include "../Scripts/ConcreteScripts/PointLightSourceScript.h"
 #include "ui_RenderrerMainWindow.h"
 
 class Scene
@@ -25,10 +26,7 @@ public:
 		));
 
 		// Make Light source shape
-		scene_root_.push_back(std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0, 20, 0)),
-			std::make_unique<ShaderMeshRenderer>(screen_, std::make_unique<LightSourceShader>(),
-			                                     std::make_unique<Mesh>("res/cub.obj"))));
+		scene_root_.push_back(PointLightSourceScript::createObject(ui,screen_));
 
 		// Make Bezier Surface shape
 		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();

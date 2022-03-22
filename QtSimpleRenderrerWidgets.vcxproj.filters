@@ -108,5 +108,8 @@
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShaderWithWireframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

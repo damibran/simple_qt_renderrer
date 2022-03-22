@@ -118,6 +118,7 @@
     <ClInclude Include="MyMain\Screen.h" />
     <ClInclude Include="Scripts\ConcreteScripts\BezierSurfaceScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
     <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightSourceShader.h" />
