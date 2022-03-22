@@ -19,39 +19,46 @@ public:
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
 		std::unique_ptr<Transform> t(new Transform());
-		t->scale({100, 100, 100});
 
-		world_obj_.addChild(std::make_unique<Shape>(
+		// Make CoordSys shape
+		t->scale({100, 100, 100});
+		scene_root_.push_back(std::make_unique<Shape>(
 			std::move(t),
 			std::make_unique<CoordSystemRenderer>(screen_)
 		));
 
+		// Make Light source shape
 		t = std::make_unique<Transform>();
 		t->setPos({0, 20, 0});
-
-		Transform* light_transform = world_obj_.addChildAndGetTransform(std::make_unique<Shape>(
+		scene_root_.push_back(std::make_unique<Shape>(
 			std::move(t),
 			std::make_unique<ShaderMeshRenderer>(screen_, std::make_unique<LightSourceShader>(),
 			                                     std::make_unique<Mesh>("res/cub.obj"))));
 
-		world_obj_.addChild(BezierSurfaceScript::createObject(ui,screen_, light_transform, 5, 5,10,10, "res/BiggerAsymmetricWavy5x5.obj"));
+		// Make Bezier Surface shape
+		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
+		scene_root_.push_back(BezierSurfaceScript::createObject(ui,screen_, light_transform, 5, 5,10,10, "res/BiggerAsymmetricWavy5x5.obj"));
 
-		cam_ = dynamic_cast<CameraScript*>(world_obj_.addChildAndGetScriptPtr(CameraScript::createObject(ui, screen_)));
+		//Make camera shape
+		scene_root_.push_back(CameraScript::createObject(ui, screen_));
+		cam_ = dynamic_cast<CameraScript*>((scene_root_.end() - 1)->get()->getScriptPtr());
 	}
 
 	void updateScene(float dt) const
 	{
-		world_obj_.updateScript(dt);
+		for (auto& i : scene_root_)
+			i->updateScript(dt);
 	}
 
 	void renderScene() const
 	{
-		world_obj_.drawShape(screen_, cam_->getCameraProjViewMat());
+		for (auto& i : scene_root_)
+			i->drawShape(screen_, cam_->getCameraProjViewMat());
 	}
 
 private:
 	Screen& screen_;
-	Shape world_obj_;
+	std::vector<std::unique_ptr<Shape>> scene_root_;
 	////////
 	CameraScript* cam_ = nullptr;
 };
