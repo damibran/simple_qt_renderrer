@@ -70,4 +70,9 @@ public:
 		glm::vec3 color = objColor * (ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3);
 		return color;
 	}
+
+	bool supportsBackFaceCulling() override
+	{
+		return true;
+	}
 };

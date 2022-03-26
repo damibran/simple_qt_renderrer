@@ -25,4 +25,9 @@ public:
 
 		return color;
 	}
+
+	bool supportsBackFaceCulling() override
+	{
+		return true;
+	}
 };

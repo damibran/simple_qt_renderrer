@@ -43,4 +43,9 @@ public:
 			return glm::vec3(300, 300, 300);// danger, also z buffer should be turned off
 
 	}
+
+	bool supportsBackFaceCulling() override
+	{
+		return false;
+	}
 };

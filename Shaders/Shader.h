@@ -16,4 +16,5 @@ public:
 	virtual ~Shader() = default;
 	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2)  = 0;
 	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0;//return color
+	virtual bool supportsBackFaceCulling()=0;
 };
