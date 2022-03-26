@@ -19,12 +19,18 @@ public:
 			z_buffer_.push_back(FLT_MAX);
 	}
 
-	void put_point(const uint a, const uint b, const glm::vec3 color)
+	void put_point(const uint a, const uint b, const glm::vec3& color)
 	{
-		buffer_.setPixel(a * 2u, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
-		buffer_.setPixel(a * 2u + 1, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
-		buffer_.setPixel(a * 2u, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
-		buffer_.setPixel(a * 2u + 1, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
+		glm::tvec3 int_color(glm::tvec3(
+								static_cast<int>(255 * color.x),
+								static_cast<int>(255 * color.y),
+								static_cast<int>(255 * color.z)
+							));
+
+		buffer_.setPixel(a * 2u, (YMAX - b - 1) * 2u, qRgb(int_color.r, int_color.g, int_color.b));
+		buffer_.setPixel(a * 2u + 1, (YMAX - b - 1) * 2u, qRgb(int_color.r, int_color.g, int_color.b));
+		buffer_.setPixel(a * 2u, (YMAX - b - 1) * 2u + 1, qRgb(int_color.r, int_color.g, int_color.b));
+		buffer_.setPixel(a * 2u + 1, (YMAX - b - 1) * 2u + 1, qRgb(int_color.r, int_color.g, int_color.b));
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
