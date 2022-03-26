@@ -3,9 +3,9 @@
 #include "Screen.h"
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
+#include "../Scripts/ConcreteScripts/MainCubeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
-#include "../Scripts/ConcreteScripts/BezierSurfaceScript.h"
 #include "../Scripts/ConcreteScripts/PointLightSourceScript.h"
 #include "ui_RenderrerMainWindow.h"
 
@@ -30,9 +30,7 @@ public:
 
 		// Make Bezier Surface shape
 		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
-		scene_root_.push_back(
-			BezierSurfaceScript::createObject(ui, screen_, light_transform, 5, 5, 10, 10,
-			                                  "res/BiggerWavy5x5.obj"));
+		scene_root_.push_back(MainCubeScript::createObject(screen_,light_transform));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));

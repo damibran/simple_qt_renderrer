@@ -102,13 +102,13 @@
     <ClInclude Include="utils\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\ConcreteScripts\BezierSurfaceScript.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShaderWithWireframe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\MainCubeScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

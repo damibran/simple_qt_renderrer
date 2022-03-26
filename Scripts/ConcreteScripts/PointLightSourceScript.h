@@ -18,7 +18,7 @@ public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0, 20, 0)),
+			std::make_unique<Transform>(glm::vec3(0, 30, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
 			                                     std::make_unique<Mesh>("res/cub.obj")));
 
@@ -32,7 +32,7 @@ public:
 		if (check_box_->isChecked())
 		{
 			t_ += speed_ * dt;
-			transform_->setPos({20 * sin(t_), 20, 0});
+			transform_->setPos({20 * sin(t_), 30, 0});
 		}
 	}
 
