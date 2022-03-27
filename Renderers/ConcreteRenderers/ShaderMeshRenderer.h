@@ -88,7 +88,8 @@ private:
 					float w1 = edgeFunction(v2, v0, pixel);
 					float w2 = edgeFunction(v0, v1, pixel);
 
-					if (w0 >= 0 && w1 >= 0 && w2 >= 0 || !shader->supportsBackFaceCulling() && w0<=0 && w1<=0 && w2<=0 )
+					if (w0 >= 0 && w1 >= 0 && w2 >= 0 || !shader->supportsBackFaceCulling() && w0 <= 0 && w1 <= 0 && w2
+						<= 0)
 					{
 						w0 /= area;
 						w1 /= area;
@@ -108,11 +109,13 @@ private:
 
 						if (z < screen_.getZBufferAt(y * screen_.XMAX + x))
 						{
-							screen_.setZBufferAt(y * screen_.XMAX + x, z);
-
 							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
-							screen_.put_point(x, y, color);
+							if (color.x >= 0 && color.y >= 0 && color.z >= 0)// to discard return -1
+							{
+								screen_.setZBufferAt(y * screen_.XMAX + x, z);
+								screen_.put_point(x, y, color);
+							}
 						}
 					}
 				}

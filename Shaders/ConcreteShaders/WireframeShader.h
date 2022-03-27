@@ -38,9 +38,9 @@ public:
 		float z = -view_pixel_pos.z;
 
 		if (w0 < line_width * z || w1 < line_width * z || w2 < line_width * z)
-			return glm::vec3(0, 0, 0);
+			return glm::vec3(0);
 		else
-			return glm::vec3(300, 300, 300);// danger, also z buffer should be turned off
+			return glm::vec3(-1);// discard 
 
 	}
 

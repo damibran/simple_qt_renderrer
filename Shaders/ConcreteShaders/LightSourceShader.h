@@ -5,7 +5,7 @@
 class LightSourceShader : public Shader
 {
 
-	glm::vec4 objColor = glm::vec4(1, 1, 1,1);
+	glm::vec3 objColor = glm::vec3(255);
 
 public:
 
@@ -19,11 +19,9 @@ public:
 
 		return TriangleClipPos(clip_a, clip_b, clip_c);
 	}
-	glm::vec4 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
+	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
 	{
-		glm::vec4 color = objColor;
-
-		return color;
+		return objColor;
 	}
 
 	bool supportsBackFaceCulling() override
