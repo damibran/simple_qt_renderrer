@@ -449,7 +449,7 @@ public:
      * @param _out_stream The output stream to print to. The default value is std::cout.
      */
     synced_stream(std::ostream &_out_stream = std::cout)
-        : out_stream(_out_stream){};
+        : out_stream(_out_stream){}
 
     /**
      * @brief Print any number of items into the output stream. Ensures that no other threads print to this stream simultaneously, as long as they all exclusively use this synced_stream object to print.

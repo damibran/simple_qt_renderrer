@@ -1,5 +1,5 @@
 #pragma once
-#include "../shapes/shape.h"
+#include "../MyMain/Shape.h"
 #include "../Shader.h"
 
 class WireFrameShader : public Shader
@@ -14,11 +14,11 @@ private:
 	vrtx b;
 	vrtx c;
 
-	float line_width = 0.0001;
+	float line_width = 0.0001f;
 
 public:
 	WireFrameShader(float lw) :line_width(lw) {}
-	triangleClipPos computeVertexShader(const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2) override
+	TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
 	{
 		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
 		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
@@ -29,7 +29,7 @@ public:
 		b.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v1.pos, 1.0f));
 		c.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v2.pos, 1.0f));
 
-		return triangleClipPos(clip_a, clip_b, clip_c);
+		return TriangleClipPos(clip_a, clip_b, clip_c);
 	}
 	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2)override
 	{
@@ -38,9 +38,14 @@ public:
 		float z = -view_pixel_pos.z;
 
 		if (w0 < line_width * z || w1 < line_width * z || w2 < line_width * z)
-			return glm::vec3(0, 0, 0);
+			return glm::vec3(0);
 		else
-			return glm::vec3(300, 300, 300);// danger, also z buffer should be turned off
+			return glm::vec3(-1);// discard 
 
+	}
+
+	bool supportsBackFaceCulling() override
+	{
+		return false;
 	}
 };

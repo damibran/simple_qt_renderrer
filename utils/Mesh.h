@@ -1,7 +1,6 @@
 #pragma once
-#include<QDebug>
-#include"../utils/MVP_mat.h"
 #include"../utils/Vertex.h"
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 #include <assimp/Importer.hpp>
@@ -16,19 +15,24 @@ public:
 	{
 		loadMesh(path);
 	}
-	
-	friend class MeshRenderer;
+
+	friend class ShaderMeshRenderer;
 
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	Mesh(std::vector<vertex> verts, std::vector<unsigned int> indes)
+	Mesh(std::vector<Vertex> verts, std::vector<unsigned int> indes)
 	{
 		this->vertices = verts;
 		this->indices = indes;
 	}
 
+	const std::vector<Vertex>& getChildVerticesRef(int indx) const
+	{
+		return childs[indx]->vertices;
+	}
+
 private:
 	// mesh Data
-	std::vector<vertex> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 	std::vector<std::unique_ptr<Mesh>> childs;
 	// model data 
@@ -38,12 +42,13 @@ private:
 	{
 		// read file via ASSIMP
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, 0);// aiProcess_Triangulate| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
+		const aiScene* scene = importer.ReadFile(path, aiProcess_JoinIdenticalVertices);
+		// aiProcess_Triangulate| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 		{
 			std::string err = importer.GetErrorString();
-            //gScreen.debug_massage("ERROR::ASSIMP:: "+ err);
+			//gScreen.debug_massage("ERROR::ASSIMP:: "+ err);
 			return;
 		}
 		// retrieve the directory path of the filepath
@@ -69,19 +74,18 @@ private:
 		{
 			processNode(node->mChildren[i], scene);
 		}
-
 	}
 
-	std::unique_ptr<Mesh> processMesh(const aiMesh* mesh, const aiScene* scene)const
+	std::unique_ptr<Mesh> processMesh(const aiMesh* mesh, const aiScene* scene) const
 	{
 		// data to fill
-		std::vector<vertex> vertices;
-		std::vector<unsigned int> indices;
+		std::vector<Vertex> vertices_t;
+		std::vector<unsigned int> indices_t;
 
 		// walk through each of the mesh's vertices
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++)
 		{
-			vertex vrtx;
+			Vertex vrtx;
 
 			vrtx.pos.x = mesh->mVertices[i].x;
 			vrtx.pos.y = mesh->mVertices[i].y;
@@ -94,7 +98,7 @@ private:
 				vrtx.norm.z = mesh->mNormals[i].z;
 			}
 
-			vertices.push_back(vrtx);
+			vertices_t.push_back(vrtx);
 		}
 		// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
@@ -102,10 +106,10 @@ private:
 			aiFace face = mesh->mFaces[i];
 			// retrieve all indices of the face and store them in the indices vector
 			for (unsigned int j = 0; j < face.mNumIndices; j++)
-				indices.push_back(face.mIndices[j]);
+				indices_t.push_back(face.mIndices[j]);
 		}
 
 		// return a mesh object created from the extracted mesh data
-		return std::make_unique<Mesh>(vertices, indices);
+		return std::make_unique<Mesh>(vertices_t, indices_t);
 	}
 };

@@ -1,10 +1,10 @@
 #pragma once
-#include "../utils/MVP_mat.h"
+#include "../utils/MVPMat.h"
 #include "../utils/Vertex.h"
 
-struct triangleClipPos
+struct TriangleClipPos
 {
-	triangleClipPos(glm::vec4 _v1, glm::vec4 _v2, glm::vec4 _v3) :v1(_v1), v2(_v2), v3(_v3) {}
+	TriangleClipPos(glm::vec4 v1_t, glm::vec4 v2_t, glm::vec4 v3_t) :v1(v1_t), v2(v2_t), v3(v3_t) {}
 	glm::vec4 v1;
 	glm::vec4 v2;
 	glm::vec4 v3;
@@ -13,6 +13,8 @@ struct triangleClipPos
 class Shader
 {
 public:
-	virtual triangleClipPos computeVertexShader(const MVP_mat& trans, const vertex& v0, const vertex& v1, const vertex& v2)  = 0;
+	virtual ~Shader() = default;
+	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2)  = 0;
 	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0;//return color
+	virtual bool supportsBackFaceCulling()=0;
 };

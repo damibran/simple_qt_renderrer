@@ -7,14 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>936</width>
-    <height>523</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>RenderrerMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="renderLabel">
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
+   </property>
+   <widget class="QRenderLabel" name="renderLabel">
     <property name="geometry">
      <rect>
       <x>150</x>
@@ -36,7 +39,7 @@
       <x>10</x>
       <y>10</y>
       <width>120</width>
-      <height>421</height>
+      <height>531</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -45,6 +48,19 @@
     <property name="frameShadow">
      <enum>QFrame::Sunken</enum>
     </property>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>76</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Flex</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -68,6 +84,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QRenderLabel</class>
+   <extends>QLabel</extends>
+   <header>../QtMy/QRenderLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="RenderrerMainWindow.qrc"/>
  </resources>

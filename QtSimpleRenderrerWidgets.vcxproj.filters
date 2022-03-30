@@ -23,16 +23,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <QtRcc Include="RenderrerMainWindow.qrc">
+    <QtRcc Include="QtMain\RenderrerMainWindow.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-    <QtUic Include="RenderrerMainWindow.ui">
+    <QtUic Include="QtMain\RenderrerMainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
-    <QtMoc Include="RenderrerMainWindow.h">
+    <QtMoc Include="QtMain\RendererMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <ClCompile Include="RenderrerMainWindow.cpp">
+    <ClCompile Include="QtMain\RendererMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,49 +42,73 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Scene.h">
+    <ClInclude Include="MyMain\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Screen.h">
+    <ClInclude Include="MyMain\Screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\camera.h">
+    <ClInclude Include="Renderers\ConcreteRenderers\ShaderMeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\MeshRenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\MVP_mat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utils\ShaderThreader.h">
+    <ClInclude Include="utils\MVPMat.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shapes\Mesh.h">
+    <ClInclude Include="utils\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shapes\shape.h">
+    <ClInclude Include="MyMain\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\CubeShader.h">
+    <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\LightCubeShader.h">
+    <ClInclude Include="Shaders\ConcreteShaders\LightSourceShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="thread_pool.hpp">
+    <ClInclude Include="utils\thread_pool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers\RendererComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\LineSegment.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtMy\QRenderLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShaderWithWireframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\MainCubeScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
