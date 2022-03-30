@@ -111,5 +111,8 @@
     <ClInclude Include="Scripts\ConcreteScripts\MainCubeScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 #include "../RendererComponent.h"
 #include "../Shaders/Shader.h"
 
-class ShaderMeshRenderer final : public RendererComponent
+class ShaderMeshRenderer : public RendererComponent
 {
 public:
 	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m) : screen_(s),
@@ -15,7 +15,7 @@ public:
 		drawMesh(screen_, trans, mesh_);
 	}
 
-private:
+protected:
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)

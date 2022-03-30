@@ -113,6 +113,7 @@
     <ClInclude Include="QtMy\QRenderLabel.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
+    <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
