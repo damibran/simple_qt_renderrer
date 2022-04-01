@@ -16,6 +16,11 @@ public:
 		loadMesh(path);
 	}
 
+	Mesh(const std::unique_ptr<Mesh>& m):vertices(m->vertices),indices(m->indices)// dont copy childs
+	{
+		qDebug()<<"Mesh Copy";
+	}
+
 	friend class ShaderMeshRenderer;
 	friend class MeshClipShaderMeshRenderer;
 
@@ -30,6 +35,12 @@ public:
 	const std::vector<Vertex>& getChildVerticesRef(int indx) const
 	{
 		return childs[indx]->vertices;
+	}
+
+	size_t faceCount() const
+	{
+
+		return indices.size()/3;
 	}
 
 private:

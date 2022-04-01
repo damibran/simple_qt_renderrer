@@ -7,6 +7,9 @@
 class ShaderMeshRenderer : public RendererComponent
 {
 public:
+
+	virtual ~ShaderMeshRenderer() override = default;
+
 	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m) : screen_(s),
 		shader_(std::move(shdr)), mesh_(std::move(m)), pool_(4) { pool_.sleep_duration = 0; }
 
@@ -40,21 +43,21 @@ protected:
 		glm::vec3 c;
 
 		//calculating raster positions
-		a.x = static_cast<float>(screen_.XMAX) * ((abc.v1.x / abc.v1.w + 1) / 2);
-		a.y = static_cast<float>(screen_.YMAX) * ((abc.v1.y / abc.v1.w + 1) / 2);
-		a.z = abc.v1.w;
+		a.x = static_cast<float>(screen_.XMAX) * ((abc.a.x / abc.a.w + 1) / 2);
+		a.y = static_cast<float>(screen_.YMAX) * ((abc.a.y / abc.a.w + 1) / 2);
+		a.z = abc.a.w;
 
-		b.x = static_cast<float>(screen_.XMAX) * ((abc.v2.x / abc.v2.w + 1) / 2);
-		b.y = static_cast<float>(screen_.YMAX) * ((abc.v2.y / abc.v2.w + 1) / 2);
-		b.z = abc.v2.w;
+		b.x = static_cast<float>(screen_.XMAX) * ((abc.b.x / abc.b.w + 1) / 2);
+		b.y = static_cast<float>(screen_.YMAX) * ((abc.b.y / abc.b.w + 1) / 2);
+		b.z = abc.b.w;
 
-		c.x = static_cast<float>(screen_.XMAX) * ((abc.v3.x / abc.v3.w + 1) / 2);
-		c.y = static_cast<float>(screen_.YMAX) * ((abc.v3.y / abc.v3.w + 1) / 2);
-		c.z = abc.v3.w;
+		c.x = static_cast<float>(screen_.XMAX) * ((abc.c.x / abc.c.w + 1) / 2);
+		c.y = static_cast<float>(screen_.YMAX) * ((abc.c.y / abc.c.w + 1) / 2);
+		c.z = abc.c.w;
 
-		if (abc.v1.z <= abc.v1.w && abc.v1.z >= -abc.v1.w &&
-			abc.v2.z <= abc.v2.w && abc.v2.z >= -abc.v2.w &&
-			abc.v3.z <= abc.v3.w && abc.v3.z >= -abc.v3.w) //kinda Clipping
+		if (abc.a.z <= abc.a.w && abc.a.z >= -abc.a.w &&
+			abc.b.z <= abc.b.w && abc.b.z >= -abc.b.w &&
+			abc.c.z <= abc.c.w && abc.c.z >= -abc.c.w) //kinda Clipping
 			put_triangle(shader, a, b, c);
 	}
 

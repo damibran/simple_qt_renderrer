@@ -28,4 +28,7 @@ public:
 	{
 		return true;
 	}
+
+	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
+		std::pair<float, TriangleSide> c) override{return nullptr;}
 };
