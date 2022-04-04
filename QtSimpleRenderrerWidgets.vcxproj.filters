@@ -114,5 +114,8 @@
     <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\TriangleSides.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

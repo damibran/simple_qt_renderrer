@@ -75,4 +75,48 @@ public:
 	{
 		return true;
 	}
+
+	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
+	                              std::pair<float, TriangleSide> c) override
+	{
+		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(this->light_obj);
+
+		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
+		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);
+
+		res->b.view_pos = lerpViewPosAlongSide(b.first, b.second);
+		res->b.view_norm = lerpViewNormAlongSide(b.first, b.second);
+
+		res->c.view_pos = lerpViewPosAlongSide(c.first, c.second);
+		res->c.view_norm = lerpViewNormAlongSide(c.first, c.second);
+
+		return res;
+	}
+
+private:
+	glm::vec3 lerpViewPosAlongSide(float t, TriangleSide side) const
+	{
+		if (side == TriangleSide::AB)
+		{
+			return this->a.view_pos + t * (this->b.view_pos - this->a.view_pos);
+		}
+		if (side == TriangleSide::BC)
+		{
+			return this->b.view_pos + t * (this->c.view_pos - this->b.view_pos);
+		}
+		return this->c.view_pos + t * (this->a.view_pos - this->c.view_pos);
+	}
+
+	glm::vec3 lerpViewNormAlongSide(float t, TriangleSide side) const
+	{
+		if (side == TriangleSide::AB)
+		{
+			return this->a.view_norm + t * (this->b.view_norm - this->a.view_norm);
+		}
+		if (side == TriangleSide::BC)
+		{
+			return this->b.view_norm + t * (this->c.view_norm - this->b.view_norm);
+		}
+		return this->c.view_norm + t * (this->a.view_norm - this->c.view_norm);
+	}
 };

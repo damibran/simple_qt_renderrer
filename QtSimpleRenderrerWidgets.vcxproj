@@ -133,6 +133,7 @@
     <ClInclude Include="utils\LineSegment.h" />
     <ClInclude Include="utils\MVPMat.h" />
     <ClInclude Include="utils\Transform.h" />
+    <ClInclude Include="utils\TriangleSides.h" />
     <ClInclude Include="utils\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
