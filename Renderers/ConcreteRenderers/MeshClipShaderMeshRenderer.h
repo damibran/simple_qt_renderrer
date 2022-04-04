@@ -7,17 +7,6 @@
 #include "../Shaders/Shader.h"
 #include "../utils/Transform.h"
 
-struct Trngl
-{
-	Trngl(const Vertex& _a, const Vertex& _b, const Vertex& _c): a(_a), b(_b), c(_c)
-	{
-	}
-
-	const Vertex& a;
-	const Vertex& b;
-	const Vertex& c;
-};
-
 class MeshClipShaderMeshRenderer : public ShaderMeshRenderer
 {
 public:
@@ -50,11 +39,8 @@ public:
 	}
 
 private:
-	int mainMeshIndx = 0;
-
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
-		mainMeshIndx = 0;
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
 			TriangleClipPos abc = shader_->computeVertexShader(trans, mesh->vertices[mesh->indices[i]],
@@ -66,7 +52,6 @@ private:
 			abc.c = glm::inverse(trans.proj) * abc.c;
 
 			process_trngl(shader_, trans, abc, 0);
-			mainMeshIndx++;
 		}
 
 		for (auto const& i : mesh->childs)
@@ -115,9 +100,9 @@ private:
 			glm::vec4& face_P = clip_mesh_clip_space_vertices_[clip_mesh_->indices[cur_clip_mesh_face * 3 + 1]].
 				pos;
 
-			float a_dist = distFromPlane2(abc.a, face_norm, face_P);
-			float b_dist = distFromPlane2(abc.b, face_norm, face_P);
-			float c_dist = distFromPlane2(abc.c, face_norm, face_P);
+			float a_dist = distFromPlane(abc.a, face_norm, face_P);
+			float b_dist = distFromPlane(abc.b, face_norm, face_P);
+			float c_dist = distFromPlane(abc.c, face_norm, face_P);
 
 			//ordering CCW
 			if (a_dist >= 0) // a is outside
@@ -127,8 +112,6 @@ private:
 					if (c_dist >= 0) //c is outside
 					{
 						// a is outside b is outside c is outside
-						if (mainMeshIndx == 0)
-							qDebug() << "F + " << cur_clip_mesh_face << " : " << mainMeshIndx;
 						return; // reject triangle
 					}
 					else
@@ -242,13 +225,8 @@ private:
 			}
 		}
 	}
-
-	float distFromPlane(const glm::vec4& P, const glm::vec4& planeV)
-	{
-		return glm::dot(planeV, P);
-	}
-
-	float distFromPlane2(const glm::vec4& P, const glm::vec4& planeN, const glm::vec4& planeP)
+	
+	float distFromPlane(const glm::vec4& P, const glm::vec4& planeN, const glm::vec4& planeP) const
 	{
 		return glm::dot(planeN, P - planeP);
 	}
