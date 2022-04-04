@@ -1,5 +1,6 @@
 #pragma once
 #include <unordered_set>
+#define GLM_FORCE_EXPLICIT_CTOR
 #include "../MyMain/Screen.h"
 #include "../utils/Mesh.h"
 #include "ShaderMeshRenderer.h"
@@ -24,40 +25,48 @@ public:
 
 	MeshClipShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m,
 	                           std::unique_ptr<Mesh> c_m, Transform* c_t) :
-		ShaderMeshRenderer(s, std::move(shdr), std::move(m)), clip_trans_(c_t), clip_mesh_(std::move(c_m->childs[0])),
-		clip_mesh_clip_space(std::make_unique<Mesh>(clip_mesh_))
+		ShaderMeshRenderer(s, std::move(shdr), std::move(m)), clip_trans_(c_t), clip_mesh_(std::move(c_m->childs[0]))
 	{
+		clip_mesh_clip_space_vertices_.resize(clip_mesh_->vertices.size());
 	}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
-		for (size_t i = 0; i < clip_mesh_clip_space->indices.size(); ++i)
+		for (size_t i = 0; i < clip_mesh_->indices.size(); ++i)
 		{
-			clip_mesh_clip_space->vertices[clip_mesh_clip_space->indices[i]].pos =
-				trans.proj *
+			clip_mesh_clip_space_vertices_[clip_mesh_->indices[i]].pos =
 				trans.view *
 				clip_trans_->getFullModelMatrix() *
 				glm::vec4(clip_mesh_->vertices[clip_mesh_->indices[i]].pos, 1.0f);
 
-			clip_mesh_clip_space->vertices[clip_mesh_clip_space->indices[i]].norm =
-				glm::mat3(glm::transpose(glm::inverse(
-					trans.proj *
-					trans.view *
-					clip_trans_->getFullModelMatrix()))) *
-				clip_mesh_->vertices[clip_mesh_->indices[i]].norm;
+			clip_mesh_clip_space_vertices_[clip_mesh_->indices[i]].norm =
+				glm::normalize(
+					glm::mat3(glm::transpose(glm::inverse(
+						trans.view *
+						clip_trans_->getFullModelMatrix()))) *
+					clip_mesh_->vertices[clip_mesh_->indices[i]].norm);
 		}
 		drawMesh(screen_, trans, mesh_);
 	}
 
 private:
+	int mainMeshIndx = 0;
+
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
+		mainMeshIndx = 0;
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
 			TriangleClipPos abc = shader_->computeVertexShader(trans, mesh->vertices[mesh->indices[i]],
 			                                                   mesh->vertices[mesh->indices[i + 1]],
 			                                                   mesh->vertices[mesh->indices[i + 2]]);
-			process_trngl(shader_, abc, 0);
+
+			abc.a = glm::inverse(trans.proj) * abc.a;
+			abc.b = glm::inverse(trans.proj) * abc.b;
+			abc.c = glm::inverse(trans.proj) * abc.c;
+
+			process_trngl(shader_, trans, abc, 0);
+			mainMeshIndx++;
 		}
 
 		for (auto const& i : mesh->childs)
@@ -66,47 +75,49 @@ private:
 		}
 	}
 
-	void process_trngl(std::unique_ptr<Shader>& shader, const TriangleClipPos& abc,
+	void process_trngl(std::unique_ptr<Shader>& shader, const MVPMat& trans, const TriangleClipPos& abc,
 	                   size_t cur_clip_mesh_face)
 	{
 		if (cur_clip_mesh_face == clip_mesh_->faceCount())
 		{
+			TriangleClipPos abc_(trans.proj * abc.a, trans.proj * abc.b, trans.proj * abc.c);
+
 			glm::vec3 a;
 			glm::vec3 b;
 			glm::vec3 c;
 
 			//calculating raster positions
-			a.x = static_cast<float>(screen_.XMAX) * ((abc.a.x / abc.a.w + 1) / 2);
-			a.y = static_cast<float>(screen_.YMAX) * ((abc.a.y / abc.a.w + 1) / 2);
-			a.z = abc.a.w;
+			a.x = static_cast<float>(screen_.XMAX) * ((abc_.a.x / abc_.a.w + 1) / 2);
+			a.y = static_cast<float>(screen_.YMAX) * ((abc_.a.y / abc_.a.w + 1) / 2);
+			a.z = abc_.a.w;
 
-			b.x = static_cast<float>(screen_.XMAX) * ((abc.b.x / abc.b.w + 1) / 2);
-			b.y = static_cast<float>(screen_.YMAX) * ((abc.b.y / abc.b.w + 1) / 2);
-			b.z = abc.b.w;
+			b.x = static_cast<float>(screen_.XMAX) * ((abc_.b.x / abc_.b.w + 1) / 2);
+			b.y = static_cast<float>(screen_.YMAX) * ((abc_.b.y / abc_.b.w + 1) / 2);
+			b.z = abc_.b.w;
 
-			c.x = static_cast<float>(screen_.XMAX) * ((abc.c.x / abc.c.w + 1) / 2);
-			c.y = static_cast<float>(screen_.YMAX) * ((abc.c.y / abc.c.w + 1) / 2);
-			c.z = abc.c.w;
+			c.x = static_cast<float>(screen_.XMAX) * ((abc_.c.x / abc_.c.w + 1) / 2);
+			c.y = static_cast<float>(screen_.YMAX) * ((abc_.c.y / abc_.c.w + 1) / 2);
+			c.z = abc_.c.w;
 
-			if (abc.a.z <= abc.a.w && abc.a.z >= -abc.a.w &&
-				abc.b.z <= abc.b.w && abc.b.z >= -abc.b.w &&
-				abc.c.z <= abc.c.w && abc.c.z >= -abc.c.w) //kinda frutsum Clipping
+			if (abc_.a.z <= abc_.a.w && abc_.a.z >= -abc_.a.w &&
+				abc_.b.z <= abc_.b.w && abc_.b.z >= -abc_.b.w &&
+				abc_.c.z <= abc_.c.w && abc_.c.z >= -abc_.c.w) //kinda frutsum Clipping
 			{
 				put_triangle(shader, a, b, c);
 			}
 		}
 		else
 		{
-			glm::vec3& face_norm = clip_mesh_clip_space->vertices[clip_mesh_clip_space->indices[cur_clip_mesh_face * 3]]
-				.
-				norm;
-			glm::vec3& face_P = clip_mesh_clip_space->vertices[clip_mesh_clip_space->indices[cur_clip_mesh_face * 3]].
-				pos;
-			float planeD = -glm::dot(face_norm, face_P);
+			glm::vec4 face_norm = glm::vec4(
+				clip_mesh_clip_space_vertices_[clip_mesh_->indices[cur_clip_mesh_face * 3 + 1]].
+				norm, 0);
 
-			float a_dist = distFromPlane(glm::vec3(abc.a), face_norm, planeD);
-			float b_dist = distFromPlane(glm::vec3(abc.b), face_norm, planeD);
-			float c_dist = distFromPlane(glm::vec3(abc.c), face_norm, planeD);
+			glm::vec4& face_P = clip_mesh_clip_space_vertices_[clip_mesh_->indices[cur_clip_mesh_face * 3 + 1]].
+				pos;
+
+			float a_dist = distFromPlane2(abc.a, face_norm, face_P);
+			float b_dist = distFromPlane2(abc.b, face_norm, face_P);
+			float c_dist = distFromPlane2(abc.c, face_norm, face_P);
 
 			//ordering CCW
 			if (a_dist >= 0) // a is outside
@@ -116,6 +127,8 @@ private:
 					if (c_dist >= 0) //c is outside
 					{
 						// a is outside b is outside c is outside
+						if (mainMeshIndx == 0)
+							qDebug() << "F + " << cur_clip_mesh_face << " : " << mainMeshIndx;
 						return; // reject triangle
 					}
 					else
@@ -127,7 +140,7 @@ private:
 						glm::vec4 v_bc = abc.b + t_bc * (abc.c - abc.b);
 						std::unique_ptr<Shader> sh1 = shader->clone({t_ca, TriangleSide::CA}, {t_bc, TriangleSide::BC},
 						                                            {0, TriangleSide::CA});
-						process_trngl(sh1, TriangleClipPos(v_ca, v_bc, abc.c), cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, TriangleClipPos(v_ca, v_bc, abc.c), cur_clip_mesh_face + 1);
 					}
 				}
 				else
@@ -144,7 +157,7 @@ private:
 						std::unique_ptr<Shader> sh1 = shader->clone({t_ab, TriangleSide::AB}, {0, TriangleSide::BC},
 						                                            {t_bc, TriangleSide::BC});
 
-						process_trngl(sh1, {v_ab, abc.b, v_bc}, cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, {v_ab, abc.b, v_bc}, cur_clip_mesh_face + 1);
 					}
 					else // both c and b is inside
 					{
@@ -160,8 +173,8 @@ private:
 						std::unique_ptr<Shader> sh2 = shader->clone({t_ab, TriangleSide::AB}, {0, TriangleSide::CA},
 						                                            {t_ca, TriangleSide::CA});
 
-						process_trngl(sh1, {v_ab, abc.b, abc.c}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, {v_ab, abc.c, v_ca}, cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, {v_ab, abc.b, abc.c}, cur_clip_mesh_face + 1);
+						process_trngl(sh2, trans, {v_ab, abc.c, v_ca}, cur_clip_mesh_face + 1);
 					}
 				}
 			}
@@ -181,7 +194,7 @@ private:
 						std::unique_ptr<Shader> sh1 = shader->clone({0, TriangleSide::AB}, {t_ab, TriangleSide::AB},
 						                                            {t_ca, TriangleSide::CA});
 
-						process_trngl(sh1, {abc.a, v_ab, v_ca}, cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, {abc.a, v_ab, v_ca}, cur_clip_mesh_face + 1);
 					}
 					else
 					{
@@ -197,8 +210,8 @@ private:
 						std::unique_ptr<Shader> sh2 = shader->clone({0, TriangleSide::AB}, {t_bc, TriangleSide::BC},
 						                                            {0, TriangleSide::CA});
 
-						process_trngl(sh1, {abc.a, v_ab, v_bc}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, {abc.a, v_bc, abc.c}, cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, {abc.a, v_ab, v_bc}, cur_clip_mesh_face + 1);
+						process_trngl(sh2, trans, {abc.a, v_bc, abc.c}, cur_clip_mesh_face + 1);
 					}
 				}
 				else
@@ -217,25 +230,30 @@ private:
 						std::unique_ptr<Shader> sh2 = shader->clone({t_ca, TriangleSide::CA}, {0, TriangleSide::BC},
 						                                            {t_bc, TriangleSide::BC});
 
-						process_trngl(sh1, {abc.a, abc.b, v_ca}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, {v_ca, abc.b, v_bc}, cur_clip_mesh_face + 1);
+						process_trngl(sh1, trans, {abc.a, abc.b, v_ca}, cur_clip_mesh_face + 1);
+						process_trngl(sh2, trans, {v_ca, abc.b, v_bc}, cur_clip_mesh_face + 1);
 					}
 					else
 					{
 						// a is inside b is inside c is inside
-						process_trngl(shader, abc, cur_clip_mesh_face += 1);
+						process_trngl(shader, trans, abc, cur_clip_mesh_face + 1);
 					}
 				}
 			}
 		}
 	}
 
-	float distFromPlane(const glm::vec3& P, const glm::vec3& planeN, const float& planeD)
+	float distFromPlane(const glm::vec4& P, const glm::vec4& planeV)
 	{
-		return glm::dot(planeN, P) + planeD;
+		return glm::dot(planeV, P);
+	}
+
+	float distFromPlane2(const glm::vec4& P, const glm::vec4& planeN, const glm::vec4& planeP)
+	{
+		return glm::dot(planeN, P - planeP);
 	}
 
 	Transform* clip_trans_;
 	std::unique_ptr<Mesh> clip_mesh_;
-	std::unique_ptr<Mesh> clip_mesh_clip_space;
+	std::vector<VertexClip> clip_mesh_clip_space_vertices_;
 };
