@@ -16,10 +16,10 @@ public:
 		std::unique_ptr<Transform>& light, std::unique_ptr<Transform>& clip_trans)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0), glm::vec3(10)),
+			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
 			std::make_unique<MeshClipShaderMeshRenderer>(
 				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),
-				mesh_instances.find("res/cub.obj")->second,
+				mesh_instances.find("res/tree.obj")->second,
 				mesh_instances.find("res/cub.obj")->second, clip_trans,true));
 
 		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());

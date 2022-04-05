@@ -22,6 +22,7 @@ public:
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
 		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
+		mesh_instances_["res/tree.obj"] = std::make_unique<Mesh>("res/tree.obj");
 
 		// Make CoordSys shape
 		scene_root_.push_back(std::make_unique<Shape>(

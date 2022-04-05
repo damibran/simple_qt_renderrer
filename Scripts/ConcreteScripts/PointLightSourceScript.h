@@ -20,7 +20,7 @@ public:
 	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0, 30, 0)),
+			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
 			                                     mesh_instances.find("res/cub.obj")->second));
 
@@ -34,12 +34,12 @@ public:
 		if (check_box_->isChecked())
 		{
 			t_ += speed_ * dt;
-			transform_->setPos({20 * sin(t_), 30 * cos(t_), 0});
+			transform_->setPos({100 * sin(t_)*cos(2*t_), 100 * sin(0.5f*t_)*sin(2*t_), 100*cos(2*t_)});
 		}
 	}
 
 private:
-	float speed_ = 1;
+	float speed_ = 0.5;
 	float t_ = 0.;
 	std::unique_ptr<Transform>& transform_;
 	QCheckBox* check_box_;

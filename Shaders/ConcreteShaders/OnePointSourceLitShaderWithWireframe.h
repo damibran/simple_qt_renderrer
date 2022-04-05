@@ -17,7 +17,7 @@ private:
 
 	glm::vec3 view_light_pos;
 
-	float ambient = 0.3f;
+	float ambient = 0.5f;
 	float diffStrength = 0.7f;
 	float specStrength = 0.9f;
 

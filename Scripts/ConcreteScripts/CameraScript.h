@@ -92,7 +92,7 @@ private:
 	glm::vec3 right_;
 	glm::vec3 world_up_ = glm::vec3(0, 1, 0);
 	float mouse_sensitivity_ = 0.15f;
-	float speed_ = 10;
+	float speed_ = 15;
 
 	void updateCameraVectors()
 	{
