@@ -14,10 +14,10 @@ private:
 	vrtx b;
 	vrtx c;
 
-	float line_width = 0.0001f;
+	float line_width;
 
 public:
-	WireFrameShader(float lw) : line_width(lw)
+	WireFrameShader(float lw=0.0001) : line_width(lw)
 	{
 	}
 

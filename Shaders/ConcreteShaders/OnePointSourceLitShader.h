@@ -21,12 +21,12 @@ private:
 	float diffStrength = 0.5f;
 	float specStrength = 0.8f;
 
-	glm::vec3 objColor = glm::vec3(255, 255, 100);
+	glm::vec3 objColor;
 
 	Transform* light_obj;
 
 public:
-	OnePointSourceLitShader(Transform* lo) : light_obj(lo)
+	OnePointSourceLitShader(Transform* lo, glm::vec3 color = glm::vec3(255, 255, 100)) : light_obj(lo)
 	{
 	}
 
@@ -79,7 +79,7 @@ public:
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
 	                              std::pair<float, TriangleSide> c) override
 	{
-		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(this->light_obj);
+		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(this->light_obj, this->objColor);
 
 		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
 		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);

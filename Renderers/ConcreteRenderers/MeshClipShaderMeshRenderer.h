@@ -4,6 +4,7 @@
 #include "../MyMain/Screen.h"
 #include "../utils/Mesh.h"
 #include "ShaderMeshRenderer.h"
+#include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Shaders/Shader.h"
 #include "../utils/Transform.h"
 
@@ -13,8 +14,9 @@ public:
 	~MeshClipShaderMeshRenderer() override = default;
 
 	MeshClipShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> main_obj_shdr, const std::unique_ptr<Mesh>& m,
-	                           const std::unique_ptr<Mesh>& c_m, std::unique_ptr<Transform>& c_t) :
-		ShaderMeshRenderer(s, std::move(main_obj_shdr), m), clip_trans_(c_t), clip_mesh_(c_m->childs[0])
+	                           const std::unique_ptr<Mesh>& c_m, std::unique_ptr<Transform>& c_t, bool r_o) :
+		ShaderMeshRenderer(s, std::move(main_obj_shdr), m), clip_trans_(c_t), clip_mesh_(c_m->childs[0]),
+		render_outer_(r_o)
 	{
 		clip_mesh_clip_space_vertices_.resize(clip_mesh_->vertices.size());
 	}
@@ -112,18 +114,24 @@ private:
 					if (c_dist >= 0) //c is outside
 					{
 						// a is outside b is outside c is outside
-						return; // reject triangle
+						if (render_outer_)
+						{
+							std::unique_ptr<Shader> sh1 = shader->clone({0, TriangleSide::AB}, {0, TriangleSide::BC},
+							                                            {0, TriangleSide::CA});
+							sh1->changeColor({255, 0, 0});
+							process_trngl(sh1, trans, abc, clip_mesh_->faceCount());
+						}
+						else
+							return; // reject triangle
 					}
 					else
 					{
 						// a is outside b is outside c is inside
 						float t_ca = c_dist / (c_dist - a_dist);
 						float t_bc = b_dist / (b_dist - c_dist);
-						glm::vec4 v_ca = abc.c + t_ca * (abc.a - abc.c);
-						glm::vec4 v_bc = abc.b + t_bc * (abc.c - abc.b);
-						std::unique_ptr<Shader> sh1 = shader->clone({t_ca, TriangleSide::CA}, {t_bc, TriangleSide::BC},
-						                                            {0, TriangleSide::CA});
-						process_trngl(sh1, trans, TriangleClipPos(v_ca, v_bc, abc.c), cur_clip_mesh_face + 1);
+
+						oneInsideTwoOutSide(t_ca, TriangleSide::CA, t_bc, TriangleSide::BC, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 				}
 				else
@@ -134,13 +142,8 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_bc = b_dist / (b_dist - c_dist);
 
-						glm::vec4 v_ab = abc.a + t_ab * (abc.b - abc.a);
-						glm::vec4 v_bc = abc.b + t_bc * (abc.c - abc.b);
-
-						std::unique_ptr<Shader> sh1 = shader->clone({t_ab, TriangleSide::AB}, {0, TriangleSide::BC},
-						                                            {t_bc, TriangleSide::BC});
-
-						process_trngl(sh1, trans, {v_ab, abc.b, v_bc}, cur_clip_mesh_face + 1);
+						oneInsideTwoOutSide(t_bc, TriangleSide::BC, t_ab, TriangleSide::AB, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 					else // both c and b is inside
 					{
@@ -148,16 +151,8 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_ca = c_dist / (c_dist - a_dist);
 
-						glm::vec4 v_ab = abc.a + t_ab * (abc.b - abc.a);
-						glm::vec4 v_ca = abc.c + t_ca * (abc.a - abc.c);
-
-						std::unique_ptr<Shader> sh1 = shader->clone({t_ab, TriangleSide::AB}, {0, TriangleSide::BC},
-						                                            {0, TriangleSide::CA});
-						std::unique_ptr<Shader> sh2 = shader->clone({t_ab, TriangleSide::AB}, {0, TriangleSide::CA},
-						                                            {t_ca, TriangleSide::CA});
-
-						process_trngl(sh1, trans, {v_ab, abc.b, abc.c}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, trans, {v_ab, abc.c, v_ca}, cur_clip_mesh_face + 1);
+						twoInsideOneOutSide(t_ab, TriangleSide::AB, t_ca, TriangleSide::CA, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 				}
 			}
@@ -171,13 +166,8 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_ca = c_dist / (c_dist - a_dist);
 
-						glm::vec4 v_ab = abc.a + t_ab * (abc.b - abc.a);
-						glm::vec4 v_ca = abc.c + t_ca * (abc.a - abc.c);
-
-						std::unique_ptr<Shader> sh1 = shader->clone({0, TriangleSide::AB}, {t_ab, TriangleSide::AB},
-						                                            {t_ca, TriangleSide::CA});
-
-						process_trngl(sh1, trans, {abc.a, v_ab, v_ca}, cur_clip_mesh_face + 1);
+						oneInsideTwoOutSide(t_ab, TriangleSide::AB, t_ca, TriangleSide::CA, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 					else
 					{
@@ -185,16 +175,8 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_bc = b_dist / (b_dist - c_dist);
 
-						glm::vec4 v_ab = abc.a + t_ab * (abc.b - abc.a);
-						glm::vec4 v_bc = abc.b + t_bc * (abc.c - abc.b);
-
-						std::unique_ptr<Shader> sh1 = shader->clone({0, TriangleSide::AB}, {t_ab, TriangleSide::AB},
-						                                            {t_bc, TriangleSide::BC});
-						std::unique_ptr<Shader> sh2 = shader->clone({0, TriangleSide::AB}, {t_bc, TriangleSide::BC},
-						                                            {0, TriangleSide::CA});
-
-						process_trngl(sh1, trans, {abc.a, v_ab, v_bc}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, trans, {abc.a, v_bc, abc.c}, cur_clip_mesh_face + 1);
+						twoInsideOneOutSide(t_bc, TriangleSide::BC, t_ab, TriangleSide::AB, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 				}
 				else
@@ -205,16 +187,8 @@ private:
 						float t_bc = b_dist / (b_dist - c_dist);
 						float t_ca = c_dist / (c_dist - a_dist);
 
-						glm::vec4 v_ca = abc.c + t_ca * (abc.a - abc.c);
-						glm::vec4 v_bc = abc.b + t_bc * (abc.c - abc.b);
-
-						std::unique_ptr<Shader> sh1 = shader->clone({0, TriangleSide::AB}, {0, TriangleSide::BC},
-						                                            {t_ca, TriangleSide::CA});
-						std::unique_ptr<Shader> sh2 = shader->clone({t_ca, TriangleSide::CA}, {0, TriangleSide::BC},
-						                                            {t_bc, TriangleSide::BC});
-
-						process_trngl(sh1, trans, {abc.a, abc.b, v_ca}, cur_clip_mesh_face + 1);
-						process_trngl(sh2, trans, {v_ca, abc.b, v_bc}, cur_clip_mesh_face + 1);
+						twoInsideOneOutSide(t_ca, TriangleSide::CA, t_bc, TriangleSide::BC, shader, trans, abc,
+						                    cur_clip_mesh_face);
 					}
 					else
 					{
@@ -231,7 +205,69 @@ private:
 		return glm::dot(planeN, P - planeP);
 	}
 
+	// {0 , side1 } - gives inside one and {1,side2} too
+	void oneInsideTwoOutSide(float t_side1, TriangleSide side1, float t_side2,
+	                         TriangleSide side2, std::unique_ptr<Shader>& shader, const MVPMat& trans,
+	                         const TriangleClipPos& abc,
+	                         size_t cur_clip_mesh_face)
+	{
+		const glm::vec4 v_side1 = abc.lerpSide(t_side1, side1);
+		const glm::vec4 v_side2 = abc.lerpSide(t_side2, side2);
+
+		std::unique_ptr<Shader> sh1 = shader->clone({t_side1, side1}, {t_side2, side2},
+		                                            {0, side1});
+
+		process_trngl(sh1, trans, TriangleClipPos(v_side1, v_side2, abc.lerpSide(0, side1)), cur_clip_mesh_face + 1);
+
+		if (render_outer_)
+		{
+			std::unique_ptr<Shader> sh2 = shader->clone({t_side1, side1}, {1, side1},
+			                                            {0, side2});
+
+			std::unique_ptr<Shader> sh3 = shader->clone({t_side1, side1}, {0, side2},
+			                                            {t_side2, side2});
+
+			sh2->changeColor({255, 0, 0});
+			sh3->changeColor({255, 0, 0});
+
+			process_trngl(sh2, trans, TriangleClipPos(v_side1, abc.lerpSide(1, side1), abc.lerpSide(0, side2)),
+			              clip_mesh_->faceCount());
+			process_trngl(sh3, trans, TriangleClipPos(v_side1, abc.lerpSide(0, side2), v_side2),
+			              clip_mesh_->faceCount());
+		}
+	}
+
+	// {0,side1} gives outside one and {1, side2} too
+	void twoInsideOneOutSide(float t_side1, TriangleSide side1, float t_side2,
+	                         TriangleSide side2, std::unique_ptr<Shader>& shader, const MVPMat& trans,
+	                         const TriangleClipPos& abc,
+	                         size_t cur_clip_mesh_face)
+	{
+		// a is outside b is inside c is inside
+		glm::vec4 v_side1 = abc.lerpSide(t_side1, side1);
+		glm::vec4 v_side2 = abc.lerpSide(t_side2, side2);
+
+		std::unique_ptr<Shader> sh1 = shader->clone({t_side1, side1}, {1, side1},
+		                                            {0, side2});
+		std::unique_ptr<Shader> sh2 = shader->clone({t_side1, side1}, {0, side2},
+		                                            {t_side2, side2});
+
+		process_trngl(sh1, trans, {v_side1, abc.lerpSide(1, side1), abc.lerpSide(0, side2)}, cur_clip_mesh_face + 1);
+		process_trngl(sh2, trans, {v_side1, abc.lerpSide(0, side2), v_side2}, cur_clip_mesh_face + 1);
+
+		if (render_outer_)
+		{
+			std::unique_ptr<Shader> sh3 = shader->clone({0, side1}, {t_side1, side1},
+			                                            {t_side2, side2});
+
+			sh3->changeColor({255, 0, 0});
+
+			process_trngl(sh3, trans, {abc.lerpSide(0, side1), v_side1, v_side2}, clip_mesh_->faceCount());
+		}
+	}
+
 	std::unique_ptr<Transform>& clip_trans_;
 	const std::unique_ptr<Mesh>& clip_mesh_;
-	std::vector<VertexClip> clip_mesh_clip_space_vertices_;
+	std::vector<VertexView> clip_mesh_clip_space_vertices_;
+	const bool render_outer_ = false;
 };

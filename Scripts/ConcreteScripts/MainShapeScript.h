@@ -20,7 +20,7 @@ public:
 			std::make_unique<MeshClipShaderMeshRenderer>(
 				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),
 				mesh_instances.find("res/cub.obj")->second,
-				mesh_instances.find("res/cub.obj")->second, clip_trans));
+				mesh_instances.find("res/cub.obj")->second, clip_trans,true));
 
 		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());
 

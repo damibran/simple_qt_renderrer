@@ -17,16 +17,16 @@ private:
 
 	glm::vec3 view_light_pos;
 
-	float ambient = 0.1f;
-	float diffStrength = 0.5f;
-	float specStrength = 0.8f;
+	float ambient = 0.3f;
+	float diffStrength = 0.7f;
+	float specStrength = 0.9f;
 
-	glm::vec3 objColor = glm::vec3(255, 255, 84);
+	glm::vec3 objColor;
 
 	std::unique_ptr<Transform>& light_obj;
 
 public:
-	OnePointSourceLitShaderWithWireframe(std::unique_ptr<Transform>& lo) : light_obj(lo)
+	OnePointSourceLitShaderWithWireframe(std::unique_ptr<Transform>& lo, glm::vec3 color = glm::vec3(255, 255, 84)) : light_obj(lo), objColor(color)
 	{
 	}
 
@@ -85,7 +85,7 @@ public:
 	                              std::pair<float, TriangleSide> c) override
 	{
 		std::unique_ptr<OnePointSourceLitShaderWithWireframe> res = std::make_unique<
-			OnePointSourceLitShaderWithWireframe>(this->light_obj);
+			OnePointSourceLitShaderWithWireframe>(this->light_obj,this->objColor);
 
 		res->view_light_pos=view_light_pos;
 
@@ -100,6 +100,8 @@ public:
 
 		return res;
 	}
+
+
 
 private:
 	glm::vec3 lerpViewPosAlongSide(float t, TriangleSide side) const
@@ -126,5 +128,11 @@ private:
 			return this->b.view_norm + t * (this->c.view_norm - this->b.view_norm);
 		}
 		return this->c.view_norm + t * (this->a.view_norm - this->c.view_norm);
+	}
+
+public:
+	void changeColor(glm::vec3 color) override
+	{
+		objColor = color;
 	}
 };

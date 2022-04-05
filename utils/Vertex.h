@@ -7,7 +7,7 @@ struct Vertex
 	glm::vec3 norm;
 };
 
-struct VertexClip
+struct VertexView
 {
 	glm::vec4 pos;
 	glm::vec3 norm;

@@ -10,6 +10,19 @@ struct TriangleClipPos
 	{
 	}
 
+	glm::vec4 lerpSide(float t,TriangleSide side) const
+	{
+		if (side == TriangleSide::AB)
+		{
+			return a + t * (b - a);
+		}
+		if (side == TriangleSide::BC)
+		{
+			return b + t * (c - b);
+		}
+		return c + t * (a - c);
+	}
+
 	glm::vec4 a;
 	glm::vec4 b;
 	glm::vec4 c;
@@ -25,4 +38,5 @@ public:
 	virtual std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
 	                                      std::pair<float, TriangleSide> c) =0;
 	virtual bool supportsBackFaceCulling() =0;
+	virtual void changeColor(glm::vec3 color){};
 };
