@@ -11,14 +11,14 @@
 class MainCubeScript : public Script
 {
 public:
-	static std::unique_ptr<Shape> createObject(Screen& s, Transform* light, Transform* clip_trans)
+	static std::unique_ptr<Shape> createObject(Screen& s, const std::unordered_map<std::string,std::unique_ptr<Mesh>>& mesh_instances,Transform* light, Transform* clip_trans)
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(10)),
 			std::make_unique<MeshClipShaderMeshRenderer>(
 				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),
-				std::make_unique<Mesh>("res/cub.obj"),
-				std::make_unique<Mesh>("res/cub.obj"), clip_trans));
+				mesh_instances.find("res/cub.obj")->second,
+				mesh_instances.find("res/cub.obj")->second, clip_trans));
 
 		shp->setScript(std::make_unique<MainCubeScript>(shp->getTransformPtr()));
 		return shp;

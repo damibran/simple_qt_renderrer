@@ -12,9 +12,9 @@ class MeshClipShaderMeshRenderer : public ShaderMeshRenderer
 public:
 	~MeshClipShaderMeshRenderer() override = default;
 
-	MeshClipShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, std::unique_ptr<Mesh> m,
-	                           std::unique_ptr<Mesh> c_m, Transform* c_t) :
-		ShaderMeshRenderer(s, std::move(shdr), std::move(m)), clip_trans_(c_t), clip_mesh_(std::move(c_m->childs[0]))
+	MeshClipShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> main_obj_shdr, const std::unique_ptr<Mesh>& m,
+	                           const std::unique_ptr<Mesh>& c_m, Transform* c_t) :
+		ShaderMeshRenderer(s, std::move(main_obj_shdr), m), clip_trans_(c_t), clip_mesh_(c_m->childs[0])
 	{
 		clip_mesh_clip_space_vertices_.resize(clip_mesh_->vertices.size());
 	}
@@ -225,13 +225,13 @@ private:
 			}
 		}
 	}
-	
+
 	float distFromPlane(const glm::vec4& P, const glm::vec4& planeN, const glm::vec4& planeP) const
 	{
 		return glm::dot(planeN, P - planeP);
 	}
 
 	Transform* clip_trans_;
-	std::unique_ptr<Mesh> clip_mesh_;
+	const std::unique_ptr<Mesh>& clip_mesh_;
 	std::vector<VertexClip> clip_mesh_clip_space_vertices_;
 };

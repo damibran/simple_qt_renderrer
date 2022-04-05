@@ -20,6 +20,8 @@ public:
 
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
+		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
+
 		// Make CoordSys shape
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(100)),
@@ -27,14 +29,14 @@ public:
 		));
 
 		// Make Light source shape
-		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_));
+		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
 		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make clip object
 		scene_root_.push_back(std::make_unique<Shape>(std::make_unique<Transform>(glm::vec3(0), glm::vec3(15)),
 		                                              std::make_unique<ShaderMeshRenderer>(
 			                                              screen_, std::make_unique<WireFrameShader>(0.0003),
-			                                              std::make_unique<Mesh>("res/cub.obj")
+			                                              mesh_instances_.find("res/cub.obj")->second
 		                                              )
 			)
 		);
@@ -42,7 +44,7 @@ public:
 		Transform* clip_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make main cube
-		scene_root_.push_back(MainCubeScript::createObject(screen_, light_transform, clip_transform));
+		scene_root_.push_back(MainCubeScript::createObject(screen_, mesh_instances_, light_transform, clip_transform));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
@@ -64,6 +66,7 @@ public:
 private:
 	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
 };

@@ -15,12 +15,14 @@ public:
 	{
 	}
 
-	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s)
+	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s,
+	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
+	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0, 30, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
-			                                     std::make_unique<Mesh>("res/cub.obj")));
+			                                     mesh_instances.find("res/cub.obj")->second));
 
 		shp->setScript(std::make_unique<PointLightSourceScript>(shp->getTransformPtr(), ui.checkBox));
 
