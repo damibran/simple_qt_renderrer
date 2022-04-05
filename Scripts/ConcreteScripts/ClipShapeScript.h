@@ -14,12 +14,12 @@ public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui,
 	                                           Screen& s,
 	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
-	                                           mesh_instances)
+	                                           mesh_instances, const std::string& mesh)
 	{
 		auto shp = std::make_unique<Shape>(std::make_unique<Transform>(glm::vec3(0), glm::vec3(15)),
 		                                   std::make_unique<ShaderMeshRenderer>(
 			                                   s, std::make_unique<WireFrameShader>(0.0003),
-			                                   mesh_instances.find("res/cub.obj")->second
+			                                   mesh_instances.find(mesh)->second
 		                                   )
 		);
 
