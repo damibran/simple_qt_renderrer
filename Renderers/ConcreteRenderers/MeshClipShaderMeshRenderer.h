@@ -130,7 +130,7 @@ private:
 						float t_ca = c_dist / (c_dist - a_dist);
 						float t_bc = b_dist / (b_dist - c_dist);
 
-						oneInsideTwoOutSide(t_ca, TriangleSide::CA, t_bc, TriangleSide::BC, shader, trans, abc,
+						oneInsideTwoOutside(t_ca, TriangleSide::CA, t_bc, TriangleSide::BC, shader, trans, abc,
 						                    cur_clip_mesh_face);
 					}
 				}
@@ -142,7 +142,7 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_bc = b_dist / (b_dist - c_dist);
 
-						oneInsideTwoOutSide(t_bc, TriangleSide::BC, t_ab, TriangleSide::AB, shader, trans, abc,
+						oneInsideTwoOutside(t_bc, TriangleSide::BC, t_ab, TriangleSide::AB, shader, trans, abc,
 						                    cur_clip_mesh_face);
 					}
 					else // both c and b is inside
@@ -166,7 +166,7 @@ private:
 						float t_ab = a_dist / (a_dist - b_dist);
 						float t_ca = c_dist / (c_dist - a_dist);
 
-						oneInsideTwoOutSide(t_ab, TriangleSide::AB, t_ca, TriangleSide::CA, shader, trans, abc,
+						oneInsideTwoOutside(t_ab, TriangleSide::AB, t_ca, TriangleSide::CA, shader, trans, abc,
 						                    cur_clip_mesh_face);
 					}
 					else
@@ -206,7 +206,7 @@ private:
 	}
 
 	// {0 , side1 } - gives inside one and {1,side2} too
-	void oneInsideTwoOutSide(float t_side1, TriangleSide side1, float t_side2,
+	void oneInsideTwoOutside(float t_side1, TriangleSide side1, float t_side2,
 	                         TriangleSide side2, std::unique_ptr<Shader>& shader, const MVPMat& trans,
 	                         const TriangleClipPos& abc,
 	                         size_t cur_clip_mesh_face)
