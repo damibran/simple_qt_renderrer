@@ -33,34 +33,43 @@
      <string>RenderLabel</string>
     </property>
    </widget>
-   <widget class="QFrame" name="infoFrame">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>120</width>
-      <height>531</height>
+      <x>0</x>
+      <y>0</y>
+      <width>121</width>
+      <height>451</height>
      </rect>
     </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Sunken</enum>
-    </property>
-    <widget class="QCheckBox" name="checkBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>76</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Flex</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Flex</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTransformEditor" name="MainTransformEditor" native="true"/>
+     </item>
+     <item>
+      <widget class="QTransformEditor" name="ClipTransformEditor" native="true"/>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -89,6 +98,12 @@
    <class>QRenderLabel</class>
    <extends>QLabel</extends>
    <header>../QtMy/QRenderLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QTransformEditor</class>
+   <extends>QWidget</extends>
+   <header>../QtMy/QTransformEditor.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

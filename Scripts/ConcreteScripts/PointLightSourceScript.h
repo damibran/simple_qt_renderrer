@@ -34,7 +34,7 @@ public:
 		if (check_box_->isChecked())
 		{
 			t_ += speed_ * dt;
-			transform_->setPos({20 * sin(t_), 30*cos(t_), 0});
+			transform_->setPos({20 * sin(t_), 30 * cos(t_), 0});
 		}
 	}
 

@@ -108,9 +108,11 @@
     <QtMoc Include="QtMain\RendererMainWindow.h" />
     <ClCompile Include="QtMain\RendererMainWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="QtMy\QTransformEditor.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="QtMy\QRenderLabel.h" />
+    <ClInclude Include="QtMy\QTransformEditor.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h" />
