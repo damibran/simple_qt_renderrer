@@ -1,58 +1,16 @@
 #pragma once
 #include "../MyMain//Shape.h"
-#include "../Shader.h"
+#include "../ConcreteShaders/OnePointSourceLitShader.h"
 
-class OnePointSourceLitShaderWithWireframe final : public Shader
+class OnePointSourceLitShaderWithWireframe final : public OnePointSourceLitShader
 {
-private:
-	struct vrtx
-	{
-		glm::vec3 view_pos;
-		glm::vec3 view_norm;
-	};
-
-	vrtx a;
-	vrtx b;
-	vrtx c;
-
-	glm::vec3 view_light_pos;
-
-	float ambient = 0.5f;
-	float diffStrength = 0.7f;
-	float specStrength = 0.9f;
-
-	glm::vec3 objColor;
-
-	std::unique_ptr<Transform>& light_obj;
-
 public:
-	OnePointSourceLitShaderWithWireframe(std::unique_ptr<Transform>& lo, glm::vec3 color = glm::vec3(255, 255, 84)) : light_obj(lo), objColor(color)
+	OnePointSourceLitShaderWithWireframe(std::unique_ptr<Transform>& lo,
+	                                     glm::vec3 color = glm::vec3(255, 255, 84)): OnePointSourceLitShader(lo, color)
 	{
 	}
 
 	OnePointSourceLitShaderWithWireframe() = delete;
-
-	TriangleClipPos
-	computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
-	{
-		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
-		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
-		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
-
-		//calculating view positions
-		a.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v0.pos, 1.0f));
-		b.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v1.pos, 1.0f));
-		c.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v2.pos, 1.0f));
-
-		//calculation normals
-		a.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v0.norm;
-		b.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v1.norm;
-		c.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v2.norm;
-
-		view_light_pos = trans.view * glm::vec4(light_obj->getPos(), 1.0f);
-
-		return TriangleClipPos(clip_a, clip_b, clip_c);
-	}
 
 	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) override
 	{
@@ -76,18 +34,12 @@ public:
 		return color;
 	}
 
-	bool supportsBackFaceCulling() override
-	{
-		return false;
-	}
-
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
 	                              std::pair<float, TriangleSide> c) override
 	{
 		std::unique_ptr<OnePointSourceLitShaderWithWireframe> res = std::make_unique<
-			OnePointSourceLitShaderWithWireframe>(this->light_obj,this->objColor);
-
-		res->view_light_pos=view_light_pos;
+			OnePointSourceLitShaderWithWireframe>(this->light_obj, this->objColor);
+		res->view_light_pos = view_light_pos;
 
 		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
 		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);
@@ -97,42 +49,6 @@ public:
 
 		res->c.view_pos = lerpViewPosAlongSide(c.first, c.second);
 		res->c.view_norm = lerpViewNormAlongSide(c.first, c.second);
-
 		return res;
-	}
-
-
-
-private:
-	glm::vec3 lerpViewPosAlongSide(float t, TriangleSide side) const
-	{
-		if (side == TriangleSide::AB)
-		{
-			return this->a.view_pos + t * (this->b.view_pos - this->a.view_pos);
-		}
-		if (side == TriangleSide::BC)
-		{
-			return this->b.view_pos + t * (this->c.view_pos - this->b.view_pos);
-		}
-		return this->c.view_pos + t * (this->a.view_pos - this->c.view_pos);
-	}
-
-	glm::vec3 lerpViewNormAlongSide(float t, TriangleSide side) const
-	{
-		if (side == TriangleSide::AB)
-		{
-			return this->a.view_norm + t * (this->b.view_norm - this->a.view_norm);
-		}
-		if (side == TriangleSide::BC)
-		{
-			return this->b.view_norm + t * (this->c.view_norm - this->b.view_norm);
-		}
-		return this->c.view_norm + t * (this->a.view_norm - this->c.view_norm);
-	}
-
-public:
-	void changeColor(glm::vec3 color) override
-	{
-		objColor = color;
 	}
 };

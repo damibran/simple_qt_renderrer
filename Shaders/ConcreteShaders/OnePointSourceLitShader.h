@@ -2,9 +2,9 @@
 #include "../MyMain//Shape.h"
 #include "../Shader.h"
 
-class OnePointSourceLitShader final : public Shader
+class OnePointSourceLitShader : public Shader
 {
-private:
+protected:
 	struct vrtx
 	{
 		glm::vec3 view_pos;
@@ -17,16 +17,16 @@ private:
 
 	glm::vec3 view_light_pos;
 
-	float ambient = 0.1f;
-	float diffStrength = 0.5f;
-	float specStrength = 0.8f;
+	float ambient = 0.7f;
+	float diffStrength = 0.7f;
+	float specStrength = 0.9f;
 
 	glm::vec3 objColor;
 
-	Transform* light_obj;
+	std::unique_ptr<Transform>& light_obj;
 
 public:
-	OnePointSourceLitShader(Transform* lo, glm::vec3 color = glm::vec3(255, 255, 100)) : light_obj(lo)
+	OnePointSourceLitShader(std::unique_ptr<Transform>& lo, glm::vec3 color = glm::vec3(255, 255, 84)) : objColor(color),light_obj(lo)
 	{
 	}
 
@@ -80,7 +80,7 @@ public:
 	                              std::pair<float, TriangleSide> c) override
 	{
 		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(this->light_obj, this->objColor);
-
+		res->view_light_pos = view_light_pos;
 		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
 		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);
 
@@ -93,7 +93,12 @@ public:
 		return res;
 	}
 
-private:
+	void changeColor(glm::vec3 color) override
+	{
+		objColor = color;
+	}
+
+protected:
 	glm::vec3 lerpViewPosAlongSide(float t, TriangleSide side) const
 	{
 		if (side == TriangleSide::AB)

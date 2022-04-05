@@ -33,8 +33,9 @@ public:
 	{
 		if (check_box_->isChecked())
 		{
+			constexpr float R=50;
 			t_ += speed_ * dt;
-			transform_->setPos({100 * sin(t_)*cos(2*t_), 100 * sin(0.5f*t_)*sin(2*t_), 100*cos(2*t_)});
+			transform_->setPos({R * sin(t_)*cos(t_), R *cos(t_), R*sin(t_)});
 		}
 	}
 

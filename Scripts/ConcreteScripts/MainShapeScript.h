@@ -21,7 +21,7 @@ public:
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
 			std::make_unique<MeshClipShaderMeshRenderer>(
-				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),
+				s, std::make_unique<OnePointSourceLitShader>(light),
 				mesh_instances.find(main)->second,
 				mesh_instances.find(clip)->second, clip_trans, true));
 
