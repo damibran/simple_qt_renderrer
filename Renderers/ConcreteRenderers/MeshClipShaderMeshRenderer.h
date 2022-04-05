@@ -13,7 +13,7 @@ public:
 	~MeshClipShaderMeshRenderer() override = default;
 
 	MeshClipShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> main_obj_shdr, const std::unique_ptr<Mesh>& m,
-	                           const std::unique_ptr<Mesh>& c_m, Transform* c_t) :
+	                           const std::unique_ptr<Mesh>& c_m, std::unique_ptr<Transform>& c_t) :
 		ShaderMeshRenderer(s, std::move(main_obj_shdr), m), clip_trans_(c_t), clip_mesh_(c_m->childs[0])
 	{
 		clip_mesh_clip_space_vertices_.resize(clip_mesh_->vertices.size());
@@ -231,7 +231,7 @@ private:
 		return glm::dot(planeN, P - planeP);
 	}
 
-	Transform* clip_trans_;
+	std::unique_ptr<Transform>& clip_trans_;
 	const std::unique_ptr<Mesh>& clip_mesh_;
 	std::vector<VertexClip> clip_mesh_clip_space_vertices_;
 };

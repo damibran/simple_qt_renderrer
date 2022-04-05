@@ -11,7 +11,7 @@
 class MainCubeScript : public Script
 {
 public:
-	static std::unique_ptr<Shape> createObject(Screen& s, const std::unordered_map<std::string,std::unique_ptr<Mesh>>& mesh_instances,Transform* light, Transform* clip_trans)
+	static std::unique_ptr<Shape> createObject(Screen& s, const std::unordered_map<std::string,std::unique_ptr<Mesh>>& mesh_instances,std::unique_ptr<Transform>& light, std::unique_ptr<Transform>& clip_trans)
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(10)),
@@ -24,7 +24,7 @@ public:
 		return shp;
 	}
 
-	MainCubeScript(Transform* trans): transform_(trans)
+	MainCubeScript(std::unique_ptr<Transform>& trans): transform_(trans)
 	{
 	}
 
@@ -36,5 +36,5 @@ public:
 
 private:
 	float angle = 0;
-	Transform* transform_;
+	std::unique_ptr<Transform>& transform_;
 };

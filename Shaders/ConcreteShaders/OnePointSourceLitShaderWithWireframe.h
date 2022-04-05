@@ -23,10 +23,10 @@ private:
 
 	glm::vec3 objColor = glm::vec3(255, 255, 84);
 
-	Transform* light_obj;
+	std::unique_ptr<Transform>& light_obj;
 
 public:
-	OnePointSourceLitShaderWithWireframe(Transform* lo) : light_obj(lo)
+	OnePointSourceLitShaderWithWireframe(std::unique_ptr<Transform>& lo) : light_obj(lo)
 	{
 	}
 

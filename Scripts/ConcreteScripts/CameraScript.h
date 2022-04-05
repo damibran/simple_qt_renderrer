@@ -22,7 +22,7 @@ public:
 		return shp;
 	}
 
-	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, Transform* transform) : ui_(ui), screen_(s),
+	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, std::unique_ptr<Transform>& transform) : ui_(ui), screen_(s),
 		transform_(transform)
 	{
 		proj_ = glm::perspective(glm::radians(45.0f),
@@ -85,7 +85,7 @@ private:
 
 	Ui::RenderrerMainWindowClass& ui_;
 	Screen& screen_;
-	Transform* transform_;
+	std::unique_ptr<Transform>& transform_;
 	glm::mat4 proj_;
 	glm::vec3 front_ = glm::vec3(0.0f, 0.0f, -1.0f);
 	glm::vec3 up_ = glm::vec3(0.0f, 1.0f, 0.0f);

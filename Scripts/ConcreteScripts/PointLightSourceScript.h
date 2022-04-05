@@ -11,7 +11,7 @@
 class PointLightSourceScript : public Script
 {
 public:
-	PointLightSourceScript(Transform* t, QCheckBox* qcb): transform_(t), check_box_(qcb)
+	PointLightSourceScript(std::unique_ptr<Transform>& t, QCheckBox* qcb): transform_(t), check_box_(qcb)
 	{
 	}
 
@@ -34,13 +34,13 @@ public:
 		if (check_box_->isChecked())
 		{
 			t_ += speed_ * dt;
-			transform_->setPos({20 * sin(t_), 30, 0});
+			transform_->setPos({20 * sin(t_), 30*cos(t_), 0});
 		}
 	}
 
 private:
 	float speed_ = 1;
 	float t_ = 0.;
-	Transform* transform_;
+	std::unique_ptr<Transform>& transform_;
 	QCheckBox* check_box_;
 };

@@ -30,7 +30,7 @@ public:
 
 		// Make Light source shape
 		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
-		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
+		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make clip object
 		scene_root_.push_back(std::make_unique<Shape>(std::make_unique<Transform>(glm::vec3(0), glm::vec3(15)),
@@ -41,7 +41,7 @@ public:
 			)
 		);
 
-		Transform* clip_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
+		std::unique_ptr<Transform>& clip_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make main cube
 		scene_root_.push_back(MainCubeScript::createObject(screen_, mesh_instances_, light_transform, clip_transform));
