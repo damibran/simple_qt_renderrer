@@ -71,7 +71,6 @@ public slots:
 
 public:
 	QVBoxLayout* verticalLayout;
-	QLabel* ObjNameLabel;
 	QComboBox* TransformSelector;
 	QSlider* XSlider;
 	QSlider* YSlider;
@@ -94,10 +93,6 @@ public:
 		verticalLayout = new QVBoxLayout(this);
 		verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
 		verticalLayout->setContentsMargins(0, 0, 0, 0);
-		ObjNameLabel = new QLabel(this);
-		ObjNameLabel->setObjectName(QString::fromUtf8("ObjNameLabel"));
-
-		verticalLayout->addWidget(ObjNameLabel);
 
 		TransformSelector = new QComboBox(this);
 		TransformSelector->addItem(QString("Scale"));

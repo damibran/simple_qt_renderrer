@@ -51,7 +51,21 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Main Object</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QTransformEditor" name="MainTransformEditor" native="true"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Clip Object</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QTransformEditor" name="ClipTransformEditor" native="true"/>
