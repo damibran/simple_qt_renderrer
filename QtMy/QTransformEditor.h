@@ -13,19 +13,60 @@ public slots:
 		if (i == 0) // Scale
 		{
 			values = shape_transform_->getScale();
+			XSlider->setMinimum(scaleMin);
+			YSlider->setMinimum(scaleMin);
+			ZSlider->setMinimum(scaleMin);
+
+			XSlider->setMaximum(scaleMax);
+			YSlider->setMaximum(scaleMax);
+			ZSlider->setMaximum(scaleMax);
 		}
 		else if (i == 1) // Pos
 		{
 			values = shape_transform_->getPos();
+			XSlider->setMinimum(posMin);
+			YSlider->setMinimum(posMin);
+			ZSlider->setMinimum(posMin);
+
+			XSlider->setMaximum(posMax);
+			YSlider->setMaximum(posMax);
+			ZSlider->setMaximum(posMax);
 		}
 		else // Rot
 		{
 			values = shape_transform_->getRotationDegrees();
+			XSlider->setMinimum(rotMin);
+			YSlider->setMinimum(rotMin);
+			ZSlider->setMinimum(rotMin);
+
+			XSlider->setMaximum(rotMax);
+			YSlider->setMaximum(rotMax);
+			ZSlider->setMaximum(rotMax);
 		}
 
-		XSlider->setValue(values.x);
-		YSlider->setValue(values.y);
-		ZSlider->setValue(values.z);
+		XSlider->setValue(static_cast<int>(values.x));
+		YSlider->setValue(static_cast<int>(values.y));
+		ZSlider->setValue(static_cast<int>(values.z));
+	}
+
+	void onSliderUpdate(int x)
+	{
+		int i = TransformSelector->currentIndex();
+
+		glm::vec3 values(XSlider->value(), YSlider->value(), ZSlider->value());
+
+		if (i == 0) // Scale
+		{
+			shape_transform_->setScale(values);
+		}
+		else if (i == 1) // Pos
+		{
+			shape_transform_->setPos(values);
+		}
+		else // Rot
+		{
+			shape_transform_->setRotationDegrees(values);
+		}
 	}
 
 public:
@@ -37,6 +78,15 @@ public:
 	QSlider* ZSlider;
 
 	Transform* shape_transform_;
+
+	const int posMin = -50;
+	const int posMax = - posMin;
+
+	const int scaleMin = 0;
+	const int scaleMax = 30;
+
+	const int rotMin = -45;
+	const int rotMax = -rotMin;
 
 	QTransformEditor(QWidget* parent): QWidget(parent)
 	{
@@ -59,33 +109,31 @@ public:
 
 		XSlider = new QSlider(this);
 		XSlider->setObjectName(QString::fromUtf8("XSlider"));
-		XSlider->setMinimum(-90);
-		XSlider->setMaximum(90);
 		XSlider->setOrientation(Qt::Horizontal);
 
 		verticalLayout->addWidget(XSlider);
 
 		YSlider = new QSlider(this);
 		YSlider->setObjectName(QString::fromUtf8("YSlider"));
-		YSlider->setMinimum(-90);
-		YSlider->setMaximum(90);
 		YSlider->setOrientation(Qt::Horizontal);
 
 		verticalLayout->addWidget(YSlider);
 
 		ZSlider = new QSlider(this);
 		ZSlider->setObjectName(QString::fromUtf8("ZSlider"));
-		ZSlider->setMinimum(-90);
-		ZSlider->setMaximum(90);
 		ZSlider->setOrientation(Qt::Horizontal);
 
 		verticalLayout->addWidget(ZSlider);
 
 		connect(TransformSelector, &QComboBox::currentIndexChanged, this, &QTransformEditor::onSelectorUpdate);
+		connect(XSlider, &QSlider::valueChanged, this, &QTransformEditor::onSliderUpdate);
+		connect(YSlider, &QSlider::valueChanged, this, &QTransformEditor::onSliderUpdate);
+		connect(ZSlider, &QSlider::valueChanged, this, &QTransformEditor::onSliderUpdate);
 	}
 
 	void bindWidgetToShape(Transform* transform)
 	{
 		shape_transform_ = transform;
+		onSelectorUpdate(0);
 	}
 };

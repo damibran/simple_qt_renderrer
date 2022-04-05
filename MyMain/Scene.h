@@ -3,7 +3,8 @@
 #include "Screen.h"
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
-#include "../Scripts/ConcreteScripts/MainCubeScript.h"
+#include "../Scripts/ConcreteScripts/MainShapeScript.h"
+#include "../Scripts/ConcreteScripts/ClipShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -33,18 +34,12 @@ public:
 		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make clip object
-		scene_root_.push_back(std::make_unique<Shape>(std::make_unique<Transform>(glm::vec3(0), glm::vec3(15)),
-		                                              std::make_unique<ShaderMeshRenderer>(
-			                                              screen_, std::make_unique<WireFrameShader>(0.0003),
-			                                              mesh_instances_.find("res/cub.obj")->second
-		                                              )
-			)
-		);
-
+		scene_root_.push_back(ClipShapeScript::createObject(ui, screen_, mesh_instances_));
 		std::unique_ptr<Transform>& clip_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make main cube
-		scene_root_.push_back(MainCubeScript::createObject(screen_, mesh_instances_, light_transform, clip_transform));
+		scene_root_.push_back(
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, light_transform, clip_transform));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
