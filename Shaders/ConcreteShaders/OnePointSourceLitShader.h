@@ -17,9 +17,9 @@ protected:
 
 	glm::vec3 view_light_pos;
 
-	float ambient = 0.7f;
-	float diffStrength = 0.7f;
-	float specStrength = 0.9f;
+	float ambient = 1.f;
+	float diffStrength = 1.0f;
+	float specStrength = 1.0f;
 
 	glm::vec3 objColor;
 

@@ -43,7 +43,7 @@ public:
 
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj", "res/tetrahedron.obj",
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/cub.obj", "res/tetrahedron.obj",
 			                              light_transform,
 			                              clip_transform));
 
