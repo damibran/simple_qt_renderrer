@@ -23,6 +23,9 @@ public:
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
+		glm::mat3 t_inv_proj = glm::mat3(glm::transpose(glm::inverse(
+			trans.view *
+			clip_trans_->getFullModelMatrix())));
 		for (size_t i = 0; i < clip_mesh_->indices.size(); ++i)
 		{
 			clip_mesh_clip_space_vertices_[clip_mesh_->indices[i]].pos =
@@ -31,10 +34,7 @@ public:
 				glm::vec4(clip_mesh_->vertices[clip_mesh_->indices[i]].pos, 1.0f);
 
 			clip_mesh_clip_space_vertices_[clip_mesh_->indices[i]].norm =
-				glm::normalize(
-					glm::mat3(glm::transpose(glm::inverse(
-						trans.view *
-						clip_trans_->getFullModelMatrix()))) *
+				glm::normalize(t_inv_proj *
 					clip_mesh_->vertices[clip_mesh_->indices[i]].norm);
 		}
 		drawMesh(screen_, trans, mesh_);
@@ -43,15 +43,17 @@ public:
 private:
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
+		glm::mat4 inv_proj = glm::inverse(trans.proj);
+		glm::mat3 t_inv_MV = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model)));
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
-			TriangleClipPos abc = shader_->computeVertexShader(trans, mesh->vertices[mesh->indices[i]],
+			TriangleClipPos abc = shader_->computeVertexShader(trans,t_inv_MV, mesh->vertices[mesh->indices[i]],
 			                                                   mesh->vertices[mesh->indices[i + 1]],
 			                                                   mesh->vertices[mesh->indices[i + 2]]);
 
-			abc.a = glm::inverse(trans.proj) * abc.a;
-			abc.b = glm::inverse(trans.proj) * abc.b;
-			abc.c = glm::inverse(trans.proj) * abc.c;
+			abc.a = inv_proj * abc.a;
+			abc.b = inv_proj * abc.b;
+			abc.c = inv_proj * abc.c;
 
 			process_trngl(shader_, trans, abc, 0);
 		}

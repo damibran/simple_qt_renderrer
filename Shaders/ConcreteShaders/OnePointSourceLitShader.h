@@ -26,7 +26,8 @@ protected:
 	std::unique_ptr<Transform>& light_obj;
 
 public:
-	OnePointSourceLitShader(std::unique_ptr<Transform>& lo, glm::vec3 color = glm::vec3(255, 255, 84)) : objColor(color),light_obj(lo)
+	OnePointSourceLitShader(std::unique_ptr<Transform>& lo,
+	                        glm::vec3 color = glm::vec3(255, 255, 84)) : objColor(color), light_obj(lo)
 	{
 	}
 
@@ -48,6 +49,29 @@ public:
 		a.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v0.norm;
 		b.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v1.norm;
 		c.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v2.norm;
+
+		view_light_pos = trans.view * glm::vec4(light_obj->getPos(), 1.0f);
+
+		return TriangleClipPos(clip_a, clip_b, clip_c);
+	}
+
+	TriangleClipPos
+	computeVertexShader(const MVPMat& trans, const glm::mat3 t_inv_VM, const Vertex& v0, const Vertex& v1,
+	                    const Vertex& v2) override
+	{
+		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
+		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
+		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
+
+		//calculating view positions
+		a.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v0.pos, 1.0f));
+		b.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v1.pos, 1.0f));
+		c.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v2.pos, 1.0f));
+
+		//calculation normals
+		a.view_norm = t_inv_VM * v0.norm;
+		b.view_norm = t_inv_VM * v1.norm;
+		c.view_norm = t_inv_VM * v2.norm;
 
 		view_light_pos = trans.view * glm::vec4(light_obj->getPos(), 1.0f);
 
@@ -79,7 +103,8 @@ public:
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
 	                              std::pair<float, TriangleSide> c) override
 	{
-		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(this->light_obj, this->objColor);
+		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(
+			this->light_obj, this->objColor);
 		res->view_light_pos = view_light_pos;
 		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
 		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);
