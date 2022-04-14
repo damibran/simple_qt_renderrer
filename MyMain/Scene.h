@@ -4,7 +4,6 @@
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
-#include "../Scripts/ConcreteScripts/ClipShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -37,15 +36,10 @@ public:
 		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
 		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
-		// Make clip object
-		scene_root_.push_back(ClipShapeScript::createObject(ui, screen_, mesh_instances_, "res/tetrahedron.obj"));
-		std::unique_ptr<Transform>& clip_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
-
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/cub.obj", "res/tetrahedron.obj",
-			                              light_transform,
-			                              clip_transform));
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj",
+			                              light_transform));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));

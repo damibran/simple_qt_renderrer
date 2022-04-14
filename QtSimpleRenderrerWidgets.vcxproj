@@ -120,7 +120,6 @@
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
     <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
-    <ClInclude Include="Scripts\ConcreteScripts\ClipShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\MainShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
     <ClInclude Include="Scripts\Script.h" />

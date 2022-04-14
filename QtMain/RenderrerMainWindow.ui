@@ -61,16 +61,6 @@
       <widget class="QTransformEditor" name="MainTransformEditor" native="true"/>
      </item>
      <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Clip Object</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTransformEditor" name="ClipTransformEditor" native="true"/>
-     </item>
-     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
