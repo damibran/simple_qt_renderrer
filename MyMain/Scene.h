@@ -3,7 +3,7 @@
 #include "Screen.h"
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
-#include "../Scripts/ConcreteScripts/MainCubeScript.h"
+#include "../Scripts/ConcreteScripts/MainShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -20,6 +20,12 @@ public:
 
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
+		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
+		mesh_instances_["res/tetrahedron.obj"] = std::make_unique<Mesh>("res/tetrahedron.obj");
+		mesh_instances_["res/monkey.obj"] = std::make_unique<Mesh>("res/monkey.obj");
+		mesh_instances_["res/tree.obj"] = std::make_unique<Mesh>("res/tree.obj");
+		mesh_instances_["res/pyramid.obj"] = std::make_unique<Mesh>("res/pyramid.obj");
+
 		// Make CoordSys shape
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(100)),
@@ -27,16 +33,13 @@ public:
 		));
 
 		// Make Light source shape
-		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_));
-		Transform* light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
-
-		scene_root_.push_back(std::make_unique<Shape>(std::make_unique<Transform>(glm::vec3(0), glm::vec3(15)),
-		                                              std::make_unique<ShaderMeshRenderer>(
-			                                              screen_, std::make_unique<WireFrameShader>(0.0003),
-			                                              std::make_unique<Mesh>("res/cub.obj"))));
+		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
+		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make main cube
-		scene_root_.push_back(MainCubeScript::createObject(screen_, light_transform));
+		scene_root_.push_back(
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj",
+			                              light_transform));
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
@@ -58,6 +61,7 @@ public:
 private:
 	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
+	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
 };

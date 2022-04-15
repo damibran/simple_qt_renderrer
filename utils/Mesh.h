@@ -16,10 +16,16 @@ public:
 		loadMesh(path);
 	}
 
+	Mesh(const std::unique_ptr<Mesh>& m): vertices(m->vertices), indices(m->indices) // dont copy childs
+	{
+		qDebug() << "Mesh Copy";
+	}
+
 	friend class ShaderMeshRenderer;
+	friend class MeshClipShaderMeshRenderer;
 
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	Mesh(std::vector<Vertex> verts, std::vector<unsigned int> indes)
+	Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& indes)
 	{
 		this->vertices = verts;
 		this->indices = indes;
@@ -28,6 +34,11 @@ public:
 	const std::vector<Vertex>& getChildVerticesRef(int indx) const
 	{
 		return childs[indx]->vertices;
+	}
+
+	size_t faceCount() const
+	{
+		return indices.size() / 3;
 	}
 
 private:
@@ -42,7 +53,7 @@ private:
 	{
 		// read file via ASSIMP
 		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(path, aiProcess_JoinIdenticalVertices);
+		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
 		// aiProcess_Triangulate| aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero

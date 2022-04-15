@@ -108,8 +108,22 @@
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts\ConcreteScripts\MainCubeScript.h">
+    <ClInclude Include="Scripts\ConcreteScripts\MainShapeScript.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\TriangleSides.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QtMy\QTransformEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="QtMy\QTransformEditor.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>

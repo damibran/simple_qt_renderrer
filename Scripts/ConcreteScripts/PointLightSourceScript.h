@@ -11,16 +11,18 @@
 class PointLightSourceScript : public Script
 {
 public:
-	PointLightSourceScript(Transform* t, QCheckBox* qcb): transform_(t), check_box_(qcb)
+	PointLightSourceScript(std::unique_ptr<Transform>& t, QCheckBox* qcb): transform_(t), check_box_(qcb)
 	{
 	}
 
-	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s)
+	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s,
+	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
+	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0, 30, 0)),
+			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
-			                                     std::make_unique<Mesh>("res/cub.obj")));
+			                                     mesh_instances.find("res/tetrahedron.obj")->second));
 
 		shp->setScript(std::make_unique<PointLightSourceScript>(shp->getTransformPtr(), ui.checkBox));
 
@@ -31,14 +33,15 @@ public:
 	{
 		if (check_box_->isChecked())
 		{
+			constexpr float R=50;
 			t_ += speed_ * dt;
-			transform_->setPos({20 * sin(t_), 30, 0});
+			transform_->setPos({R * sin(t_)*cos(t_), R *cos(t_), R*sin(t_)});
 		}
 	}
 
 private:
-	float speed_ = 1;
+	float speed_ = 0.5;
 	float t_ = 0.;
-	Transform* transform_;
+	std::unique_ptr<Transform>& transform_;
 	QCheckBox* check_box_;
 };

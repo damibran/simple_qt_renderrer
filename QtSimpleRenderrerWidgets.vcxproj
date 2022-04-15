@@ -108,16 +108,19 @@
     <QtMoc Include="QtMain\RendererMainWindow.h" />
     <ClCompile Include="QtMain\RendererMainWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <QtUic Include="QtMy\QTransformEditor.ui" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="QtMy\QRenderLabel.h" />
+    <ClInclude Include="QtMy\QTransformEditor.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\BezierCurveRenderer.h" />
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
+    <ClInclude Include="Renderers\ConcreteRenderers\MeshClipShaderMeshRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
     <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
-    <ClInclude Include="Scripts\ConcreteScripts\MainCubeScript.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\MainShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
     <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShader.h" />
@@ -132,6 +135,7 @@
     <ClInclude Include="utils\LineSegment.h" />
     <ClInclude Include="utils\MVPMat.h" />
     <ClInclude Include="utils\Transform.h" />
+    <ClInclude Include="utils\TriangleSides.h" />
     <ClInclude Include="utils\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

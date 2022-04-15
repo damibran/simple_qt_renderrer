@@ -14,7 +14,7 @@ public:
 	Screen(const uint mx, const uint my) : XMAX(mx / 2), YMAX(my / 2),
 	                                       buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32)
 	{
-		buffer_.fill(QColor(150, 150, 150));
+		buffer_.fill(QColor(200, 200, 200));
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			z_buffer_.push_back(FLT_MAX);
 	}
@@ -35,7 +35,7 @@ public:
 
 	void clearScreen()
 	{
-		buffer_.fill(QColor(150, 150, 150));
+		buffer_.fill(QColor(200, 200, 200));
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			z_buffer_[i] = FLT_MAX;
 	}

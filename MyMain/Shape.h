@@ -64,9 +64,9 @@ public:
 		return script_.get();
 	}
 
-	Transform* getTransformPtr() const
+	std::unique_ptr<Transform>& getTransformPtr()
 	{
-		return transform_.get();
+		return transform_;
 	}
 
 	RendererComponent* getRenderComponentPtr() const

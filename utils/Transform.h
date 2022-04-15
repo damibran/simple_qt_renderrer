@@ -50,6 +50,11 @@ public:
 		scaling_ = v;
 	}
 
+	glm::vec3 getScale() const
+	{
+		return scaling_;
+	}
+
 	[[nodiscard]] glm::mat4 getRotationMatrix() const
 	{
 		glm::mat4 m(1.);
