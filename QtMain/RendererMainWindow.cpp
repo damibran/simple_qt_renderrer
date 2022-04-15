@@ -3,7 +3,7 @@
 
 RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* parent)
 	: QMainWindow(parent)
-	  , screen_(wr, hr)
+	  , screen_(wr, hr,4)
 	  , scene_(screen_)
 {
 	ui_.setupUi(this);
@@ -26,7 +26,7 @@ void RendererMainWindow::screen_refresh()
 	tp1_ = tp2_;
 	const float delta_time = elapsed_time.count();
 
-	//qDebug() << 1.0f / delta_time;
+	qDebug() << 1.0f / delta_time;
 
 	screen_.clearScreen();
 	//updating all scene

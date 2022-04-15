@@ -11,7 +11,7 @@ public:
 	~ShaderMeshRenderer() override = default;
 
 	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, const std::unique_ptr<Mesh>& m) : screen_(s),
-		shader_(std::move(shdr)), mesh_(m), pool_(4) { pool_.sleep_duration = 0; }
+		shader_(std::move(shdr)), mesh_(m), pool_(s.pool_) {}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
@@ -130,7 +130,7 @@ protected:
 	Screen& screen_;
 	std::unique_ptr<Shader> shader_;
 	const std::unique_ptr<Mesh>& mesh_;
-	thread_pool pool_; // not like this creates pool_for every, but they need to share !!!!
+	thread_pool& pool_;
 
 	float min3(const float& a, const float& b, const float& c) const
 	{
@@ -142,7 +142,7 @@ protected:
 		return std::max(a, std::max(b, c));
 	}
 
-	float edgeFunction(const glm::vec3& a, const glm::vec3& b, const glm::vec2& c) const
+	static float edgeFunction(const glm::vec3& a, const glm::vec3& b, const glm::vec2& c)
 	{
 		return -((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x));
 	}

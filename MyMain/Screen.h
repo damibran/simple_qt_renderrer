@@ -10,10 +10,12 @@ class Screen
 public:
 	const uint XMAX;
 	const uint YMAX;
+	thread_pool pool_;
 
-	Screen(const uint mx, const uint my) : XMAX(mx / 2), YMAX(my / 2),
-	                                       buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32)
+	Screen(const uint mx, const uint my,uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
+	                                       buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),pool_(_thread_count)
 	{
+		pool_.sleep_duration=0;
 		buffer_.fill(QColor(200, 200, 200));
 		for (size_t i = 0; i < XMAX * YMAX; ++i)
 			z_buffer_.push_back(FLT_MAX);
