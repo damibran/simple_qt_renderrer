@@ -1,6 +1,6 @@
 #pragma once
 #include"../utils/MVPMat.h"
-#include "Screen.h"
+#include "../MyMain/Screen.h"
 #include "../Renderers/RendererComponent.h"
 #include "../Scripts/Script.h"
 #include <vector>
@@ -43,6 +43,8 @@ public:
 		{
 			i->drawShape(screen, this_trans);
 		}
+
+		// here must be synhro of working threads
 	}
 
 	void updateScript(float dt) const
@@ -59,7 +61,7 @@ public:
 		script_ = std::move(s);
 	}
 
-	Script* getScriptPtr() const
+	[[nodiscard]] Script* getScriptPtr() const
 	{
 		return script_.get();
 	}

@@ -17,7 +17,7 @@ private:
 	float line_width;
 
 public:
-	WireFrameShader(float lw=0.0001) : line_width(lw)
+	WireFrameShader(float lw = 0.0001) : line_width(lw)
 	{
 	}
 
@@ -54,7 +54,7 @@ public:
 	}
 
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
-	                              std::pair<float, TriangleSide> c) override
+	                              std::pair<float, TriangleSide> c) const override
 	{
 		std::unique_ptr<WireFrameShader> res = std::make_unique<WireFrameShader>(line_width);
 
@@ -79,5 +79,12 @@ private:
 			return this->b.view_pos + t * (this->c.view_pos - this->b.view_pos);
 		}
 		return this->c.view_pos + t * (this->a.view_pos - this->c.view_pos);
+	}
+
+protected:
+	[[nodiscard]] bool isEqual(const Shader& obj) const override
+	{
+		auto v = dynamic_cast<const WireFrameShader&>(obj);
+		return line_width == v.line_width;
 	}
 };

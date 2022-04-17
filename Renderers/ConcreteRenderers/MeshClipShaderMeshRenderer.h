@@ -8,7 +8,7 @@
 #include "../Shaders/Shader.h"
 #include "../utils/Transform.h"
 
-class MeshClipShaderMeshRenderer : public ShaderMeshRenderer
+/*class MeshClipShaderMeshRenderer : public ShaderMeshRenderer
 {
 public:
 	~MeshClipShaderMeshRenderer() override = default;
@@ -273,3 +273,4 @@ private:
 	std::vector<VertexView> clip_mesh_clip_space_vertices_;
 	const bool render_outer_ = false;
 };
+*/

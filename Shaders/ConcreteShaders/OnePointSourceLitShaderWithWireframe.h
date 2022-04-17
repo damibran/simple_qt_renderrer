@@ -35,7 +35,7 @@ public:
 	}
 
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
-	                              std::pair<float, TriangleSide> c) override
+	                              std::pair<float, TriangleSide> c)const override
 	{
 		std::unique_ptr<OnePointSourceLitShaderWithWireframe> res = std::make_unique<
 			OnePointSourceLitShaderWithWireframe>(this->light_obj, this->objColor);

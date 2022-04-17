@@ -56,6 +56,9 @@ public:
 	{
 		for (auto& i : scene_root_)
 			i->drawShape(screen_, cam_->getCameraProjViewMat());
+
+		screen_.pool_.wait_for_tasks();
+		screen_.sumUpBuffers();
 	}
 
 private:

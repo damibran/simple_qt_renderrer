@@ -101,7 +101,7 @@ public:
 	}
 
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
-	                              std::pair<float, TriangleSide> c) override
+	                              std::pair<float, TriangleSide> c) const override
 	{
 		std::unique_ptr<OnePointSourceLitShader> res = std::make_unique<OnePointSourceLitShader>(
 			this->light_obj, this->objColor);
@@ -148,5 +148,11 @@ protected:
 			return this->b.view_norm + t * (this->c.view_norm - this->b.view_norm);
 		}
 		return this->c.view_norm + t * (this->a.view_norm - this->c.view_norm);
+	}
+
+	[[nodiscard]] bool isEqual(const Shader& obj) const override
+	{
+		auto v = dynamic_cast<const OnePointSourceLitShader&>(obj);
+		return light_obj == v.light_obj && objColor == v.objColor;
 	}
 };

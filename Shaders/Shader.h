@@ -36,7 +36,9 @@ public:
 	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const glm::mat3 t_inv_VM, const Vertex& v0,
 	                                            const Vertex& v1,
 	                                            const Vertex& v2)
-	{ return computeVertexShader(trans, v0, v1, v2); }
+	{
+		return computeVertexShader(trans, v0, v1, v2);
+	}
 
 	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0,
 	                                            const Vertex& v1,
@@ -51,10 +53,25 @@ public:
 
 	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0; //return color
 	virtual std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
-	                                      std::pair<float, TriangleSide> c) =0;
+	                                      std::pair<float, TriangleSide> c) const =0;
+
+	virtual std::unique_ptr<Shader> clone() const
+	{
+		return clone({0, TriangleSide::AB}, {0, TriangleSide::BC}, {0, TriangleSide::CA});
+	};
+
 	virtual bool supportsBackFaceCulling() =0;
 
 	virtual void changeColor(glm::vec3 color)
 	{
 	};
+
+	friend bool operator==(const Shader& lhs, const Shader& rhs)
+	{
+		return typeid(lhs) == typeid(rhs)
+			&& lhs.isEqual(rhs);
+	}
+
+protected:
+	[[nodiscard]] virtual bool isEqual(const Shader& obj) const=0;
 };

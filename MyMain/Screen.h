@@ -12,13 +12,11 @@ public:
 	const uint YMAX;
 	thread_pool pool_;
 
-	Screen(const uint mx, const uint my,uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
-	                                       buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),pool_(_thread_count)
+	Screen(const uint mx, const uint my, uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
+	                                                           buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),
+	                                                           pool_(XMAX, YMAX, _thread_count)
 	{
-		pool_.sleep_duration=0;
-		buffer_.fill(QColor(200, 200, 200));
-		for (size_t i = 0; i < XMAX * YMAX; ++i)
-			z_buffer_.push_back(FLT_MAX);
+		pool_.sleep_duration = 0;
 	}
 
 	void put_point(const uint a, const uint b, const glm::vec3& color)
@@ -30,6 +28,17 @@ public:
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
+	void sumUpBuffers()
+	{
+		for (uint x = 0; x < XMAX; ++x)
+		{
+			for (uint y = 0; y < YMAX; ++y)
+			{
+				put_point(x,y,pool_.getThreadsColor(x,y));
+			}
+		}
+	}
+
 	QImage& getImage()
 	{
 		return buffer_;
@@ -37,24 +46,11 @@ public:
 
 	void clearScreen()
 	{
-		buffer_.fill(QColor(200, 200, 200));
-		for (size_t i = 0; i < XMAX * YMAX; ++i)
-			z_buffer_[i] = FLT_MAX;
-	}
-
-	float getZBufferAt(const uint i) const
-	{
-		return z_buffer_[i];
-	}
-
-	void setZBufferAt(const uint i, const float val)
-	{
-		z_buffer_[i] = val;
+		pool_.clearBuffers({200,200,200});
 	}
 
 private:
 	QImage buffer_;
-	std::vector<float> z_buffer_;
 };
 
 #endif // SCREEN_H

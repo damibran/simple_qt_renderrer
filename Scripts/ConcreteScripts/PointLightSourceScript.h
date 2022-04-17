@@ -21,7 +21,7 @@ public:
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
-			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
+			std::make_unique<ShaderMeshRenderer>(s, s.pool_.registerShader(LightSourceShader()),
 			                                     mesh_instances.find("res/tetrahedron.obj")->second));
 
 		shp->setScript(std::make_unique<PointLightSourceScript>(shp->getTransformPtr(), ui.checkBox));
