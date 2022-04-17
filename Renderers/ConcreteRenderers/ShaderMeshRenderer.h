@@ -24,15 +24,17 @@ protected:
 	{
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
-			pool_.push_task(TaskArgs(shader_, trans, mesh->vertices[mesh->indices[i]],
-			                         mesh->vertices[mesh->indices[i + 1]],
-			                         mesh->vertices[mesh->indices[i + 2]]));
+			pool_.push_task(std::move(std::make_unique<TaskArgs>(shader_, trans, mesh->vertices[mesh->indices[i]],
+			                                                     mesh->vertices[mesh->indices[i + 1]],
+			                                                     mesh->vertices[mesh->indices[i + 2]])));
 		}
 
 		for (auto const& i : mesh->childs)
 		{
 			drawMesh(screen, trans, i);
 		}
+
+		screen_.pool_.wait_for_tasks();
 	}
 
 	Screen& screen_;

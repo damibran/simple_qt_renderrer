@@ -50,20 +50,17 @@ using ShaderID = size_t;
 
 struct TaskArgs
 {
-	TaskArgs() = default;
-	TaskArgs& operator=(const TaskArgs& other) = default;
-
-
+	TaskArgs(const TaskArgs& o)=delete;
 	TaskArgs(ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
 	         const Vertex& v2) : shader(shdr), trans(trans), v0(v0), v1(v1), v2(v2)
 	{
 	}
 
 	ShaderID shader;
-	MVPMat trans;
-	Vertex v0;
-	Vertex v1;
-	Vertex v2;
+	const MVPMat& trans;
+	const Vertex& v0;
+	const Vertex& v1;
+	const Vertex& v2;
 };
 
 
@@ -237,12 +234,12 @@ public:
 		});
 	}
 
-	void push_task(const TaskArgs& ta)
+	void push_task(std::unique_ptr<TaskArgs>&& ta)
 	{
 		tasks_total++;
 		{
 			const std::scoped_lock lock(queue_mutex);
-			tasks.push(ta);
+			tasks.push(std::move(ta));
 		}
 	}
 
@@ -455,14 +452,14 @@ private:
 	 * @param task A reference to the task. Will be populated with a function if the queue is not empty.
 	 * @return true if a task was found, false if the queue is empty.
 	 */
-	bool pop_task(TaskArgs& task)
+	bool pop_task(std::unique_ptr<TaskArgs>& task)
 	{
 		const std::scoped_lock lock(queue_mutex);
 		if (tasks.empty())
 			return false;
 		else
 		{
-			task = tasks.front();
+			task = std::move(tasks.front());
 			tasks.pop();
 			return true;
 		}
@@ -487,11 +484,11 @@ private:
 	{
 		while (running)
 		{
-			TaskArgs task;
+			std::unique_ptr<TaskArgs> task;
 			if (!paused && pop_task(task))
 			{
-				process_trngl(context_map[std::this_thread::get_id()], task.shader, task.trans, task.v0, task.v1,
-				              task.v2);
+				process_trngl(context_map[std::this_thread::get_id()], task->shader, task->trans, task->v0, task->v1,
+				              task->v2);
 				tasks_total--;
 			}
 			else
@@ -624,7 +621,7 @@ private:
 	/**
 	 * @brief A queue of tasks to be executed by the threads.
 	 */
-	std::queue<TaskArgs> tasks = {};
+	std::queue<std::unique_ptr<TaskArgs>> tasks = {};
 
 	/**
 	 * @brief The number of threads in the pool.
