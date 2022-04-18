@@ -103,6 +103,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="utils\ShaderThread.h" />
     <QtRcc Include="QtMain\RenderrerMainWindow.qrc" />
     <QtUic Include="QtMain\RenderrerMainWindow.ui" />
     <QtMoc Include="QtMain\RendererMainWindow.h" />
