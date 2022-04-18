@@ -206,15 +206,15 @@ public:
 	 * @tparam F The type of the function.
 	 * @param task The function to push.
 	 */
-	template <typename F>
-	void push_task(const F& task)
-	{
-		tasks_total++;
-		{
-			const std::scoped_lock lock(queue_mutex);
-			tasks.push(std::function<void()>(task));
-		}
-	}
+	//template <typename F>
+	//void push_task(const F& task)
+	//{
+	//	tasks_total++;
+	//	{
+	//		const std::scoped_lock lock(queue_mutex);
+	//		tasks.push(std::function<void()>(task));
+	//	}
+	//}
 
 	/**
 	 * @brief Push a function with arguments, but no return value, into the task queue.
@@ -225,14 +225,14 @@ public:
 	 * @param task The function to push.
 	 * @param args The arguments to pass to the function.
 	 */
-	template <typename F, typename... A>
-	void push_task(const F& task, const A&...args)
-	{
-		push_task([task, args...]
-		{
-			task(args...);
-		});
-	}
+	//template <typename F, typename... A>
+	//void push_task(const F& task, const A&...args)
+	//{
+	//	push_task([task, args...]
+	//	{
+	//		task(args...);
+	//	});
+	//}
 
 	void push_task(std::function<void(ThreadContext&)>&& ta)
 	{

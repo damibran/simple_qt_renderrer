@@ -22,15 +22,26 @@ public:
 protected:
 	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
-
-		
-		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
+		if (!mesh->indices.empty())
 		{
-			pool_.push_task([this,i,&mesh,&trans](ThreadContext& cntx)
+			uint count_of_triangles_per_thread = std::ceil(mesh->indices.size() / 3. / screen.pool_.get_thread_count());;
+			for (uint t = 0, cur_indx = 0; t < screen.pool_.get_thread_count(); t++, cur_indx +=
+			     count_of_triangles_per_thread)
 			{
-				process_trngl(cntx,shader_,trans, mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]], mesh->vertices[mesh->indices[i + 2]]);
-			});
+				pool_.push_task([this,cur_indx,count_of_triangles_per_thread,&mesh,&trans](ThreadContext& cntx)
+				{
+					for (int i = cur_indx; i < cur_indx + count_of_triangles_per_thread && i * 3 < mesh->indices.size(); ++i)
+						process_trngl(cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
+						              mesh->vertices[mesh->indices[i * 3 + 1]],
+						              mesh->vertices[mesh->indices[i * 3 + 2]]);
+				});
+			}
+
+			//for (size_t i = 0; i <= mesh->indices.size() - 3; i += 3)
+			//{
+			//}
 		}
+
 
 		for (auto const& i : mesh->childs)
 		{
