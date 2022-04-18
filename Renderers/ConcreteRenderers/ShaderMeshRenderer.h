@@ -24,11 +24,11 @@ protected:
 	{
 		if (!mesh->indices.empty())
 		{
-			uint count_of_triangles_per_thread = std::ceil(mesh->indices.size() / 3. / screen.pool_.get_thread_count());;
+			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / screen.pool_.get_thread_count());;
 			for (uint t = 0, cur_indx = 0; t < screen.pool_.get_thread_count(); t++, cur_indx +=
 			     count_of_triangles_per_thread)
 			{
-				pool_.push_task([this,cur_indx,count_of_triangles_per_thread,&mesh,&trans](ThreadContext& cntx)
+				pool_.push_task([this,cur_indx,count_of_triangles_per_thread,&mesh,trans](ThreadContext& cntx)
 				{
 					for (int i = cur_indx; i < cur_indx + count_of_triangles_per_thread && i * 3 < mesh->indices.size(); ++i)
 						process_trngl(cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
@@ -48,7 +48,8 @@ protected:
 			drawMesh(screen, trans, i);
 		}
 
-		screen_.pool_.wait_for_tasks();
+		//screen_.pool_.wait_for_tasks();
+
 	}
 
 	void process_trngl(ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,

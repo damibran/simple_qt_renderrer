@@ -52,16 +52,27 @@ public:
 			i->updateScript(dt);
 	}
 
-	void renderScene() const
+	void renderScene()const
 	{
+		//std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
+
+		screen_.pool_.paused=true;
+
 		for (auto& i : scene_root_)
 			i->drawShape(screen_, cam_->getCameraProjViewMat());
 
-		//screen_.pool_.wait_for_tasks();
+		screen_.pool_.paused=false;
+		screen_.pool_.wait_for_tasks();
+
+		//std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
+		//const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
+
 		screen_.sumUpBuffers();
 	}
 
 private:
+	std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
 	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
