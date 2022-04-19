@@ -52,14 +52,10 @@ public:
 	 *
 	 * @param _thread_count The number of threads to use. The default value is the total number of hardware threads available, as reported by the implementation. With a hyperthreaded CPU, this will be twice the number of CPU cores. If the argument is zero, the default value will be used instead.
 	 */
-	thread_pool(const ui32& _thread_count = std::thread::hardware_concurrency())
+	thread_pool(uint w, uint h,const ui32& _thread_count = std::thread::hardware_concurrency())
 		: thread_count(_thread_count ? _thread_count : std::thread::hardware_concurrency())
 	{
 		threads.resize(thread_count);
-	}
-
-	void start(uint w, uint h)
-	{
 		create_threads(w, h);
 	}
 
@@ -420,7 +416,7 @@ public:
 		ui32 sleep_duration = 0;
 		std::thread t;
 	private:
-		void sleep_or_yield()
+		void sleep_or_yield() const
 		{
 			if (sleep_duration)
 				std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration));

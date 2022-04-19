@@ -14,10 +14,9 @@ public:
 
 	Screen(const uint mx, const uint my, uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
 	                                                           buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),
-	                                                           pool_(_thread_count)
+	                                                           pool_(XMAX, YMAX,_thread_count)
 	{
 		pool_.sleep_duration = 0;
-		pool_.start(XMAX, YMAX);
 	}
 
 	void put_point(const uint a, const uint b, const glm::vec3& color)
