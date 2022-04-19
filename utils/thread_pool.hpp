@@ -341,33 +341,33 @@ public:
 		}
 	}
 
-	void clearBuffers(glm::vec3 color)
+	void clearBuffers(uint cur_buffer,glm::vec3 color)
 	{
 		for (int i = 0; i < thread_count; ++i)
 		{
 			auto& th = threads[i].thread_context_;
 			for (int j = 0; j < th.w_ * th.h_; ++j)
 			{
-				th.color_buffer[j] = color;
-				th.z_buffer_[j] = FLT_MAX;
+				th.color_buffer[cur_buffer][j] = color;
+				th.z_buffer_[cur_buffer][j] = FLT_MAX;
 			}
 		}
 	}
 
-	glm::vec3 getThreadsColor(uint x, uint y)
+	glm::vec3 getThreadsColor(uint cur_buffer,uint x, uint y)
 	{
-		float z_min = threads[0].thread_context_.z_buffer_[y * threads[0].thread_context_.w_ + x];
+		float z_min = threads[0].thread_context_.z_buffer_[cur_buffer][y * threads[0].thread_context_.w_ + x];
 		int min_index = 0;
 		for (int i = 1; i < thread_count; ++i)
 		{
-			if (threads[i].thread_context_.z_buffer_[y * threads[i].thread_context_.w_ + x] < z_min)
+			if (threads[i].thread_context_.z_buffer_[cur_buffer][y * threads[i].thread_context_.w_ + x] < z_min)
 			{
-				z_min = threads[i].thread_context_.z_buffer_[y * threads[i].thread_context_.w_ + x];
+				z_min = threads[i].thread_context_.z_buffer_[cur_buffer][y * threads[i].thread_context_.w_ + x];
 				min_index = i;
 			}
 		}
 
-		return threads[min_index].thread_context_.color_buffer[y * threads[min_index].thread_context_.w_ +
+		return threads[min_index].thread_context_.color_buffer[cur_buffer][y * threads[min_index].thread_context_.w_ +
 			x];
 	}
 

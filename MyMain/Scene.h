@@ -52,33 +52,49 @@ public:
 			i->updateScript(dt);
 	}
 
-	void renderScene()const
+	void renderScene(QRenderLabel* render_label)
 	{
-		std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
-
-		screen_.pool_.paused=true;
+		screen_.pool_.paused = true;
 
 		for (auto& i : scene_root_)
 			i->drawShape(screen_, cam_->getCameraProjViewMat());
 
-		screen_.pool_.paused=false;
+		screen_.pool_.paused = false;
 		screen_.pool_.wait_for_tasks();
 
-		std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
-		const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
-		qDebug()<<1./elapsed_time.count();
+		std::unique_lock lk(m);
+		cv.wait(lk,[this]{return writed==true;});
 
-		screen_.sumUpBuffers();
+		writed=false;
+
+		if (screen_.cur_buffer_ == 0)
+		{
+			screen_.prev_buffer = 0;
+			screen_.cur_buffer_ = 1;
+		}
+		else
+		{
+			screen_.prev_buffer = 1;
+			screen_.cur_buffer_ = 0;
+		}
+
+		screen_.pool_.push_task([this,render_label](ThreadContext& cntx)
+		{
+			screen_.sumUpBuffers(render_label);
+			writed=true;
+		});
 	}
 
 private:
-	std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
-	std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
 	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
+
+	bool writed=true;
+	std::mutex m;
+	std::condition_variable cv;
 };
 
 #endif // SCENE_H

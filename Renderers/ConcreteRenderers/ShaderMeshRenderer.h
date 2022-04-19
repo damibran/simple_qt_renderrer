@@ -24,22 +24,19 @@ protected:
 	{
 		if (!mesh->indices.empty())
 		{
-			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / screen.pool_.get_thread_count());;
+			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / screen.pool_.get_thread_count());
+			uint cur_buffer = screen.cur_buffer_;
 			for (uint t = 0, cur_indx = 0; t < screen.pool_.get_thread_count(); t++, cur_indx +=
 			     count_of_triangles_per_thread)
 			{
-				pool_.push_task([this,cur_indx,count_of_triangles_per_thread,&mesh,trans](ThreadContext& cntx)
+				pool_.push_task([this,cur_indx,cur_buffer,count_of_triangles_per_thread,&mesh,trans](ThreadContext& cntx)
 				{
 					for (int i = cur_indx; i < cur_indx + count_of_triangles_per_thread && i * 3 < mesh->indices.size(); ++i)
-						process_trngl(cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
+						process_trngl(cur_buffer,cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
 						              mesh->vertices[mesh->indices[i * 3 + 1]],
 						              mesh->vertices[mesh->indices[i * 3 + 2]]);
 				});
 			}
-
-			//for (size_t i = 0; i <= mesh->indices.size() - 3; i += 3)
-			//{
-			//}
 		}
 
 
@@ -52,7 +49,7 @@ protected:
 
 	}
 
-	void process_trngl(ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
+	void process_trngl(uint cur_buffer,ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
 	                   const Vertex& v2)
 	{
 		auto& shader = cntx.shaders_[shdr];
@@ -126,14 +123,14 @@ protected:
 
 						const float z = w0 * a.z + w1 * b.z + w2 * c.z;
 
-						if (z < cntx.z_buffer_[y * XMAX + x])
+						if (z < cntx.z_buffer_[cur_buffer][y * XMAX + x])
 						{
 							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
 							if (color.x >= 0 && color.y >= 0 && color.z >= 0) // to discard return -1
 							{
-								cntx.z_buffer_[y * XMAX + x] = z;
-								cntx.color_buffer[y * XMAX + x] = color;
+								cntx.z_buffer_[cur_buffer][y * XMAX + x] = z;
+								cntx.color_buffer[cur_buffer][y * XMAX + x] = color;
 							}
 						}
 					}

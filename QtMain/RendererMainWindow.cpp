@@ -26,15 +26,15 @@ void RendererMainWindow::screen_refresh()
 	tp1_ = tp2_;
 	const float delta_time = elapsed_time.count();
 
-	//qDebug() << 1.0f / delta_time;
+	qDebug() << 1.0f / delta_time;
 
 	screen_.clearScreen();
 	//updating all scene
 	scene_.updateScene(delta_time);
-	scene_.renderScene();
+	scene_.renderScene(ui_.renderLabel);
 
 	//updating screen using color buffer info
-	ui_.renderLabel->setPixmap(QPixmap::fromImage(screen_.getImage().scaled(ui_.renderLabel->size())));
+	//ui_.renderLabel->setPixmap(QPixmap::fromImage(screen_.getImage().scaled(ui_.renderLabel->size())));
 }
 
 void RendererMainWindow::keyPressEvent(QKeyEvent* event)

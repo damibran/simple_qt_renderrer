@@ -5,21 +5,23 @@
 
 typedef unsigned int uint;
 
-
 struct ThreadContext
 {
 	ThreadContext() = default;
 
 	ThreadContext(uint w, uint h): w_(w), h_(h)
 	{
-		color_buffer.resize(w * h);
-		z_buffer_.resize(w * h);
-		for (size_t i = 0; i < w * h; ++i)
-			z_buffer_[i] = FLT_MAX;
+		for(int i=0;i<2;++i)
+		{
+		color_buffer[i].resize(w * h);
+		z_buffer_[i].resize(w * h);
+		for (size_t j = 0; j < w * h; ++j)
+			z_buffer_[i][j] = FLT_MAX;
+		}
 	}
 
 	uint w_, h_;
-	std::vector<glm::vec3> color_buffer;
-	std::vector<float> z_buffer_;
+	std::array<std::vector<glm::vec3>,2> color_buffer;
+	std::array<std::vector<float>,2> z_buffer_;
 	std::vector<std::unique_ptr<Shader>> shaders_;
 };

@@ -3,6 +3,7 @@
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QSlider>
+#include "../utils/Transform.h"
 
 class QTransformEditor : public QWidget
 {
