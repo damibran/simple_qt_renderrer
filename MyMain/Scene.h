@@ -54,7 +54,7 @@ public:
 
 	void renderScene()const
 	{
-		//std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
+		std::chrono::system_clock::time_point tp1_ = std::chrono::system_clock::now();
 
 		screen_.pool_.paused=true;
 
@@ -64,8 +64,9 @@ public:
 		screen_.pool_.paused=false;
 		screen_.pool_.wait_for_tasks();
 
-		//std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
-		//const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
+		std::chrono::system_clock::time_point tp2_ = std::chrono::system_clock::now();
+		const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
+		qDebug()<<1./elapsed_time.count();
 
 		screen_.sumUpBuffers();
 	}

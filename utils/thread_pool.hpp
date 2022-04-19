@@ -27,42 +27,9 @@
 #include <type_traits> // std::common_type_t, std::decay_t, std::enable_if_t, std::is_void_v, std::invoke_result_t
 #include <utility>     // std::move
 #include "../Shaders/Shader.h"
-
-struct ThreadContext
-{
-	ThreadContext() = default;
-
-	ThreadContext(uint w, uint h): w_(w), h_(h)
-	{
-		color_buffer.resize(w * h);
-		z_buffer_.resize(w * h);
-		for (size_t i = 0; i < w * h; ++i)
-			z_buffer_[i] = FLT_MAX;
-	}
-
-	uint w_, h_;
-	std::vector<glm::vec3> color_buffer;
-	std::vector<float> z_buffer_;
-	std::vector<std::unique_ptr<Shader>> shaders_;
-};
+#include "../utils/ThreadContext.h"
 
 using ShaderID = size_t;
-
-struct TaskArgs
-{
-	TaskArgs(const TaskArgs& o)=delete;
-	TaskArgs(ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
-	         const Vertex& v2) : shader(shdr), trans(trans), v0(v0), v1(v1), v2(v2)
-	{
-	}
-
-	ShaderID shader;
-	const MVPMat& trans;
-	const Vertex& v0;
-	const Vertex& v1;
-	const Vertex& v2;
-};
-
 
 // ============================================================================================= //
 //                                    Begin class thread_pool                                    //
@@ -85,9 +52,13 @@ public:
 	 *
 	 * @param _thread_count The number of threads to use. The default value is the total number of hardware threads available, as reported by the implementation. With a hyperthreaded CPU, this will be twice the number of CPU cores. If the argument is zero, the default value will be used instead.
 	 */
-	thread_pool(uint w, uint h, const ui32& _thread_count = std::thread::hardware_concurrency())
-		: thread_count(_thread_count ? _thread_count : std::thread::hardware_concurrency()),
-		  threads(new std::thread[_thread_count ? _thread_count : std::thread::hardware_concurrency()])
+	thread_pool(const ui32& _thread_count = std::thread::hardware_concurrency())
+		: thread_count(_thread_count ? _thread_count : std::thread::hardware_concurrency())
+	{
+		threads.resize(thread_count);
+	}
+
+	void start(uint w, uint h)
 	{
 		create_threads(w, h);
 	}
@@ -357,7 +328,7 @@ public:
 
 	ShaderID registerShader(const Shader& shdr)
 	{
-		auto& cntx = context_map[threads[0].get_id()].shaders_;
+		auto& cntx = threads[0].thread_context_.shaders_;
 
 		auto i = std::find_if(cntx.begin(), cntx.end(), [&shdr](const std::unique_ptr<Shader>& val)
 		{
@@ -369,7 +340,7 @@ public:
 		else
 		{
 			for (int i = 0; i < thread_count; ++i)
-				context_map[threads[i].get_id()].shaders_.push_back(shdr.clone());
+				threads[i].thread_context_.shaders_.push_back(shdr.clone());
 			return cntx.size() - 1;
 		}
 	}
@@ -378,7 +349,7 @@ public:
 	{
 		for (int i = 0; i < thread_count; ++i)
 		{
-			auto& th = context_map[threads[i].get_id()];
+			auto& th = threads[i].thread_context_;
 			for (int j = 0; j < th.w_ * th.h_; ++j)
 			{
 				th.color_buffer[j] = color;
@@ -389,20 +360,74 @@ public:
 
 	glm::vec3 getThreadsColor(uint x, uint y)
 	{
-		float z_min = context_map[threads[0].get_id()].z_buffer_[y * context_map[threads[0].get_id()].w_ + x];
+		float z_min = threads[0].thread_context_.z_buffer_[y * threads[0].thread_context_.w_ + x];
 		int min_index = 0;
 		for (int i = 1; i < thread_count; ++i)
 		{
-			if (context_map[threads[i].get_id()].z_buffer_[y * context_map[threads[i].get_id()].w_ + x] < z_min)
+			if (threads[i].thread_context_.z_buffer_[y * threads[i].thread_context_.w_ + x] < z_min)
 			{
-				z_min = context_map[threads[i].get_id()].z_buffer_[y * context_map[threads[i].get_id()].w_ + x];
+				z_min = threads[i].thread_context_.z_buffer_[y * threads[i].thread_context_.w_ + x];
 				min_index = i;
 			}
 		}
 
-		return context_map[threads[min_index].get_id()].color_buffer[y * context_map[threads[min_index].get_id()].w_ +
+		return threads[min_index].thread_context_.color_buffer[y * threads[min_index].thread_context_.w_ +
 			x];
 	}
+
+	class ShaderThread
+	{
+	public:
+		ThreadContext thread_context_;
+
+		ShaderThread()=default;
+
+		ShaderThread(int w, int h, thread_pool* pool)
+			: thread_context_(w, h), pool_(pool)
+		{
+		}
+
+		void start()
+		{
+			t = std::thread(&ShaderThread::worker, this);
+		}
+
+		void worker()
+		{
+			while (pool_->running)
+			{
+				std::function<void(ThreadContext&)> task;
+				if (!pool_->paused && pool_->pop_task(task))
+				{
+					task(thread_context_);
+					pool_->tasks_total--;
+				}
+				else
+				{
+					sleep_or_yield();
+				}
+			}
+		}
+
+		void join()
+		{
+			t.join();
+		}
+
+
+	protected:
+		thread_pool* pool_;
+		ui32 sleep_duration = 0;
+		std::thread t;
+	private:
+		void sleep_or_yield()
+		{
+			if (sleep_duration)
+				std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration));
+			else
+				std::this_thread::yield();
+		}
+	};
 
 	// ===========
 	// Public data
@@ -430,8 +455,8 @@ private:
 	{
 		for (ui32 i = 0; i < thread_count; i++)
 		{
-			threads[i] = std::thread(&thread_pool::worker, this);
-			context_map[threads[i].get_id()] = ThreadContext(w, h);
+			threads[i]= ShaderThread(w, h, this);
+			threads[i].start();
 		}
 	}
 
@@ -480,22 +505,22 @@ private:
 	/**
 	 * @brief A worker function to be assigned to each thread in the pool. Continuously pops tasks out of the queue and executes them, as long as the atomic variable running is set to true.
 	 */
-	void worker()
-	{
-		while (running)
-		{
-			std::function<void(ThreadContext&)> task;
-			if (!paused && pop_task(task))
-			{
-				task(context_map[std::this_thread::get_id()]);
-				tasks_total--;
-			}
-			else
-			{
-				sleep_or_yield();
-			}
-		}
-	}
+	//void worker()
+	//{
+	//	while (running)
+	//	{
+	//		std::function<void(ThreadContext&)> task;
+	//		if (!paused && pop_task(task))
+	//		{
+	//			task(context_map[std::this_thread::get_id()]);
+	//			tasks_total--;
+	//		}
+	//		else
+	//		{
+	//			sleep_or_yield();
+	//		}
+	//	}
+	//}
 
 	// ============
 	// Private data
@@ -524,127 +549,10 @@ private:
 	/**
 	 * @brief A smart pointer to manage the memory allocated for the threads.
 	 */
-	std::unique_ptr<std::thread[]> threads;
-
-	std::unordered_map<std::thread::id, ThreadContext> context_map;
+	std::vector<ShaderThread> threads;
 
 	/**
 	 * @brief An atomic variable to keep track of the total number of unfinished tasks - either still in the queue, or running in a thread.
 	 */
 	std::atomic<ui32> tasks_total = 0;
 };
-
-
-//                                     End class thread_pool                                     //
-// ============================================================================================= //
-
-// ============================================================================================= //
-//                                   Begin class synced_stream                                   //
-
-/**
- * @brief A helper class to synchronize printing to an output stream by different threads.
- */
-class synced_stream
-{
-public:
-	/**
-	 * @brief Construct a new synced stream.
-	 *
-	 * @param _out_stream The output stream to print to. The default value is std::cout.
-	 */
-	synced_stream(std::ostream& _out_stream = std::cout)
-		: out_stream(_out_stream)
-	{
-	}
-
-	/**
-	 * @brief Print any number of items into the output stream. Ensures that no other threads print to this stream simultaneously, as long as they all exclusively use this synced_stream object to print.
-	 *
-	 * @tparam T The types of the items
-	 * @param items The items to print.
-	 */
-	template <typename... T>
-	void print(const T&...items)
-	{
-		const std::scoped_lock lock(stream_mutex);
-		(out_stream << ... << items);
-	}
-
-	/**
-	 * @brief Print any number of items into the output stream, followed by a newline character. Ensures that no other threads print to this stream simultaneously, as long as they all exclusively use this synced_stream object to print.
-	 *
-	 * @tparam T The types of the items
-	 * @param items The items to print.
-	 */
-	template <typename... T>
-	void println(const T&...items)
-	{
-		print(items..., '\n');
-	}
-
-private:
-	/**
-	 * @brief A mutex to synchronize printing.
-	 */
-	mutable std::mutex stream_mutex = {};
-
-	/**
-	 * @brief The output stream to print to.
-	 */
-	std::ostream& out_stream;
-};
-
-//                                    End class synced_stream                                    //
-// ============================================================================================= //
-
-// ============================================================================================= //
-//                                       Begin class timer                                       //
-
-/**
- * @brief A helper class to measure execution time for benchmarking purposes.
- */
-class timer
-{
-	typedef std::int_fast64_t i64;
-
-public:
-	/**
-	 * @brief Start (or restart) measuring time.
-	 */
-	void start()
-	{
-		start_time = std::chrono::steady_clock::now();
-	}
-
-	/**
-	 * @brief Stop measuring time and store the elapsed time since start().
-	 */
-	void stop()
-	{
-		elapsed_time = std::chrono::steady_clock::now() - start_time;
-	}
-
-	/**
-	 * @brief Get the number of milliseconds that have elapsed between start() and stop().
-	 *
-	 * @return The number of milliseconds.
-	 */
-	i64 ms() const
-	{
-		return (std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time)).count();
-	}
-
-private:
-	/**
-	 * @brief The time point when measuring started.
-	 */
-	std::chrono::time_point<std::chrono::steady_clock> start_time = std::chrono::steady_clock::now();
-
-	/**
-	 * @brief The duration that has elapsed between start() and stop().
-	 */
-	std::chrono::duration<double> elapsed_time = std::chrono::duration<double>::zero();
-};
-
-//                                        End class timer                                        //
-// ============================================================================================= //
