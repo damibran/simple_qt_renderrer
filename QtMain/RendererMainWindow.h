@@ -14,6 +14,7 @@ public:
 
 public slots:
 	void screen_refresh();
+	void printImage(QImage&);
 
 protected:
 	void keyPressEvent(QKeyEvent* event) override;

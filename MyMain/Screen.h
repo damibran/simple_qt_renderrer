@@ -5,8 +5,13 @@
 #include<glm/glm.hpp>
 #include "../utils/thread_pool.hpp"
 
-class Screen
+class Screen:public QObject
 {
+	Q_OBJECT
+
+	signals:
+	void ImageUpdated(QImage&);
+
 public:
 	const uint XMAX;
 	const uint YMAX;
@@ -39,7 +44,12 @@ public:
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
-	void sumUpBuffers(QRenderLabel* render_label)
+	void clearScreen()
+	{
+		pool_.clearBuffers(prev_buffer, {200, 200, 200});
+	}
+
+	void sumUpBuffers()
 	{
 		for (uint x = 0; x < XMAX; ++x)
 		{
@@ -48,13 +58,7 @@ public:
 				put_point(x, y, pool_.getThreadsColor(prev_buffer, x, y));
 			}
 		}
-		qDebug()<<render_label->size();
-		render_label->setPixmap(QPixmap::fromImage(buffer_[prev_buffer].scaled(render_label->size())));
-	}
-
-	void clearScreen()
-	{
-		pool_.clearBuffers(prev_buffer, {200, 200, 200});
+		emit ImageUpdated(buffer_[prev_buffer]);
 	}
 
 private:

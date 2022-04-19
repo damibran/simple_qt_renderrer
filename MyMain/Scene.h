@@ -52,7 +52,7 @@ public:
 			i->updateScript(dt);
 	}
 
-	void renderScene(QRenderLabel* render_label)
+	void renderScene()
 	{
 		screen_.pool_.paused = true;
 
@@ -62,10 +62,6 @@ public:
 		screen_.pool_.paused = false;
 		screen_.pool_.wait_for_tasks();
 
-		std::unique_lock lk(m);
-		cv.wait(lk,[this]{return writed==true;});
-
-		writed=false;
 
 		if (screen_.cur_buffer_ == 0)
 		{
@@ -78,10 +74,9 @@ public:
 			screen_.cur_buffer_ = 0;
 		}
 
-		screen_.pool_.push_task([this,render_label](ThreadContext& cntx)
+		screen_.pool_.push_task([this](ThreadContext& cntx)
 		{
-			screen_.sumUpBuffers(render_label);
-			writed=true;
+			screen_.sumUpBuffers();
 		});
 	}
 
@@ -91,10 +86,6 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
-
-	bool writed=true;
-	std::mutex m;
-	std::condition_variable cv;
 };
 
 #endif // SCENE_H

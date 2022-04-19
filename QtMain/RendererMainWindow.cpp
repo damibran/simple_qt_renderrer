@@ -14,6 +14,8 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 
 	ui_.renderLabel->resize(wr, hr);
 
+	connect(&screen_,&Screen::ImageUpdated,this,&RendererMainWindow::printImage);
+
 	timer_.start(32);
 	connect(&timer_, SIGNAL(timeout()), this, SLOT(screen_refresh()));
 }
@@ -26,19 +28,24 @@ void RendererMainWindow::screen_refresh()
 	tp1_ = tp2_;
 	const float delta_time = elapsed_time.count();
 
-	qDebug() << 1.0f / delta_time;
+	//qDebug() << 1.0f / delta_time;
 
 	screen_.clearScreen();
 	//updating all scene
 	scene_.updateScene(delta_time);
-	scene_.renderScene(ui_.renderLabel);
+	scene_.renderScene();
+}
 
-	//updating screen using color buffer info
-	//ui_.renderLabel->setPixmap(QPixmap::fromImage(screen_.getImage().scaled(ui_.renderLabel->size())));
+void RendererMainWindow::printImage(QImage& img)
+{
+	ui_.renderLabel->setPixmap(QPixmap::fromImage(img.scaled(ui_.renderLabel->size())));
 }
 
 void RendererMainWindow::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == 16777216)
-		this->close();
+	{
+		timer_.stop();
+		//this->close();
+	}
 }

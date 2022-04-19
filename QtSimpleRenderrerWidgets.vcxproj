@@ -117,7 +117,7 @@
     <ClInclude Include="Renderers\ConcreteRenderers\CoordSystemRenderer.h" />
     <ClInclude Include="Renderers\RendererComponent.h" />
     <ClInclude Include="MyMain\Scene.h" />
-    <ClInclude Include="MyMain\Screen.h" />
+    <QtMoc Include="MyMain\Screen.h" />
     <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\MainShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
