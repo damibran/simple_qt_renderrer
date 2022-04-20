@@ -61,6 +61,20 @@ public:
 		emit ImageUpdated(buffer_[prev_buffer]);
 	}
 
+	void swapBuffer()
+	{
+		if (cur_buffer_ == 0)
+		{
+			prev_buffer = 0;
+			cur_buffer_ = 1;
+		}
+		else
+		{
+			prev_buffer = 1;
+			cur_buffer_ = 0;
+		}
+	}
+
 private:
 	std::array<QImage, 2> buffer_;
 };

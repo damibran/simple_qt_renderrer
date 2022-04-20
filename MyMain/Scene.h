@@ -62,17 +62,7 @@ public:
 		screen_.pool_.paused = false;
 		screen_.pool_.wait_for_tasks();
 
-
-		if (screen_.cur_buffer_ == 0)
-		{
-			screen_.prev_buffer = 0;
-			screen_.cur_buffer_ = 1;
-		}
-		else
-		{
-			screen_.prev_buffer = 1;
-			screen_.cur_buffer_ = 0;
-		}
+		screen_.swapBuffer();
 
 		screen_.pool_.push_task([this](ThreadContext& cntx)
 		{
