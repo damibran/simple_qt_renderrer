@@ -17,7 +17,7 @@ private:
 	float line_width;
 
 public:
-	WireFrameShader(float lw=0.0001) : line_width(lw)
+	WireFrameShader(float lw=0.0005) : line_width(lw)
 	{
 	}
 
@@ -50,7 +50,7 @@ public:
 
 	bool supportsBackFaceCulling() override
 	{
-		return false;
+		return true;
 	}
 
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,

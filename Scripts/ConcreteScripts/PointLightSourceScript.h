@@ -20,7 +20,7 @@ public:
 	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
+			std::make_unique<Transform>(glm::vec3(0, 30, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
 			                                     mesh_instances.find("res/tetrahedron.obj")->second));
 
@@ -33,7 +33,7 @@ public:
 	{
 		if (check_box_->isChecked())
 		{
-			constexpr float R=50;
+			constexpr float R=30;
 			t_ += speed_ * dt;
 			transform_->setPos({R * sin(t_)*cos(t_), R *cos(t_), R*sin(t_)});
 		}

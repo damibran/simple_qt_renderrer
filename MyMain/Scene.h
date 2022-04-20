@@ -4,6 +4,7 @@
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
+#include "../Scripts/ConcreteScripts/SecondShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -38,7 +39,12 @@ public:
 
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj",
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/cub.obj",
+			                              light_transform));
+
+		// Make second cube
+		scene_root_.push_back(
+			SecondShapeScript::createObject(ui, screen_, mesh_instances_, "res/tetrahedron.obj",
 			                              light_transform));
 
 		//Make camera shape

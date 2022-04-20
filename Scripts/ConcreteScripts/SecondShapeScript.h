@@ -8,7 +8,7 @@
 #include "../Script.h"
 #include "../utils/Transform.h"
 
-class MainShapeScript : public Script
+class SecondShapeScript : public Script
 {
 public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui,
@@ -18,17 +18,17 @@ public:
 	                                           std::unique_ptr<Transform>& light)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(10, 0, 0), glm::vec3(5)),
+			std::make_unique<Transform>(glm::vec3(-10,0,0), glm::vec3(5)),
 			std::make_unique<ShaderMeshRenderer>(
 				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),
 				mesh_instances.at(main)));
 
-		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());
+		ui.SecondTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());
 
 		return shp;
 	}
 
-	MainShapeScript() = default;
+	SecondShapeScript() = default;
 
 	void updateScript(float dt) override
 	{
