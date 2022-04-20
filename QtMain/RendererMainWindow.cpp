@@ -3,19 +3,17 @@
 
 RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* parent)
 	: QMainWindow(parent)
-	  , screen_(wr, hr,4)
-	  , scene_(screen_)
-	,render_thread_(screen_,scene_,working_)
+	,render_thread_(wr, hr,4,scene_,working_)
 {
 	ui_.setupUi(this);
-
-	scene_.setupScene(ui_);
 
 	resize(wr + 250, hr);
 
 	ui_.renderLabel->resize(wr, hr);
 
-	connect(&screen_,&Screen::ImageUpdated,this,&RendererMainWindow::printImage);
+	scene_.setupScene(ui_,render_thread_.pool_);
+
+	connect(&render_thread_.screen_,&Screen::ImageUpdated,this,&RendererMainWindow::printImage);
 }
 
 void RendererMainWindow::screen_refresh()

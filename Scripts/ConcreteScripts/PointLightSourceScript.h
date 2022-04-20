@@ -15,13 +15,13 @@ public:
 	{
 	}
 
-	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s,
+	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, thread_pool& pool,
 	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
 	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
-			std::make_unique<ShaderMeshRenderer>(s, s.pool_.registerShader(LightSourceShader()),
+			std::make_unique<ShaderMeshRenderer>(pool.registerShader(LightSourceShader()),
 			                                     mesh_instances.find("res/tetrahedron.obj")->second));
 
 		shp->setScript(std::make_unique<PointLightSourceScript>(shp->getTransformPtr(), ui.checkBox));

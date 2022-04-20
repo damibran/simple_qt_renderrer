@@ -1,6 +1,5 @@
 #ifndef SCENE_H
 #define SCENE_H
-#include "Screen.h"
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
@@ -13,12 +12,9 @@
 class Scene
 {
 public:
-	explicit Scene(Screen& s) :
-		screen_(s)
-	{
-	}
+	explicit Scene()=default;
 
-	void setupScene(Ui::RenderrerMainWindowClass& ui)
+	void setupScene(Ui::RenderrerMainWindowClass& ui,thread_pool& pool)
 	{
 		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
 		mesh_instances_["res/tetrahedron.obj"] = std::make_unique<Mesh>("res/tetrahedron.obj");
@@ -29,20 +25,20 @@ public:
 		// Make CoordSys shape
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(100)),
-			std::make_unique<CoordSystemRenderer>(screen_)
+			std::make_unique<CoordSystemRenderer>()
 		));
 
 		// Make Light source shape
-		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
+		scene_root_.push_back(PointLightSourceScript::createObject(ui, pool,mesh_instances_));
 		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj",
+			MainShapeScript::createObject(ui, pool, mesh_instances_, "res/monkey.obj",
 			                              light_transform));
 
 		//Make camera shape
-		scene_root_.push_back(CameraScript::createObject(ui, screen_));
+		scene_root_.push_back(CameraScript::createObject(ui));
 		cam_ = dynamic_cast<CameraScript*>((scene_root_.end() - 1)->get()->getScriptPtr());
 	}
 
@@ -52,26 +48,13 @@ public:
 			i->updateScript(dt);
 	}
 
-	void renderScene()
+	void renderScene(thread_pool& pool)
 	{
-		screen_.pool_.paused = true;
-
 		for (auto& i : scene_root_)
-			i->drawShape(screen_, cam_->getCameraProjViewMat());
-
-		screen_.pool_.paused = false;
-		screen_.pool_.wait_for_tasks();
-
-		screen_.swapBuffer();
-
-		screen_.pool_.push_task([this](ThreadContext& cntx)
-		{
-			screen_.sumUpBuffers();
-		});
+			i->drawShape(pool, cam_->getCameraProjViewMat());
 	}
 
 private:
-	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////

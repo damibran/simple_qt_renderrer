@@ -52,7 +52,7 @@ public:
 	 *
 	 * @param _thread_count The number of threads to use. The default value is the total number of hardware threads available, as reported by the implementation. With a hyperthreaded CPU, this will be twice the number of CPU cores. If the argument is zero, the default value will be used instead.
 	 */
-	thread_pool(uint w, uint h,const ui32& _thread_count = std::thread::hardware_concurrency())
+	thread_pool(uint w, uint h, const ui32& _thread_count = std::thread::hardware_concurrency())
 		: thread_count(_thread_count ? _thread_count : std::thread::hardware_concurrency())
 	{
 		threads.resize(thread_count);
@@ -322,6 +322,26 @@ public:
 		}
 	}
 
+	void swapBuffer()
+	{
+		for (int i = 0; i < thread_count; ++i)
+		{
+			if (cur_buffer_ == 0)
+			{
+				prev_buffer = 0;
+				threads[i].thread_context_.cur_buffer = 1;
+				cur_buffer_ = 1;
+			}
+			else
+			{
+				prev_buffer = 1;
+				threads[i].thread_context_.cur_buffer = 0;
+				cur_buffer_ = 0;
+			}
+		}
+	}
+
+
 	ShaderID registerShader(const Shader& shdr)
 	{
 		auto& cntx = threads[0].thread_context_.shaders_;
@@ -341,20 +361,20 @@ public:
 		}
 	}
 
-	void clearBuffers(uint cur_buffer,glm::vec3 color)
+	void clearBuffers(glm::vec3 color)
 	{
 		for (int i = 0; i < thread_count; ++i)
 		{
 			auto& th = threads[i].thread_context_;
 			for (int j = 0; j < th.w_ * th.h_; ++j)
 			{
-				th.color_buffer[cur_buffer][j] = color;
-				th.z_buffer_[cur_buffer][j] = FLT_MAX;
+				th.color_buffer[cur_buffer_][j] = color;
+				th.z_buffer_[cur_buffer_][j] = FLT_MAX;
 			}
 		}
 	}
 
-	glm::vec3 getThreadsColor(uint cur_buffer,uint x, uint y)
+	glm::vec3 getThreadsColor(uint cur_buffer, uint x, uint y)
 	{
 		float z_min = threads[0].thread_context_.z_buffer_[cur_buffer][y * threads[0].thread_context_.w_ + x];
 		int min_index = 0;
@@ -376,7 +396,7 @@ public:
 	public:
 		ThreadContext thread_context_;
 
-		ShaderThread()=default;
+		ShaderThread() = default;
 
 		ShaderThread(int w, int h, thread_pool* pool)
 			: thread_context_(w, h), pool_(pool)
@@ -434,6 +454,9 @@ public:
 	 */
 	std::atomic<bool> paused = false;
 
+	uint cur_buffer_ = 0;
+	uint prev_buffer = 1;
+
 	/**
 	 * @brief The duration, in microseconds, that the worker function should sleep for when it cannot find any tasks in the queue. If set to 0, then instead of sleeping, the worker function will execute std::this_thread::yield() if there are no tasks in the queue. The default value is 1000.
 	 */
@@ -451,7 +474,7 @@ private:
 	{
 		for (ui32 i = 0; i < thread_count; i++)
 		{
-			threads[i]= ShaderThread(w, h, this);
+			threads[i] = ShaderThread(w, h, this);
 			threads[i].start();
 		}
 	}

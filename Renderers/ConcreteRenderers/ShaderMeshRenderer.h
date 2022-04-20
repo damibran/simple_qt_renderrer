@@ -9,30 +9,29 @@ class ShaderMeshRenderer : public RendererComponent
 public:
 	~ShaderMeshRenderer() override = default;
 
-	ShaderMeshRenderer(Screen& s, ShaderID shdr, const std::unique_ptr<Mesh>& m) : screen_(s),
-		shader_(shdr), mesh_(m), pool_(s.pool_)
+	ShaderMeshRenderer(ShaderID shdr, const std::unique_ptr<Mesh>& m) :
+		shader_(shdr), mesh_(m)
 	{
 	}
 
-	void drawShapeVisual(const MVPMat& trans) override
+	void drawShapeVisual(thread_pool& pool,const MVPMat& trans) override
 	{
-		drawMesh(screen_, trans, mesh_);
+		drawMesh(pool ,trans, mesh_);
 	}
 
 protected:
-	void drawMesh(Screen& screen, const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
+	void drawMesh(thread_pool& pool,const MVPMat& trans, std::unique_ptr<Mesh> const& mesh)
 	{
 		if (!mesh->indices.empty())
 		{
-			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / screen.pool_.get_thread_count());
-			uint cur_buffer = screen.cur_buffer_;
-			for (uint t = 0, cur_indx = 0; t < screen.pool_.get_thread_count(); t++, cur_indx +=
+			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / pool.get_thread_count());
+			for (uint t = 0, cur_indx = 0; t < pool.get_thread_count(); t++, cur_indx +=
 			     count_of_triangles_per_thread)
 			{
-				pool_.push_task([this,cur_indx,cur_buffer,count_of_triangles_per_thread,&mesh,trans](ThreadContext& cntx)
+				pool.push_task([this,cur_indx,count_of_triangles_per_thread,&mesh,trans](ThreadContext& cntx)
 				{
 					for (int i = cur_indx; i < cur_indx + count_of_triangles_per_thread && i * 3 < mesh->indices.size(); ++i)
-						process_trngl(cur_buffer,cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
+						process_trngl(cntx, shader_, trans, mesh->vertices[mesh->indices[i * 3]],
 						              mesh->vertices[mesh->indices[i * 3 + 1]],
 						              mesh->vertices[mesh->indices[i * 3 + 2]]);
 				});
@@ -42,14 +41,14 @@ protected:
 
 		for (auto const& i : mesh->childs)
 		{
-			drawMesh(screen, trans, i);
+			drawMesh(pool,trans, i);
 		}
 
 		//screen_.pool_.wait_for_tasks();
 
 	}
 
-	void process_trngl(uint cur_buffer,ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
+	void process_trngl(ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
 	                   const Vertex& v2)
 	{
 		auto& shader = cntx.shaders_[shdr];
@@ -123,14 +122,14 @@ protected:
 
 						const float z = w0 * a.z + w1 * b.z + w2 * c.z;
 
-						if (z < cntx.z_buffer_[cur_buffer][y * XMAX + x])
+						if (z < cntx.getZBufferAt(y * XMAX + x))
 						{
 							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
 							if (color.x >= 0 && color.y >= 0 && color.z >= 0) // to discard return -1
 							{
-								cntx.z_buffer_[cur_buffer][y * XMAX + x] = z;
-								cntx.color_buffer[cur_buffer][y * XMAX + x] = color;
+								cntx.setZBufferAt(y * XMAX + x,z);
+								cntx.setColorBufferAt(y * XMAX + x, color);
 							}
 						}
 					}
@@ -154,8 +153,6 @@ protected:
 		return -((c.x - a.x) * (b.y - a.y) - (c.y - a.y) * (b.x - a.x));
 	}
 
-	Screen& screen_;
 	ShaderID shader_;
 	const std::unique_ptr<Mesh>& mesh_;
-	thread_pool& pool_;
 };

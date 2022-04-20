@@ -12,7 +12,7 @@ class MainShapeScript : public Script
 {
 public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui,
-	                                           Screen& s,
+	                                           thread_pool& pool,
 	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
 	                                           mesh_instances, const std::string& main,
 	                                           std::unique_ptr<Transform>& light)
@@ -20,7 +20,7 @@ public:
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
 			std::make_unique<ShaderMeshRenderer>(
-				s, s.pool_.registerShader(OnePointSourceLitShaderWithWireframe(light)),
+				pool.registerShader(OnePointSourceLitShaderWithWireframe(light)),
 				mesh_instances.at(main)));
 
 		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());

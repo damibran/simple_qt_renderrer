@@ -31,17 +31,17 @@ public:
 		childs_.push_back(std::move(s));
 	}
 
-	void drawShape(Screen& screen, const MVPMat& parent_trans) const
+	void drawShape(thread_pool& pool, const MVPMat& parent_trans) const
 	{
 		MVPMat this_trans(parent_trans);
 		this_trans.model = parent_trans.model * transform_->getFullModelMatrix();
 
 		if (renderer_)
-			renderer_->drawShapeVisual(this_trans);
+			renderer_->drawShapeVisual(pool,this_trans);
 
 		for (auto& i : childs_)
 		{
-			i->drawShape(screen, this_trans);
+			i->drawShape(pool, this_trans);
 		}
 
 		// here must be synhro of working threads

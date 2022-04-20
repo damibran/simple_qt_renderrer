@@ -5,5 +5,5 @@ class RendererComponent
 {
 public:
 	virtual ~RendererComponent() = default;
-	virtual void drawShapeVisual(const MVPMat& trans) = 0;
+	virtual void drawShapeVisual(thread_pool& pool,const MVPMat& trans) = 0;
 };

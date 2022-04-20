@@ -2,25 +2,27 @@
 #pragma once
 #include"../MyMain/Screen.h"
 #include "../utils/MVPMat.h"
+#include "../utils/RenderThread.h"
 
 class CoordSystemRenderer final : public RendererComponent
 {
 public:
-	explicit CoordSystemRenderer(Screen& s) : screen_(s)
-	{
-	}
+	explicit CoordSystemRenderer()=default;
 
-	void drawShapeVisual(const MVPMat& trans) override
+	void drawShapeVisual(thread_pool& pool,const MVPMat& trans) override
 	{
 		const glm::mat4 full_mat = trans.proj * trans.view * trans.model;
 
-		drawAxis(full_mat, {1, 0, 0}, {-1, 0, 0},{180,0,0});
-		drawAxis(full_mat, {0, 1, 0}, {0, -1, 0},{0,180,0});
-		drawAxis(full_mat, {0, 0, 1}, {0, 0, -1},{0,0,180});
+		pool.push_task([this,full_mat](ThreadContext& cntx)
+				{
+					drawAxis(cntx,full_mat, {1, 0, 0}, {-1, 0, 0},{180,0,0});
+					drawAxis(cntx,full_mat, {0, 1, 0}, {0, -1, 0},{0,180,0});
+					drawAxis(cntx,full_mat, {0, 0, 1}, {0, 0, -1},{0,0,180});
+				});
 	}
 
 private:
-	void drawAxis(const glm::mat4& full_mat, const glm::vec3& a_in, const glm::vec3& b_in, const glm::vec3& color) const
+	void drawAxis(ThreadContext& cntx,const glm::mat4& full_mat, const glm::vec3& a_in, const glm::vec3& b_in, const glm::vec3& color) const
 	{
 		glm::vec4 a_res = full_mat * glm::vec4(a_in, 1.0f);
 		glm::vec4 b_res = full_mat * glm::vec4(b_in, 1.0f);
@@ -35,14 +37,14 @@ private:
 			clipNearInClipSpace(b_res, a_res);
 		}
 
-		a_res.x = (a_res.x / a_res.w + 1) / 2 * static_cast<float>(screen_.XMAX);
-		a_res.y = (a_res.y / a_res.w + 1) / 2 * static_cast<float>(screen_.YMAX);
+		a_res.x = (a_res.x / a_res.w + 1) / 2 * static_cast<float>(cntx.w_);
+		a_res.y = (a_res.y / a_res.w + 1) / 2 * static_cast<float>(cntx.h_);
 
-		b_res.x = (b_res.x / b_res.w + 1) / 2 * static_cast<float>(screen_.XMAX);
-		b_res.y = (b_res.y / b_res.w + 1) / 2 * static_cast<float>(screen_.YMAX);
+		b_res.x = (b_res.x / b_res.w + 1) / 2 * static_cast<float>(cntx.w_);
+		b_res.y = (b_res.y / b_res.w + 1) / 2 * static_cast<float>(cntx.h_);
 
 		if (a_res.w > 0 && b_res.w > 0)
-			bresenhamWTest(a_res, b_res, color);
+			bresenhamWTest(cntx,a_res, b_res, color);
 	}
 
 	static void clipNearInHomoSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
@@ -60,7 +62,7 @@ private:
 		a = b + t * (a - b);
 	}
 
-	void bresenhamWTest(const glm::vec2& v1, const glm::vec2& v2, const glm::vec3& color) const
+	void bresenhamWTest(ThreadContext&cntx, const glm::vec2& v1, const glm::vec2& v2, const glm::vec3& color) const
 	{
 		const float x1 = v1.x;
 		const float y1 = v1.y;
@@ -73,8 +75,8 @@ private:
 
 		if (xdiff == 0.0f && ydiff == 0.0f)
 		{
-			if (x1 > 0 && x1 < static_cast<float>(screen_.XMAX) && y1 > 0 && y1 < static_cast<float>(screen_.YMAX))
-				screen_.put_point(static_cast<uint>(x1), static_cast<uint>(y1), color);
+			if (x1 > 0 && x1 < static_cast<float>(cntx.w_) && y1 > 0 && y1 < static_cast<float>(cntx.h_))
+				cntx.setColorBufferAt(x1,y1, color);
 			return;
 		}
 
@@ -100,8 +102,8 @@ private:
 			for (float x = xmin; x <= xmax; x += 1.0f)
 			{
 				float y = y1 + ((x - x1) * slope);
-				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), color);
+				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+					cntx.setColorBufferAt(x,y, color);
 			}
 		}
 		else
@@ -126,11 +128,9 @@ private:
 			for (float y = ymin; y <= ymax; y += 1.0f)
 			{
 				float x = x1 + ((y - y1) * slope);
-				if (x > 0 && x < static_cast<float>(screen_.XMAX) && y > 0 && y < static_cast<float>(screen_.YMAX))
-					screen_.put_point(static_cast<uint>(x), static_cast<uint>(y), color);
+				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+					cntx.setColorBufferAt(x,y, color);
 			}
 		}
 	}
-
-	Screen& screen_;
 };

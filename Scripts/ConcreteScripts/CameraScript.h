@@ -8,7 +8,7 @@
 class CameraScript final : public Script
 {
 public:
-	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& screen)
+	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui)
 	{
 		std::unique_ptr<Transform> t(new Transform);
 
@@ -17,16 +17,18 @@ public:
 
 		auto shp = std::make_unique<Shape>(std::move(t));
 
-		shp->setScript(std::make_unique<CameraScript>(ui, screen, shp->getTransformPtr()));
+		shp->setScript(std::make_unique<CameraScript>(ui, shp->getTransformPtr()));
 
 		return shp;
 	}
 
-	CameraScript(Ui::RenderrerMainWindowClass& ui, Screen& s, std::unique_ptr<Transform>& transform) : ui_(ui), screen_(s),
+	CameraScript(Ui::RenderrerMainWindowClass& ui ,std::unique_ptr<Transform>& transform) : ui_(ui),
 		transform_(transform)
 	{
+		QSize size=ui_.renderLabel->size();
+
 		proj_ = glm::perspective(glm::radians(45.0f),
-		                         static_cast<float>(screen_.XMAX) / static_cast<float>(screen_.YMAX), 0.1f, 500.0f);
+		                         static_cast<float>(size.width()/2) / static_cast<float>(size.height()/2), 0.1f, 500.0f);
 		updateCameraVectors();
 	}
 
@@ -84,7 +86,6 @@ private:
 	}
 
 	Ui::RenderrerMainWindowClass& ui_;
-	Screen& screen_;
 	std::unique_ptr<Transform>& transform_;
 	glm::mat4 proj_;
 	glm::vec3 front_ = glm::vec3(0.0f, 0.0f, -1.0f);

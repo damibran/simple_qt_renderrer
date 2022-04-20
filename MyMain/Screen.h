@@ -15,11 +15,8 @@ class Screen:public QObject
 public:
 	const uint XMAX;
 	const uint YMAX;
-	thread_pool pool_;
-	uint cur_buffer_ = 0;
-	uint prev_buffer=1;
 
-	Screen(const uint mx, const uint my, uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
+	Screen(const uint mx, const uint my) : XMAX(mx / 2), YMAX(my / 2),
 	                                                           buffer_({
 		                                                           QImage{
 			                                                           static_cast<int>(XMAX * 2),
@@ -29,50 +26,28 @@ public:
 			                                                           static_cast<int>(XMAX * 2),
 			                                                           static_cast<int>(YMAX * 2), QImage::Format_RGB32
 		                                                           }
-	                                                           }),
-	                                                           pool_(XMAX, YMAX, _thread_count)
-	{
-		pool_.sleep_duration = 0;
+	                                                           }){
 	}
 
-	void put_point(const uint a, const uint b, const glm::vec3& color)
+	void put_point(uint cur_buffer,const uint a, const uint b, const glm::vec3& color)
 	{
-		buffer_[cur_buffer_].setPixel(a * 2u, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
-		buffer_[cur_buffer_].setPixel(a * 2u + 1, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
-		buffer_[cur_buffer_].setPixel(a * 2u, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
-		buffer_[cur_buffer_].setPixel(a * 2u + 1, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
+		buffer_[cur_buffer].setPixel(a * 2u, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
+		buffer_[cur_buffer].setPixel(a * 2u + 1, (YMAX - b - 1) * 2u, qRgb(color.r, color.g, color.b));
+		buffer_[cur_buffer].setPixel(a * 2u, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
+		buffer_[cur_buffer].setPixel(a * 2u + 1, (YMAX - b - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
-	void clearScreen()
-	{
-		pool_.clearBuffers(prev_buffer, {200, 200, 200});
-	}
-
-	void sumUpBuffers()
+	void sumUpBuffers(thread_pool& pool)
 	{
 		for (uint x = 0; x < XMAX; ++x)
 		{
 			for (uint y = 0; y < YMAX; ++y)
 			{
-				put_point(x, y, pool_.getThreadsColor(prev_buffer, x, y));
+				put_point(pool.prev_buffer,x, y, pool.getThreadsColor(pool.prev_buffer, x, y));
 			}
 		}
-		emit ImageUpdated(buffer_[prev_buffer]);
-	}
-
-	void swapBuffer()
-	{
-		if (cur_buffer_ == 0)
-		{
-			prev_buffer = 0;
-			cur_buffer_ = 1;
-		}
-		else
-		{
-			prev_buffer = 1;
-			cur_buffer_ = 0;
-		}
+		emit ImageUpdated(buffer_[pool.prev_buffer]);
 	}
 
 private:
