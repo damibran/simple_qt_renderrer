@@ -5,6 +5,7 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 	: QMainWindow(parent)
 	  , screen_(wr, hr,4)
 	  , scene_(screen_)
+	,render_thread_(screen_,scene_,working_)
 {
 	ui_.setupUi(this);
 
@@ -15,22 +16,6 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 	ui_.renderLabel->resize(wr, hr);
 
 	connect(&screen_,&Screen::ImageUpdated,this,&RendererMainWindow::printImage);
-
-	render_thread_=std::thread([this]()
-	{
-		while(working_)
-		{
-			tp2_ = std::chrono::system_clock::now();
-			const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
-			tp1_ = tp2_;
-			const float delta_time = elapsed_time.count();
-
-			screen_.clearScreen();
-			//updating all scene
-			scene_.updateScene(delta_time);
-			scene_.renderScene();
-		}
-	});
 }
 
 void RendererMainWindow::screen_refresh()
@@ -49,7 +34,6 @@ void RendererMainWindow::keyPressEvent(QKeyEvent* event)
 	if (event->key() == 16777216)
 	{
 		working_=false;
-		render_thread_.join();
 		//this->close();
 	}
 }
