@@ -16,24 +16,27 @@ RendererMainWindow::RendererMainWindow(const int wr, const int hr, QWidget* pare
 
 	connect(&screen_,&Screen::ImageUpdated,this,&RendererMainWindow::printImage);
 
-	timer_.start(32);
-	connect(&timer_, SIGNAL(timeout()), this, SLOT(screen_refresh()));
+	render_thread_=std::thread([this]()
+	{
+		while(working_)
+		{
+			tp2_ = std::chrono::system_clock::now();
+			const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
+			tp1_ = tp2_;
+			const float delta_time = elapsed_time.count();
+
+			screen_.clearScreen();
+			//updating all scene
+			scene_.updateScene(delta_time);
+			scene_.renderScene();
+		}
+	});
 }
 
 void RendererMainWindow::screen_refresh()
 {
 	///calculating delta time
-	tp2_ = std::chrono::system_clock::now();
-	const std::chrono::duration<float> elapsed_time = tp2_ - tp1_;
-	tp1_ = tp2_;
-	const float delta_time = elapsed_time.count();
-
 	//qDebug() << 1.0f / delta_time;
-
-	screen_.clearScreen();
-	//updating all scene
-	scene_.updateScene(delta_time);
-	scene_.renderScene();
 }
 
 void RendererMainWindow::printImage(const QImage& img) const
@@ -45,7 +48,8 @@ void RendererMainWindow::keyPressEvent(QKeyEvent* event)
 {
 	if (event->key() == 16777216)
 	{
-		timer_.stop();
+		working_=false;
+		render_thread_.join();
 		//this->close();
 	}
 }

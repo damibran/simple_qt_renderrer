@@ -76,6 +76,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
+
 };
 
 #endif // SCENE_H
