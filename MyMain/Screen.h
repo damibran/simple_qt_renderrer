@@ -38,16 +38,16 @@ public:
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
-	void sumUpBuffers(thread_pool& pool)
+	void sumUpBuffers(uint buffer,thread_pool& pool)
 	{
 		for (uint x = 0; x < XMAX; ++x)
 		{
 			for (uint y = 0; y < YMAX; ++y)
 			{
-				put_point(pool.prev_buffer,x, y, pool.getThreadsColor(pool.prev_buffer, x, y));
+				put_point(buffer,x, y, pool.getThreadsColor(buffer, x, y));
 			}
 		}
-		emit ImageUpdated(buffer_[pool.prev_buffer]);
+		emit ImageUpdated(buffer_[buffer]);
 	}
 
 private:

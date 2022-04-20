@@ -368,8 +368,8 @@ public:
 			auto& th = threads[i].thread_context_;
 			for (int j = 0; j < th.w_ * th.h_; ++j)
 			{
-				th.color_buffer[cur_buffer_][j] = color;
-				th.z_buffer_[cur_buffer_][j] = FLT_MAX;
+				th.color_buffer[prev_buffer][j] = color;
+				th.z_buffer_[prev_buffer][j] = FLT_MAX;
 			}
 		}
 	}

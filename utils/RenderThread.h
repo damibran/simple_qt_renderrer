@@ -48,7 +48,7 @@ private:
 
 			pool_.push_task([this](ThreadContext& cntx)
 			{
-				screen_.sumUpBuffers(pool_);
+				screen_.sumUpBuffers(pool_.prev_buffer,pool_);
 			});
 		}
 	}
