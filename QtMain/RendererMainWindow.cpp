@@ -36,7 +36,7 @@ void RendererMainWindow::screen_refresh()
 	scene_.renderScene();
 }
 
-void RendererMainWindow::printImage(QImage& img) const
+void RendererMainWindow::printImage(const QImage& img) const
 {
 	ui_.renderLabel->setPixmap(QPixmap::fromImage(img.scaled(ui_.renderLabel->size())));
 }
