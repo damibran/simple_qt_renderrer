@@ -40,7 +40,7 @@ struct ThreadContext
 		color_buffer[cur_buffer][y * w_ + x]=c;
 	}
 
-	uint cur_buffer=0;
+	uint cur_buffer;
 	uint w_, h_;
 	std::array<std::vector<glm::vec3>, 2> color_buffer;
 	std::array<std::vector<float>, 2> z_buffer_;
