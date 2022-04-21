@@ -120,6 +120,9 @@
     <ClInclude Include="utils\RenderThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\Semaphore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">

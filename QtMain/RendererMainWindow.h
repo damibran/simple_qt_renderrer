@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "../utils/RenderThread.h"
 #include "../MyMain/Screen.h"
+#include "../utils/Semaphore.h" 
 #include "../MyMain/Scene.h"
 #include "ui_RenderrerMainWindow.h"
 
@@ -15,7 +16,7 @@ public:
 
 public slots:
 	void screen_refresh();
-	void printImage(const QImage&) const;
+	void printImage(const QImage&,semaphore* ) const;
 
 protected:
 	void keyPressEvent(QKeyEvent* event) override;

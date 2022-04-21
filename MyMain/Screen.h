@@ -3,6 +3,7 @@
 #include <QtGui>
 #include "ui_RenderrerMainWindow.h"
 #include<glm/glm.hpp>
+#include "../utils/Semaphore.h" 
 #include "../utils/thread_pool.hpp"
 
 class Screen:public QObject
@@ -10,7 +11,7 @@ class Screen:public QObject
 	Q_OBJECT
 
 	signals:
-	void ImageUpdated(QImage&);
+	void ImageUpdated(QImage&,semaphore*);
 
 public:
 	const uint XMAX;
@@ -38,7 +39,7 @@ public:
 		//colorBuffer[(YMAX - b) * XMAX + a] = color;
 	}
 
-	void sumUpBuffers(uint buffer,thread_pool& pool)
+	void sumUpBuffers(uint buffer,thread_pool& pool,semaphore* s)
 	{
 		for (uint x = 0; x < XMAX; ++x)
 		{
@@ -47,7 +48,7 @@ public:
 				put_point(buffer,x, y, pool.getThreadsColor(buffer, x, y));
 			}
 		}
-		emit ImageUpdated(buffer_[buffer]);
+		emit ImageUpdated(buffer_[buffer],s);
 	}
 
 private:
