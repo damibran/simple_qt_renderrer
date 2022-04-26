@@ -5,7 +5,7 @@
 class semaphore {
     std::mutex mutex_;
     std::condition_variable condition_;
-    unsigned long count_ = 1; // Initialized as locked.
+    unsigned long count_ = 1;
 
 public:
     void release() {

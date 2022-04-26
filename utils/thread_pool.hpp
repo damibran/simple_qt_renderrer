@@ -324,20 +324,23 @@ public:
 
 	void swapBuffer()
 	{
-		for (int i = 0; i < thread_count; ++i)
+		if (cur_buffer_ == 0)
 		{
-			if (cur_buffer_ == 0)
+			prev_buffer = 0;
+			for (int i = 0; i < thread_count; ++i)
 			{
-				prev_buffer = 0;
 				threads[i].thread_context_.cur_buffer = 1;
-				cur_buffer_ = 1;
 			}
-			else
+			cur_buffer_ = 1;
+		}
+		else
+		{
+			prev_buffer = 1;
+			for (int i = 0; i < thread_count; ++i)
 			{
-				prev_buffer = 1;
 				threads[i].thread_context_.cur_buffer = 0;
-				cur_buffer_ = 0;
 			}
+			cur_buffer_ = 0;
 		}
 	}
 
