@@ -130,6 +130,7 @@
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="utils\Mesh.h" />
     <ClInclude Include="MyMain\Shape.h" />
+    <ClInclude Include="utils\stb_image.h" />
     <ClInclude Include="utils\thread_pool.hpp" />
     <ClInclude Include="Renderers\ConcreteRenderers\ShaderMeshRenderer.h" />
     <ClInclude Include="utils\LineSegment.h" />

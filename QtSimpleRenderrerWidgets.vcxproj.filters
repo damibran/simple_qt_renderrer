@@ -120,6 +120,9 @@
     <ClInclude Include="QtMy\QTransformEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">
