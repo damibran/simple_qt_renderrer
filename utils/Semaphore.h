@@ -17,7 +17,9 @@ public:
     void acquire() {
         std::unique_lock<decltype(mutex_)> lock(mutex_);
         while(!count_) // Handle spurious wake-ups.
+        {
             condition_.wait(lock);
+        }
         --count_;
     }
 

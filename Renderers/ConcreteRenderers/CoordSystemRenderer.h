@@ -70,18 +70,18 @@ private:
 		int i, err_1, err_2;
 
 		glm::vec3 point = v1;
-		int dx = v2.x - v1.x;
-		int dy = v2.y - v1.y;
-		int dz = v2.z - v1.z;
-		int x_inc = (dx < 0) ? -1 : 1;
-		int l = abs(dx);
-		int y_inc = (dy < 0) ? -1 : 1;
-		int m = abs(dy);
-		int z_inc = (dz < 0) ? -1 : 1;
-		int n = abs(dz);
-		int dx2 = l << 1;
-		int dy2 = m << 1;
-		int dz2 = n << 1;
+		const int dx = v2.x - v1.x;
+		const int dy = v2.y - v1.y;
+		const int dz = v2.z - v1.z;
+		const int x_inc = (dx < 0) ? -1 : 1;
+		const int l = abs(dx);
+		const int y_inc = (dy < 0) ? -1 : 1;
+		const int m = abs(dy);
+		const int z_inc = (dz < 0) ? -1 : 1;
+		const int n = abs(dz);
+		const int dx2 = l << 1;
+		const int dy2 = m << 1;
+		const int dz2 = n << 1;
 
 		if ((l >= m) && (l >= n))
 		{
