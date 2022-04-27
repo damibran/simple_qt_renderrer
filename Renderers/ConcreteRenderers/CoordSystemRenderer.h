@@ -7,22 +7,23 @@
 class CoordSystemRenderer final : public RendererComponent
 {
 public:
-	explicit CoordSystemRenderer()=default;
+	explicit CoordSystemRenderer() = default;
 
-	void drawShapeVisual(thread_pool& pool,const MVPMat& trans) override
+	void drawShapeVisual(thread_pool& pool, const MVPMat& trans) override
 	{
 		const glm::mat4 full_mat = trans.proj * trans.view * trans.model;
 
 		pool.push_task([this,full_mat](ThreadContext& cntx)
-				{
-					drawAxis(cntx,full_mat, {1, 0, 0}, {-1, 0, 0},{180,0,0});
-					drawAxis(cntx,full_mat, {0, 1, 0}, {0, -1, 0},{0,180,0});
-					drawAxis(cntx,full_mat, {0, 0, 1}, {0, 0, -1},{0,0,180});
-				});
+		{
+			drawAxis(cntx, full_mat, {1, 0, 0}, {-1, 0, 0}, {180, 0, 0});
+			drawAxis(cntx, full_mat, {0, 1, 0}, {0, -1, 0}, {0, 180, 0});
+			drawAxis(cntx, full_mat, {0, 0, 1}, {0, 0, -1}, {0, 0, 180});
+		});
 	}
 
 private:
-	void drawAxis(ThreadContext& cntx,const glm::mat4& full_mat, const glm::vec3& a_in, const glm::vec3& b_in, const glm::vec3& color) const
+	void drawAxis(ThreadContext& cntx, const glm::mat4& full_mat, const glm::vec3& a_in, const glm::vec3& b_in,
+	              const glm::vec3& color) const
 	{
 		glm::vec4 a_res = full_mat * glm::vec4(a_in, 1.0f);
 		glm::vec4 b_res = full_mat * glm::vec4(b_in, 1.0f);
@@ -46,7 +47,7 @@ private:
 		b_res.z = b_res.w;
 
 		if (a_res.w > 0 && b_res.w > 0)
-			bresenhamWTest(cntx,a_res, b_res, color);
+			bresenham3D(a_res, b_res, cntx, color);
 	}
 
 	static void clipNearInHomoSpace(glm::vec4& a, const glm::vec4& b) // a is outside, b inside
@@ -64,79 +65,110 @@ private:
 		a = b + t * (a - b);
 	}
 
-	void bresenhamWTest(ThreadContext&cntx, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& color) const
+	void bresenham3D(const glm::vec3& v1, const glm::vec3& v2, ThreadContext& cntx, const glm::vec3& color)const
 	{
-		const glm::vec3 diff = (v2 - v1);
+		int i, err_1, err_2;
 
-		if (diff.x == 0.0f && diff.y == 0.0f)
+		glm::vec3 point = v1;
+		int dx = v2.x - v1.x;
+		int dy = v2.y - v1.y;
+		int dz = v2.z - v1.z;
+		int x_inc = (dx < 0) ? -1 : 1;
+		int l = abs(dx);
+		int y_inc = (dy < 0) ? -1 : 1;
+		int m = abs(dy);
+		int z_inc = (dz < 0) ? -1 : 1;
+		int n = abs(dz);
+		int dx2 = l << 1;
+		int dy2 = m << 1;
+		int dz2 = n << 1;
+
+		if ((l >= m) && (l >= n))
 		{
-			if (v1.x > 0 && v1.x < static_cast<float>(cntx.w_) && v1.y > 0 && v1.y < static_cast<float>(cntx.h_))
+			err_1 = dy2 - l;
+			err_2 = dz2 - l;
+			for (i = 0; i < l; i++)
 			{
-				cntx.setColorBufferAt(v1.x,v1.y, color);
-				cntx.setZBufferAt(v1.x,v1.y,FLT_MIN);
-			}
-			return;
-		}
-
-		if (fabs(diff.x) > fabs(diff.y))
-		{
-			float xmin, xmax;
-
-			// set xmin to the lower x value given
-			// and xmax to the higher value
-			if (v1.x < v2.x)
-			{
-				xmin = v1.x;
-				xmax = v2.x;
-			}
-			else
-			{
-				xmin = v2.x;
-				xmax = v1.x;
-			}
-
-			// draw line in terms of y slope
-			const float slope = diff.y / diff.x;
-			for (float x = xmin; x <= xmax; x += 1.0f)
-			{
-				float y = v1.y + ((x - v1.x) * slope);
-				float t=x/xmax;
-				//float z=x
-				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+				//output->getTileAt(point[0], point[1], point[2])->setSymbol(symbol);
+				if (point.x > 0 && point.x < static_cast<float>(cntx.w_) && point.y > 0 && point.y < static_cast<float>(cntx.h_))
 				{
-					cntx.setColorBufferAt(x,y, color);
-					cntx.setZBufferAt(x,y,FLT_MIN);
+					cntx.setColorBufferAt(point.x, point.y, color);
+					cntx.setZBufferAt(point.x, point.y, point.z);
 				}
+				if (err_1 > 0)
+				{
+					point[1] += y_inc;
+					err_1 -= dx2;
+				}
+				if (err_2 > 0)
+				{
+					point[2] += z_inc;
+					err_2 -= dx2;
+				}
+				err_1 += dy2;
+				err_2 += dz2;
+				point[0] += x_inc;
+			}
+		}
+		else if ((m >= l) && (m >= n))
+		{
+			err_1 = dx2 - m;
+			err_2 = dz2 - m;
+			for (i = 0; i < m; i++)
+			{
+				//output->getTileAt(point[0], point[1], point[2])->setSymbol(symbol);
+				if (point.x > 0 && point.x < static_cast<float>(cntx.w_) && point.y > 0 && point.y < static_cast<float>(cntx.h_))
+				{
+					cntx.setColorBufferAt(point.x, point.y, color);
+					cntx.setZBufferAt(point.x, point.y, point.z);
+				}
+				if (err_1 > 0)
+				{
+					point[0] += x_inc;
+					err_1 -= dy2;
+				}
+				if (err_2 > 0)
+				{
+					point[2] += z_inc;
+					err_2 -= dy2;
+				}
+				err_1 += dx2;
+				err_2 += dz2;
+				point[1] += y_inc;
 			}
 		}
 		else
 		{
-			float ymin, ymax;
-
-			// set ymin to the lower y value given
-			// and ymax to the higher value
-			if (v1.y < v2.y)
+			err_1 = dy2 - n;
+			err_2 = dx2 - n;
+			for (i = 0; i < n; i++)
 			{
-				ymin = v1.y;
-				ymax = v2.y;
-			}
-			else
-			{
-				ymin = v2.y;
-				ymax = v1.y;
-			}
-
-			// draw line in terms of x slope
-			float slope = diff.x / diff.y;
-			for (float y = ymin; y <= ymax; y += 1.0f)
-			{
-				float x = v1.x + ((y - v1.y) * slope);
-				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+				//output->getTileAt(point[0], point[1], point[2])->setSymbol(symbol);
+				if (point.x > 0 && point.x < static_cast<float>(cntx.w_) && point.y > 0 && point.y < static_cast<float>(cntx.h_))
 				{
-					cntx.setColorBufferAt(x,y, color);
-					cntx.setZBufferAt(x,y,FLT_MIN);
+					cntx.setColorBufferAt(point.x, point.y, color);
+					cntx.setZBufferAt(point.x, point.y, point.z);
 				}
+				if (err_1 > 0)
+				{
+					point[1] += y_inc;
+					err_1 -= dz2;
+				}
+				if (err_2 > 0)
+				{
+					point[0] += x_inc;
+					err_2 -= dz2;
+				}
+				err_1 += dy2;
+				err_2 += dx2;
+				point[2] += z_inc;
 			}
+		}
+		//output->getTileAt(point[0], point[1], point[2])->setSymbol(symbol);
+		if (point.x > 0 && point.x < static_cast<float>(cntx.w_) && point.y > 0 && point.y < static_cast<float>(cntx.h_))
+		{
+			cntx.setColorBufferAt(point.x, point.y, color);
+			cntx.setZBufferAt(point.x, point.y, point.z);
 		}
 	}
 };
