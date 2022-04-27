@@ -39,9 +39,11 @@ private:
 
 		a_res.x = (a_res.x / a_res.w + 1) / 2 * static_cast<float>(cntx.w_);
 		a_res.y = (a_res.y / a_res.w + 1) / 2 * static_cast<float>(cntx.h_);
+		a_res.z = a_res.w;
 
 		b_res.x = (b_res.x / b_res.w + 1) / 2 * static_cast<float>(cntx.w_);
 		b_res.y = (b_res.y / b_res.w + 1) / 2 * static_cast<float>(cntx.h_);
+		b_res.z = b_res.w;
 
 		if (a_res.w > 0 && b_res.w > 0)
 			bresenhamWTest(cntx,a_res, b_res, color);
@@ -62,48 +64,49 @@ private:
 		a = b + t * (a - b);
 	}
 
-	void bresenhamWTest(ThreadContext&cntx, const glm::vec2& v1, const glm::vec2& v2, const glm::vec3& color) const
+	void bresenhamWTest(ThreadContext&cntx, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& color) const
 	{
-		const float x1 = v1.x;
-		const float y1 = v1.y;
+		const glm::vec3 diff = (v2 - v1);
 
-		const float x2 = v2.x;
-		const float y2 = v2.y;
-
-		const float xdiff = (x2 - x1);
-		const float ydiff = (y2 - y1);
-
-		if (xdiff == 0.0f && ydiff == 0.0f)
+		if (diff.x == 0.0f && diff.y == 0.0f)
 		{
-			if (x1 > 0 && x1 < static_cast<float>(cntx.w_) && y1 > 0 && y1 < static_cast<float>(cntx.h_))
-				cntx.setColorBufferAt(x1,y1, color);
+			if (v1.x > 0 && v1.x < static_cast<float>(cntx.w_) && v1.y > 0 && v1.y < static_cast<float>(cntx.h_))
+			{
+				cntx.setColorBufferAt(v1.x,v1.y, color);
+				cntx.setZBufferAt(v1.x,v1.y,FLT_MIN);
+			}
 			return;
 		}
 
-		if (fabs(xdiff) > fabs(ydiff))
+		if (fabs(diff.x) > fabs(diff.y))
 		{
 			float xmin, xmax;
 
 			// set xmin to the lower x value given
 			// and xmax to the higher value
-			if (x1 < x2)
+			if (v1.x < v2.x)
 			{
-				xmin = x1;
-				xmax = x2;
+				xmin = v1.x;
+				xmax = v2.x;
 			}
 			else
 			{
-				xmin = x2;
-				xmax = x1;
+				xmin = v2.x;
+				xmax = v1.x;
 			}
 
 			// draw line in terms of y slope
-			const float slope = ydiff / xdiff;
+			const float slope = diff.y / diff.x;
 			for (float x = xmin; x <= xmax; x += 1.0f)
 			{
-				float y = y1 + ((x - x1) * slope);
+				float y = v1.y + ((x - v1.x) * slope);
+				float t=x/xmax;
+				//float z=x
 				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+				{
 					cntx.setColorBufferAt(x,y, color);
+					cntx.setZBufferAt(x,y,FLT_MIN);
+				}
 			}
 		}
 		else
@@ -112,24 +115,27 @@ private:
 
 			// set ymin to the lower y value given
 			// and ymax to the higher value
-			if (y1 < y2)
+			if (v1.y < v2.y)
 			{
-				ymin = y1;
-				ymax = y2;
+				ymin = v1.y;
+				ymax = v2.y;
 			}
 			else
 			{
-				ymin = y2;
-				ymax = y1;
+				ymin = v2.y;
+				ymax = v1.y;
 			}
 
 			// draw line in terms of x slope
-			float slope = xdiff / ydiff;
+			float slope = diff.x / diff.y;
 			for (float y = ymin; y <= ymax; y += 1.0f)
 			{
-				float x = x1 + ((y - y1) * slope);
+				float x = v1.x + ((y - v1.y) * slope);
 				if (x > 0 && x < static_cast<float>(cntx.w_) && y > 0 && y < static_cast<float>(cntx.h_))
+				{
 					cntx.setColorBufferAt(x,y, color);
+					cntx.setZBufferAt(x,y,FLT_MIN);
+				}
 			}
 		}
 	}

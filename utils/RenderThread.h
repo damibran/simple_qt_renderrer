@@ -45,11 +45,7 @@ private:
 			//updating all scene
 			scene_.updateScene(delta_time);
 
-			pool_.paused = true;
 			scene_.renderScene(pool_);
-			pool_.paused = false;
-
-			pool_.wait_for_tasks();
 
 			s->acquire();
 

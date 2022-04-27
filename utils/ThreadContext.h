@@ -30,12 +30,17 @@ struct ThreadContext
 		z_buffer_[cur_buffer][indx] = f;
 	}
 
+	void setZBufferAt(size_t x, size_t y, float f)
+	{
+		z_buffer_[cur_buffer][y * w_ + x] = f;
+	}
+
 	void setColorBufferAt(int indx, const glm::vec3& c)
 	{
 		color_buffer[cur_buffer][indx]=c;
 	}
 
-	void setColorBufferAt(size_t x, size_t y, const glm::vec3& c)
+	void setColorBufferAt( size_t x, size_t y,const glm::vec3& c)
 	{
 		color_buffer[cur_buffer][y * w_ + x]=c;
 	}

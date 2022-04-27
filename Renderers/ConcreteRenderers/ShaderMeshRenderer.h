@@ -25,6 +25,7 @@ protected:
 		if (!mesh->indices.empty())
 		{
 			uint count_of_triangles_per_thread = std::ceil((mesh->indices.size() / 3) / pool.get_thread_count());
+
 			for (uint t = 0, cur_indx = 0; t < pool.get_thread_count(); t++, cur_indx +=
 			     count_of_triangles_per_thread)
 			{
@@ -38,14 +39,10 @@ protected:
 			}
 		}
 
-
 		for (auto const& i : mesh->childs)
 		{
 			drawMesh(pool,trans, i);
 		}
-
-		//screen_.pool_.wait_for_tasks();
-
 	}
 
 	void process_trngl(ThreadContext& cntx, ShaderID shdr, const MVPMat& trans, const Vertex& v0, const Vertex& v1,
