@@ -1,8 +1,10 @@
 #pragma once
 #include"../utils/Vertex.h"
+#include "../utils/Texture.h"
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include "../utils/stb_image.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -25,10 +27,8 @@ public:
 	friend class MeshClipShaderMeshRenderer;
 
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& indes)
+	Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& indes) : vertices(verts), indices(indes)
 	{
-		this->vertices = verts;
-		this->indices = indes;
 	}
 
 	const std::vector<Vertex>& getChildVerticesRef(int indx) const
@@ -45,6 +45,7 @@ private:
 	// mesh Data
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	Texture texture;
 	std::vector<std::unique_ptr<Mesh>> childs;
 	// model data 
 	std::string directory;
@@ -78,7 +79,7 @@ private:
 			// the node object only contains indices to index the actual objects in the scene. 
 			// the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			this->childs.push_back(std::move(processMesh(mesh, scene)));
+			this->childs.push_back(processMesh(mesh, scene));
 		}
 		// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -109,6 +110,12 @@ private:
 				vrtx.norm.z = mesh->mNormals[i].z;
 			}
 
+			if (mesh->mTextureCoords[0])
+			{
+				vrtx.texCoord.x = mesh->mTextureCoords[0][i].x;
+				vrtx.texCoord.y = mesh->mTextureCoords[0][i].y;
+			}
+
 			vertices_t.push_back(vrtx);
 		}
 		// now wak through each of the mesh's faces (a face is a mesh its triangle) and retrieve the corresponding vertex indices.
@@ -120,7 +127,51 @@ private:
 				indices_t.push_back(face.mIndices[j]);
 		}
 
+		aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+		// we assume a convention for sampler names in the shaders. Each diffuse texture should be named
+		// as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
+		// Same applies to other texture as the following list summarizes:
+		// diffuse: texture_diffuseN
+		// specular: texture_specularN
+		// normal: texture_normalN
+
+		// 1. diffuse maps
+		Texture texture();
+
 		// return a mesh object created from the extracted mesh data
 		return std::make_unique<Mesh>(vertices_t, indices_t);
 	}
+
+	Texture loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+	{
+		std::vector<Texture> textures;
+		aiString str;
+		mat->GetTexture(type, 0, &str);
+		return TextureFromFile(str.C_Str(), this->directory);
+	}
+
+	Texture TextureFromFile(const char* path, const std::string& directory)
+	{
+		Texture texture;
+		std::string filename = std::string(path);
+		filename = directory + '/' + filename;
+
+		int width, height, nrComponents;
+		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			texture.data=data;
+			texture.width=width;
+			texture.height=height;
+			texture.nComp=nrComponents;
+		}
+		else
+		{
+			std::cout << "Texture failed to load at path: " << path << std::endl;
+			stbi_image_free(data);
+		}
+
+		return texture;
+	}
 };
+
