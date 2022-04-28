@@ -20,7 +20,8 @@ public:
 
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
-		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/texCub.obj");
+		mesh_instances_["res/texCub.obj"] = std::make_unique<Mesh>("res/texCub.obj");
+		mesh_instances_["res/SimpleCub.obj"] = std::make_unique<Mesh>("res/SimpleCub.obj");
 		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
 		mesh_instances_["res/tetrahedron.obj"] = std::make_unique<Mesh>("res/tetrahedron.obj");
 

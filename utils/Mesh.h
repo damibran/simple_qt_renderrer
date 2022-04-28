@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include "../utils/stb_image.h"
+#include <stb/stb_image.h>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -18,18 +18,18 @@ public:
 		loadMesh(path);
 	}
 
-	Mesh(const std::unique_ptr<Mesh>& m): vertices(m->vertices), indices(m->indices) // dont copy childs
+	//Mesh(const std::unique_ptr<Mesh>& m): vertices(m->vertices), indices(m->indices) // dont copy childs forget about texture
+	//{
+	//	qDebug() << "Mesh Copy";
+	//}
+
+	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
+	Mesh(std::vector<Vertex>&& verts, std::vector<unsigned int>&& indes, Texture&& text) : vertices(verts), indices(indes), texture(std::move(text))
 	{
-		qDebug() << "Mesh Copy";
 	}
 
 	friend class ShaderMeshRenderer;
 	friend class MeshClipShaderMeshRenderer;
-
-	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
-	Mesh(const std::vector<Vertex>& verts, const std::vector<unsigned int>& indes) : vertices(verts), indices(indes)
-	{
-	}
 
 	const std::vector<Vertex>& getChildVerticesRef(int indx) const
 	{
@@ -39,6 +39,11 @@ public:
 	size_t faceCount() const
 	{
 		return indices.size() / 3;
+	}
+
+	Texture* getTexturePtr()
+	{
+		return &childs[0]->texture;
 	}
 
 private:
@@ -79,7 +84,7 @@ private:
 			// the node object only contains indices to index the actual objects in the scene. 
 			// the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			this->childs.push_back(processMesh(mesh, scene));
+			this->childs.push_back(std::move(processMesh(mesh, scene)));
 		}
 		// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -136,13 +141,13 @@ private:
 		// normal: texture_normalN
 
 		// 1. diffuse maps
-		Texture texture();
+		Texture t_texture(loadMaterialTextures(material,aiTextureType_DIFFUSE));
 
 		// return a mesh object created from the extracted mesh data
-		return std::make_unique<Mesh>(vertices_t, indices_t);
+		return std::make_unique<Mesh>(std::move(vertices_t), std::move(indices_t),std::move(t_texture));
 	}
 
-	Texture loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
+	Texture loadMaterialTextures(aiMaterial* mat, aiTextureType type)const
 	{
 		std::vector<Texture> textures;
 		aiString str;
@@ -150,7 +155,7 @@ private:
 		return TextureFromFile(str.C_Str(), this->directory);
 	}
 
-	Texture TextureFromFile(const char* path, const std::string& directory)
+	Texture TextureFromFile(const char* path, const std::string& directory)const
 	{
 		Texture texture;
 		std::string filename = std::string(path);
@@ -160,7 +165,7 @@ private:
 		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
 		if (data)
 		{
-			texture.data=data;
+			texture.data= std::unique_ptr<unsigned char>(data);
 			texture.width=width;
 			texture.height=height;
 			texture.nComp=nrComponents;

@@ -40,6 +40,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyMain\Scene.h">
@@ -120,10 +123,10 @@
     <ClInclude Include="QtMy\QTransformEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\stb_image.h">
+    <ClInclude Include="utils\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Texture.h">
+    <ClInclude Include="Shaders\ConcreteShaders\UnlitTexturedShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
