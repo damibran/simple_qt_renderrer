@@ -11,7 +11,8 @@ public:
 	~ShaderMeshRenderer() override = default;
 
 	ShaderMeshRenderer(Screen& s, std::unique_ptr<Shader> shdr, const std::unique_ptr<Mesh>& m) : screen_(s),
-		shader_(std::move(shdr)), mesh_(m), pool_(s.pool_) {}
+		shader_(std::move(shdr)), mesh_(m)//, pool_(s.pool_)
+	{}
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
@@ -79,9 +80,7 @@ protected:
 		const uint y1 = std::min(static_cast<int>(screen_.YMAX - 1), static_cast<int>(std::floor(ymax)));
 
 		float area = edgeFunction(v0, v1, v2);
-		auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const uint a, const uint b)
-		{
-			for (uint y = a; y <= b; ++y)
+		for (uint y = y0; y <= y1; ++y)
 			{
 				for (uint x = x0; x <= x1; ++x)
 				{
@@ -123,14 +122,17 @@ protected:
 					}
 				}
 			}
-		};
-		pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
+		//auto loop = [this, v0, v1, v2, area, x0, x1, &shader](const uint a, const uint b)
+		//{
+		//	
+		//};
+		//pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
 	}
 
 	Screen& screen_;
 	std::unique_ptr<Shader> shader_;
 	const std::unique_ptr<Mesh>& mesh_;
-	thread_pool& pool_;
+	//thread_pool& pool_;
 
 	float min3(const float& a, const float& b, const float& c) const
 	{
