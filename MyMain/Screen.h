@@ -14,7 +14,7 @@ public:
 
 	Screen(const uint mx, const uint my, uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
 	                                                           buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),
-	raw_buffer(reinterpret_cast<uint*>(buffer_.scanLine(0)))
+	                                                           raw_buffer(reinterpret_cast<uint*>(buffer_.scanLine(0)))
 	//,pool_(_thread_count)
 	{
 		//pool_.sleep_duration=0;
@@ -62,7 +62,7 @@ private:
 
 	void setpixInRawBuffer(const uint x, const uint y, QRgb c)
 	{
-		raw_buffer[y * buffer_.width() + x] = c;
+		raw_buffer[y * XMAX * 2 + x] = c;
 	}
 };
 
