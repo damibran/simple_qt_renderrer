@@ -12,7 +12,7 @@ public:
 	{
 		std::unique_ptr<Transform> t(new Transform);
 
-		t->translate({ 0, 0, 10 });
+		t->translate({ 0, 0, 30 });
 		t->setRotationDegrees({ 0, -90, 0 });
 
 		auto shp = std::make_unique<Shape>(std::move(t));
