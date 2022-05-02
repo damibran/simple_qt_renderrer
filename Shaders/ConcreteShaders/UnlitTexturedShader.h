@@ -7,6 +7,8 @@ class UnlitTexturedShader : public Shader
 {
 	Texture* texture;
 
+	glm::mat4 mvp;
+
 	glm::vec2 v0TC;
 	glm::vec2 v1TC;
 	glm::vec2 v2TC;
@@ -17,12 +19,17 @@ public:
 	{
 	}
 
-	TriangleClipPos
-	computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
+	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
-		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
-		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
-		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
+		mvp = trans.proj * trans.view * trans.model;
+	}
+
+	TriangleClipPos
+	computeVertexShader(const Vertex& v0, const Vertex& v1, const Vertex& v2) override
+	{
+		glm::vec4 clip_a = mvp * glm::vec4(v0.pos, 1.0f);
+		glm::vec4 clip_b = mvp * glm::vec4(v1.pos, 1.0f);
+		glm::vec4 clip_c = mvp * glm::vec4(v2.pos, 1.0f);
 
 		v0TC = v0.texCoord;
 		v1TC = v1.texCoord;

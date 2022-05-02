@@ -23,6 +23,8 @@ public:
 
 	void drawShapeVisual(const MVPMat& trans) override
 	{
+		shader_->preparePerObjectVertexShaderData(trans);
+
 		glm::mat3 t_inv_proj = glm::mat3(glm::transpose(glm::inverse(
 			trans.view *
 			clip_trans_->getFullModelMatrix())));
@@ -47,7 +49,7 @@ private:
 		glm::mat3 t_inv_MV = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model)));
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
-			TriangleClipPos abc = shader_->computeVertexShader(trans,t_inv_MV, mesh->vertices[mesh->indices[i]],
+			TriangleClipPos abc = shader_->computeVertexShader(mesh->vertices[mesh->indices[i]],
 			                                                   mesh->vertices[mesh->indices[i + 1]],
 			                                                   mesh->vertices[mesh->indices[i + 2]]);
 
@@ -92,7 +94,7 @@ private:
 				abc_.b.z <= abc_.b.w && abc_.b.z >= -abc_.b.w &&
 				abc_.c.z <= abc_.c.w && abc_.c.z >= -abc_.c.w) //kinda frutsum Clipping
 			{
-				put_triangle(shader, a, b, c);
+				put_triangle(a, b, c);
 			}
 		}
 		else

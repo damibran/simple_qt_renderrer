@@ -2,6 +2,7 @@
 #define SCREEN_H
 #include <QtGui>
 #include<vector>
+#include<algorithm>
 #include<glm/glm.hpp>
 #include "../utils/thread_pool.hpp"
 
@@ -18,17 +19,18 @@ public:
 	//,pool_(_thread_count)
 	{
 		//pool_.sleep_duration=0;
-		for (size_t i = 0; i < XMAX * YMAX; ++i)
-			z_buffer_.push_back(FLT_MAX);
+		z_buffer_.resize(XMAX * YMAX);
+		std::fill(z_buffer_.begin(), z_buffer_.end(),FLT_MAX); 
 	}
 
 	void put_point(const uint x, const uint y, const glm::vec3& color)
 	{
 		//colorBuffer[(YMAX - y) * XMAX + x] = color;
-		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u, qRgb(color.r, color.g, color.b));
-		setpixInRawBuffer(x * 2u + 1, (YMAX - y - 1) * 2u, qRgb(color.r, color.g, color.b));
-		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
-		setpixInRawBuffer(x * 2u + 1, (YMAX - y - 1) * 2u + 1, qRgb(color.r, color.g, color.b));
+		QRgb qcolor = qRgb(color.r, color.g, color.b);
+		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u, qcolor);
+		setpixInRawBuffer(x * 2u + 1, (YMAX - y - 1) * 2u, qcolor);
+		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u + 1, qcolor);
+		setpixInRawBuffer(x * 2u + 1, (YMAX - y - 1) * 2u + 1, qcolor);
 	}
 
 	QImage& getImage()
@@ -38,11 +40,8 @@ public:
 
 	void clearScreen()
 	{
-		//buffer_.fill(QColor(200, 200, 200));
-		for (size_t i = 0; i < XMAX * YMAX * 4; ++i)
-			raw_buffer[i] = qRgb(200, 200, 200);
-		for (size_t i = 0; i < XMAX * YMAX; ++i)
-			z_buffer_[i] = FLT_MAX;
+		std::fill(raw_buffer,raw_buffer+XMAX * YMAX * 4,background_color);
+		std::fill(z_buffer_.begin(), z_buffer_.end(),FLT_MAX);
 	}
 
 	float getZBufferAt(const uint i) const
@@ -59,6 +58,8 @@ private:
 	QImage buffer_;
 	uint* raw_buffer;
 	std::vector<float> z_buffer_;
+	QRgb background_color = qRgb(200, 200, 200);
+
 
 	void setpixInRawBuffer(const uint x, const uint y, QRgb c)
 	{

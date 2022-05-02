@@ -21,7 +21,7 @@ public:
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
 			std::make_unique<ShaderMeshRenderer>(
-				s, std::make_unique<UnlitTexturedShader>(mesh_instances.at(main)->getTexturePtr()),
+				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),//mesh_instances.at(main)->getTexturePtr()),
 				mesh_instances.at(main)));
 
 		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());

@@ -21,7 +21,7 @@ public:
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
 		mesh_instances_["res/texCub.obj"] = std::make_unique<Mesh>("res/texCub.obj");
-		mesh_instances_["res/SimpleCub.obj"] = std::make_unique<Mesh>("res/SimpleCub.obj");
+		mesh_instances_["res/monkey.obj"] = std::make_unique<Mesh>("res/monkey.obj");
 		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
 		mesh_instances_["res/tetrahedron.obj"] = std::make_unique<Mesh>("res/tetrahedron.obj");
 
@@ -37,7 +37,7 @@ public:
 
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/texCub.obj",
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/monkey.obj",
 			                              light_transform));
 
 		//Make camera shape

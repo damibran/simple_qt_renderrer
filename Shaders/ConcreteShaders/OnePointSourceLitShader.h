@@ -15,6 +15,11 @@ protected:
 	vrtx b;
 	vrtx c;
 
+	glm::mat4 mvp;
+	glm::mat4 mv;
+	glm::mat3 timv;
+	glm::mat4 view;
+
 	glm::vec3 view_light_pos;
 
 	float ambient = 1.f;
@@ -33,47 +38,33 @@ public:
 
 	OnePointSourceLitShader() = delete;
 
-	TriangleClipPos
-	computeVertexShader(const MVPMat& trans, const Vertex& v0, const Vertex& v1, const Vertex& v2) override
+	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
-		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
-		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
-		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
-
-		//calculating view positions
-		a.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v0.pos, 1.0f));
-		b.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v1.pos, 1.0f));
-		c.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v2.pos, 1.0f));
-
-		//calculation normals
-		a.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v0.norm;
-		b.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v1.norm;
-		c.view_norm = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model))) * v2.norm;
-
-		view_light_pos = trans.view * glm::vec4(light_obj->getPos(), 1.0f);
-
-		return TriangleClipPos(clip_a, clip_b, clip_c);
+		view = trans.view;
+		mvp = trans.proj * trans.view * trans.model;
+		mv = trans.view * trans.model;
+		timv = glm::mat3(glm::transpose(glm::inverse(trans.view * trans.model)));
 	}
 
+
 	TriangleClipPos
-	computeVertexShader(const MVPMat& trans, const glm::mat3 t_inv_VM, const Vertex& v0, const Vertex& v1,
-	                    const Vertex& v2) override
+	computeVertexShader(const Vertex& v0, const Vertex& v1, const Vertex& v2) override
 	{
-		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
-		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
-		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
+		glm::vec4 clip_a = mvp * glm::vec4(v0.pos, 1.0f);
+		glm::vec4 clip_b = mvp * glm::vec4(v1.pos, 1.0f);
+		glm::vec4 clip_c = mvp * glm::vec4(v2.pos, 1.0f);
 
 		//calculating view positions
-		a.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v0.pos, 1.0f));
-		b.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v1.pos, 1.0f));
-		c.view_pos = glm::vec3(trans.view * trans.model * glm::vec4(v2.pos, 1.0f));
+		a.view_pos = glm::vec3(mv * glm::vec4(v0.pos, 1.0f));
+		b.view_pos = glm::vec3(mv * glm::vec4(v1.pos, 1.0f));
+		c.view_pos = glm::vec3(mv * glm::vec4(v2.pos, 1.0f));
 
 		//calculation normals
-		a.view_norm = t_inv_VM * v0.norm;
-		b.view_norm = t_inv_VM * v1.norm;
-		c.view_norm = t_inv_VM * v2.norm;
+		a.view_norm = timv * v0.norm;
+		b.view_norm = timv * v1.norm;
+		c.view_norm = timv * v2.norm;
 
-		view_light_pos = trans.view * glm::vec4(light_obj->getPos(), 1.0f);
+		view_light_pos = view * glm::vec4(light_obj->getPos(), 1.0f);
 
 		return TriangleClipPos(clip_a, clip_b, clip_c);
 	}

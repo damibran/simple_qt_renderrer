@@ -33,21 +33,11 @@ class Shader
 public:
 	virtual ~Shader() = default;
 
-	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const glm::mat3 t_inv_VM, const Vertex& v0,
-	                                            const Vertex& v1,
-	                                            const Vertex& v2)
-	{ return computeVertexShader(trans, v0, v1, v2); }
+	virtual void preparePerObjectVertexShaderData(const MVPMat& trans)=0;
 
-	virtual TriangleClipPos computeVertexShader(const MVPMat& trans, const Vertex& v0,
+	virtual TriangleClipPos computeVertexShader(const Vertex& v0,
 	                                            const Vertex& v1,
-	                                            const Vertex& v2)
-	{
-		glm::vec4 clip_a = trans.proj * trans.view * trans.model * glm::vec4(v0.pos, 1.0f);
-		glm::vec4 clip_b = trans.proj * trans.view * trans.model * glm::vec4(v1.pos, 1.0f);
-		glm::vec4 clip_c = trans.proj * trans.view * trans.model * glm::vec4(v2.pos, 1.0f);
-
-		return TriangleClipPos(clip_a, clip_b, clip_c);
-	}
+	                                            const Vertex& v2)=0;
 
 	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0; //return color
 	virtual std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
