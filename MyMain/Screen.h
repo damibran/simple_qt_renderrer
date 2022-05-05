@@ -11,14 +11,14 @@ class Screen
 public:
 	const uint XMAX;
 	const uint YMAX;
-	//thread_pool pool_;
+	thread_pool pool_;
 
 	Screen(const uint mx, const uint my, uint _thread_count) : XMAX(mx / 2), YMAX(my / 2),
 	                                                           buffer_(XMAX * 2, YMAX * 2, QImage::Format_RGB32),
 	                                                           raw_buffer(reinterpret_cast<uint*>(buffer_.scanLine(0)))
-	//,pool_(_thread_count)
+	,pool_(_thread_count)
 	{
-		//pool_.sleep_duration=0;
+		pool_.sleep_duration=0;
 		z_buffer_.resize(XMAX * YMAX);
 		std::fill(z_buffer_.begin(), z_buffer_.end(),FLT_MAX); 
 	}
