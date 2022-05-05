@@ -14,9 +14,9 @@ public:
 	{
 		const glm::mat4 full_mat = trans.proj * trans.view * trans.model;
 
-		drawAxis(full_mat, {1, 0, 0}, {-1, 0, 0},{180,0,0});
-		drawAxis(full_mat, {0, 1, 0}, {0, -1, 0},{0,180,0});
-		drawAxis(full_mat, {0, 0, 1}, {0, 0, -1},{0,0,180});
+		drawAxis(full_mat, {1, 0, 0}, {-1, 0, 0},{0.7,0,0});
+		drawAxis(full_mat, {0, 1, 0}, {0, -1, 0},{0,0.7,0});
+		drawAxis(full_mat, {0, 0, 1}, {0, 0, -1},{0,0,0.7});
 	}
 
 private:

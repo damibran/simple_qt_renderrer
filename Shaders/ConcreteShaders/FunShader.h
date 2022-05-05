@@ -39,7 +39,7 @@ public:
 		const glm::vec2 frag_tex_coord = v0TC * w0 + v1TC * w1 + v2TC * w2;
 
 
-		return {255*frag_tex_coord.x,255*frag_tex_coord.y,120};
+		return {frag_tex_coord.x,frag_tex_coord.y,0.5};
 	}
 
 	bool supportsBackFaceCulling() override

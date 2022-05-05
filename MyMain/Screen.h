@@ -26,7 +26,7 @@ public:
 	void put_point(const uint x, const uint y, const glm::vec3& color)
 	{
 		//colorBuffer[(YMAX - y) * XMAX + x] = color;
-		QRgb qcolor = qRgb(color.r, color.g, color.b);
+		const QRgb qcolor = qRgb(255*color.r, 255*color.g, 255*color.b);
 		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u, qcolor);
 		setpixInRawBuffer(x * 2u + 1, (YMAX - y - 1) * 2u, qcolor);
 		setpixInRawBuffer(x * 2u, (YMAX - y - 1) * 2u + 1, qcolor);

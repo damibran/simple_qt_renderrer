@@ -5,7 +5,7 @@
 class LightSourceShader : public Shader
 {
 	glm::mat4 mvp;
-	glm::vec3 objColor = glm::vec3(255);
+	glm::vec3 objColor = glm::vec3(1);
 
 public:
 	LightSourceShader()
