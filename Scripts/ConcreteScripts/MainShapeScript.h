@@ -8,13 +8,14 @@
 #include "../MyMain/Shape.h"
 #include "../Script.h"
 #include "../utils/Transform.h"
+#include "../utils/MeshInstances.hpp"
 
 class MainShapeScript : public Script
 {
 public:
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui,
 	                                           Screen& s,
-	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
+	                                           const MeshInstances&
 	                                           mesh_instances, const std::string& main,
 	                                           std::unique_ptr<Transform>& light)
 	{
@@ -22,7 +23,7 @@ public:
 			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
 			std::make_unique<ShaderMeshRenderer>(
 				s, std::make_unique<OnePointSourceLitShaderWithWireframe>(light),//mesh_instances.at(main)->getTexturePtr()),
-				mesh_instances.at(main)));
+				mesh_instances.get(main)));
 
 		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());
 

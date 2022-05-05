@@ -129,6 +129,9 @@
     <ClInclude Include="Shaders\ConcreteShaders\UnlitTexturedShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils\MeshInstances.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">

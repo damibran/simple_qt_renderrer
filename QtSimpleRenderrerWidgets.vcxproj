@@ -132,6 +132,7 @@
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="utils\Mesh.h" />
     <ClInclude Include="MyMain\Shape.h" />
+    <ClInclude Include="utils\MeshInstances.hpp" />
     <ClInclude Include="utils\Texture.h" />
     <ClInclude Include="utils\thread_pool.hpp" />
     <ClInclude Include="Renderers\ConcreteRenderers\ShaderMeshRenderer.h" />

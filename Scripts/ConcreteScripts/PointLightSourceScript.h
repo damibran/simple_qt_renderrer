@@ -7,6 +7,7 @@
 #include "../Renderers/ConcreteRenderers/ShaderMeshRenderer.h"
 #include "../MyMain/Shape.h"
 #include "../Script.h"
+#include "../utils/MeshInstances.hpp"
 
 class PointLightSourceScript : public Script
 {
@@ -16,13 +17,13 @@ public:
 	}
 
 	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui, Screen& s,
-	                                           const std::unordered_map<std::string, std::unique_ptr<Mesh>>&
+	                                           const MeshInstances&
 	                                           mesh_instances)
 	{
 		auto shp = std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3(0, 100, 0)),
 			std::make_unique<ShaderMeshRenderer>(s, std::make_unique<LightSourceShader>(),
-			                                     mesh_instances.find("res/tetrahedron.obj")->second));
+			                                     mesh_instances.get("res/tetrahedron.obj")));
 
 		shp->setScript(std::make_unique<PointLightSourceScript>(shp->getTransformPtr(), ui.checkBox));
 

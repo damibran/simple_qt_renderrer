@@ -8,6 +8,7 @@
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
 #include "../Scripts/ConcreteScripts/PointLightSourceScript.h"
+#include "../utils/MeshInstances.hpp"
 #include "ui_RenderrerMainWindow.h"
 
 class Scene
@@ -20,10 +21,10 @@ public:
 
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
-		mesh_instances_["res/texCub.obj"] = std::make_unique<Mesh>("res/texCub.obj");
-		mesh_instances_["res/monkey.obj"] = std::make_unique<Mesh>("res/monkey.obj");
-		mesh_instances_["res/cub.obj"] = std::make_unique<Mesh>("res/cub.obj");
-		mesh_instances_["res/tetrahedron.obj"] = std::make_unique<Mesh>("res/tetrahedron.obj");
+		mesh_instances_.add("res/texCub.obj");
+		mesh_instances_.add("res/monkey.obj");
+		mesh_instances_.add("res/cub.obj");
+		mesh_instances_.add("res/tetrahedron.obj");
 
 		// Make CoordSys shape
 		scene_root_.push_back(std::make_unique<Shape>(
@@ -60,7 +61,7 @@ public:
 private:
 	Screen& screen_;
 	std::vector<std::unique_ptr<Shape>> scene_root_;
-	std::unordered_map<std::string, std::unique_ptr<Mesh>> mesh_instances_;
+	MeshInstances mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
 };
