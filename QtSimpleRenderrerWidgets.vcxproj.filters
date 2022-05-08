@@ -135,6 +135,9 @@
     <ClInclude Include="Shaders\ConcreteShaders\FunShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\LitTexturedShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">

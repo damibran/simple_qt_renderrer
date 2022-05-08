@@ -125,6 +125,7 @@
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
     <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\FunShader.h" />
+    <ClInclude Include="Shaders\ConcreteShaders\LitTexturedShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightSourceShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShaderWithWireframe.h" />

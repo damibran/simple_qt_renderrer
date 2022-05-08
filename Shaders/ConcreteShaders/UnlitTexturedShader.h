@@ -42,18 +42,9 @@ public:
 
 	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) override
 	{
-
 		const glm::vec2 frag_tex_coord = v0TC * w0 + v1TC * w1 + v2TC * w2;
 
-		int t_x = frag_tex_coord.x*texture->width;
-		int t_y = frag_tex_coord.y*texture->height;
-
-		const int x = glm::clamp(static_cast<int>(frag_tex_coord.x * texture->width), 0, texture->width);
-		const int y = glm::clamp(static_cast<int>(frag_tex_coord.y * texture->height), 0, texture->height);
-		
-		glm::vec3 color(texture->data.get()[(texture->width * y + x)*texture->nComp]/255., texture->data.get()[(texture->width * y + x)*texture->nComp + 1]/255.,
-		                texture->data.get()[(texture->width * y + x)*texture->nComp + 2]/255.);
-		return color;
+		return texture->sampleTexture(frag_tex_coord);
 	}
 
 	bool supportsBackFaceCulling() override
