@@ -22,7 +22,7 @@ public:
 	void setupScene(Ui::RenderrerMainWindowClass& ui)
 	{
 		mesh_instances_.add("res/texCub.obj");
-		mesh_instances_.add("res/monkey.obj");
+		mesh_instances_.add("res/barell.obj");
 		mesh_instances_.add("res/cub.obj");
 		mesh_instances_.add("res/tetrahedron.obj");
 
@@ -38,7 +38,7 @@ public:
 
 		// Make main cube
 		scene_root_.push_back(
-			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/texCub.obj",
+			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/barell.obj",
 			                              light_transform));
 
 		//Make camera shape
