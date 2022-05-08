@@ -13,27 +13,24 @@
 #include "../utils/Transform.h"
 #include "../utils/MeshInstances.hpp"
 
-class MainShapeScript : public Script
+class ScanerShapeScript : public Script
 {
 public:
-	static std::unique_ptr<Shape> createObject(Ui::RenderrerMainWindowClass& ui,
-	                                           Screen& s,
+	static std::unique_ptr<Shape> createObject(Screen& s,
 	                                           const MeshInstances&
-	                                           mesh_instances, const std::string& main,
-	                                           std::unique_ptr<Transform>& light)
+	                                           mesh_instances, const std::string& main)
 	{
 		auto shp = std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0), glm::vec3(5)),
+			std::make_unique<Transform>(glm::vec3{40, 0, 0}, glm::vec3(5)),
 			std::make_unique<ShaderMeshRenderer>(
-				s, std::make_unique<LitTexturedShader>(light),
+				s, std::make_unique<ScanerShader>(),
 				mesh_instances.get(main)));
 
-		ui.MainTransformEditor->bindWidgetToShape(shp->getTransformPtr().get());
 
 		return shp;
 	}
 
-	MainShapeScript() = default;
+	ScanerShapeScript() = default;
 
 	void updateScript(float dt) override
 	{

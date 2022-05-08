@@ -1,6 +1,5 @@
 #pragma once
 #include "../MyMain/shape.h"
-#include "../utils/Texture.h"
 #include "../Shader.h"
 
 class FunShader : public Shader
@@ -11,8 +10,11 @@ class FunShader : public Shader
 	glm::vec2 v1TC;
 	glm::vec2 v2TC;
 
+	double& time;
 
 public:
+
+	FunShader(double& t):time(t){}
 
 	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
@@ -38,8 +40,11 @@ public:
 
 		const glm::vec2 frag_tex_coord = v0TC * w0 + v1TC * w1 + v2TC * w2;
 
+		const float speed = 5.0;
+		const float f = pow(sin(20.0*frag_tex_coord.x + speed*time),2.0)+pow(cos(10.0*frag_tex_coord.y),2.0);
 
-		return {frag_tex_coord.x,frag_tex_coord.y,0.5};
+		return {abs(sin(f)),abs(cos(f)),0.5};
+		//return {abs(sin(2*time))*abs(sin(f)),abs(cos(2*time))*abs(cos(f)),abs(cos(time+sin(time)))};
 	}
 
 	bool supportsBackFaceCulling() override

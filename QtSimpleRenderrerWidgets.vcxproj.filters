@@ -138,6 +138,15 @@
     <ClInclude Include="Shaders\ConcreteShaders\LitTexturedShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\FunShapeScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\ScanerShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts\ConcreteScripts\ScanerShapeScript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">

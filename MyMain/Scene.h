@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
+#include "../Scripts/ConcreteScripts/FunShapeScript.h"
+#include "../Scripts/ConcreteScripts/ScanerShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -41,13 +43,21 @@ public:
 			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/barell.obj",
 			                              light_transform));
 
+		scene_root_.push_back(
+			FunShapeScript::createObject(screen_, mesh_instances_, "res/barell.obj", time_));
+
+		scene_root_.push_back(
+			ScanerShapeScript::createObject(screen_, mesh_instances_, "res/barell.obj"));
+
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
 		cam_ = dynamic_cast<CameraScript*>((scene_root_.end() - 1)->get()->getScriptPtr());
 	}
 
-	void updateScene(float dt) const
+	void updateScene(float dt)
 	{
+		const std::chrono::duration<double> elapsed_time = std::chrono::system_clock::now() - start_;
+		time_ = elapsed_time.count();
 		for (auto& i : scene_root_)
 			i->updateScript(dt);
 	}
@@ -64,6 +74,8 @@ private:
 	MeshInstances mesh_instances_;
 	////////
 	CameraScript* cam_ = nullptr;
+	std::chrono::system_clock::time_point start_ = std::chrono::system_clock::now();
+	double time_ = 0;
 };
 
 #endif // SCENE_H

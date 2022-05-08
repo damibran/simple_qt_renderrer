@@ -121,14 +121,17 @@
     <ClInclude Include="MyMain\Scene.h" />
     <ClInclude Include="MyMain\Screen.h" />
     <ClInclude Include="Scripts\ConcreteScripts\CameraScript.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\FunShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\MainShapeScript.h" />
     <ClInclude Include="Scripts\ConcreteScripts\PointLightSourceScript.h" />
+    <ClInclude Include="Scripts\ConcreteScripts\ScanerShapeScript.h" />
     <ClInclude Include="Scripts\Script.h" />
     <ClInclude Include="Shaders\ConcreteShaders\FunShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LitTexturedShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\LightSourceShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\OnePointSourceLitShaderWithWireframe.h" />
+    <ClInclude Include="Shaders\ConcreteShaders\ScanerShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\UnlitTexturedShader.h" />
     <ClInclude Include="Shaders\ConcreteShaders\WireframeShader.h" />
     <ClInclude Include="Shaders\Shader.h" />
