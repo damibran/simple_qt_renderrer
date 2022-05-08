@@ -3,6 +3,7 @@
 #include "../utils/TriangleSides.h"
 #include "../utils/MVPMat.h"
 #include "../utils/Vertex.h"
+#include "../utils/Mesh.h"
 
 struct TriangleClipPos
 {
@@ -33,11 +34,15 @@ class Shader
 public:
 	virtual ~Shader() = default;
 
-	virtual void preparePerObjectVertexShaderData(const MVPMat& trans)=0;
+	virtual void preparePerObjectVertexShaderData(const MVPMat& trans) =0;
 
 	virtual TriangleClipPos computeVertexShader(const Vertex& v0,
 	                                            const Vertex& v1,
-	                                            const Vertex& v2)=0;
+	                                            const Vertex& v2) =0;
+
+	virtual void preparePerMeshData(std::unique_ptr<Mesh> const& mesh)
+	{
+	}
 
 	virtual glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) = 0; //return color
 	virtual std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
@@ -46,5 +51,5 @@ public:
 
 	virtual void changeColor(glm::vec3 color)
 	{
-	};
+	}
 };

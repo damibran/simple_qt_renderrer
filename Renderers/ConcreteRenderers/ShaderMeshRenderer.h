@@ -23,6 +23,9 @@ public:
 protected:
 	void drawMesh(Screen& screen, std::unique_ptr<Mesh> const& mesh)
 	{
+		if(!mesh->indices.empty())
+			shader_->preparePerMeshData(mesh);
+
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
 			process_trngl(mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]],

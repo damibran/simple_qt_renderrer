@@ -5,7 +5,7 @@
 
 class UnlitTexturedShader : public Shader
 {
-	Texture* texture;
+	const Texture* texture;
 
 	glm::mat4 mvp;
 
@@ -15,13 +15,15 @@ class UnlitTexturedShader : public Shader
 
 
 public:
-	UnlitTexturedShader(Texture* text): texture(text)
-	{
-	}
 
 	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
 		mvp = trans.proj * trans.view * trans.model;
+	}
+
+	void preparePerMeshData(std::unique_ptr<Mesh> const& mesh) override
+	{
+		texture = mesh->getTexturePtr();
 	}
 
 	TriangleClipPos
@@ -49,8 +51,8 @@ public:
 		const int x = glm::clamp(static_cast<int>(frag_tex_coord.x * texture->width), 0, texture->width);
 		const int y = glm::clamp(static_cast<int>(frag_tex_coord.y * texture->height), 0, texture->height);
 		
-		glm::vec3 color(texture->data.get()[(texture->width * y + x)*texture->nComp], texture->data.get()[(texture->width * y + x)*texture->nComp + 1],
-		                texture->data.get()[(texture->width * y + x)*texture->nComp + 2]);
+		glm::vec3 color(texture->data.get()[(texture->width * y + x)*texture->nComp]/255., texture->data.get()[(texture->width * y + x)*texture->nComp + 1]/255.,
+		                texture->data.get()[(texture->width * y + x)*texture->nComp + 2]/255.);
 		return color;
 	}
 

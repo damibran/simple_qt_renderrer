@@ -43,7 +43,7 @@ public:
 
 	Texture* getTexturePtr()
 	{
-		return &childs[0]->texture;
+		return &texture;
 	}
 
 private:
