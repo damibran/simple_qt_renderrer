@@ -49,7 +49,7 @@ public:
 	{
 		const glm::vec2 frag_tex_coord = a.TC * w0 + b.TC * w1 + c.TC * w2;
 
-		return texture->sampleTexture(frag_tex_coord);
+		return texture->sampleTexturerRepeat(frag_tex_coord);
 	}
 
 	bool supportsBackFaceCulling() override

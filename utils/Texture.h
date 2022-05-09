@@ -17,8 +17,24 @@ struct Texture
 		int t_x = tex_coord.x * width;
 		int t_y = tex_coord.y * height;
 
-		const int x = glm::clamp(static_cast<int>(tex_coord.x * width), 0, width-1);
-		const int y = glm::clamp(static_cast<int>(tex_coord.y * height), 0, height-1);
+		const int x = glm::clamp(t_x, 0, width - 1);
+		const int y = glm::clamp(t_y, 0, height - 1);
+
+
+		return {
+			data.get()[(width * y + x) * nComp] / 255.,
+			data.get()[(width * y + x) * nComp + 1] / 255.,
+			data.get()[(width * y + x) * nComp + 2] / 255.
+		};
+	}
+
+	glm::vec3 sampleTexturerRepeat(const glm::vec2& tex_coord) const
+	{
+		int t_x = 10.f * tex_coord.x * width;
+		int t_y = 10.f * tex_coord.y * height;
+
+		const int x = t_x % (width - 1);
+		const int y = t_y % (height - 1);
 
 
 		return {

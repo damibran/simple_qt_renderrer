@@ -84,7 +84,9 @@ protected:
 		const uint y1 = std::min(static_cast<int>(screen_.YMAX - 1), static_cast<int>(std::floor(ymax)));
 
 		float area = edgeFunction(v0, v1, v2);
-		for (uint y = y0; y <= y1; ++y)
+		auto loop = [this,&shader, v0, v1, v2, area, x0, x1](const uint a, const uint b)
+		{
+			for (uint y = a; y <= b; ++y)
 			{
 				for (uint x = x0; x <= x1; ++x)
 				{
@@ -126,11 +128,8 @@ protected:
 					}
 				}
 			}
-		//auto loop = [this,&shader, v0, v1, v2, area, x0, x1](const uint a, const uint b)
-		//{
-		//	
-		//};
-		//pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
+		};
+		pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
 	}
 
 	Screen& screen_;

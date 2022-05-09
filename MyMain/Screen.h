@@ -58,7 +58,7 @@ private:
 	QImage buffer_;
 	uint* raw_buffer;
 	std::vector<float> z_buffer_;
-	QRgb background_color = qRgb(200, 200, 200);
+	QRgb background_color = qRgb(235, 235, 235);
 
 
 	void setpixInRawBuffer(const uint x, const uint y, QRgb c)

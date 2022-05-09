@@ -28,10 +28,10 @@ public:
 		mesh_instances_.add("res/tetrahedron.obj");
 
 		// Make CoordSys shape
-		scene_root_.push_back(std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3(0), glm::vec3(100)),
-			std::make_unique<CoordSystemRenderer>(screen_)
-		));
+		//scene_root_.push_back(std::make_unique<Shape>(
+		//	std::make_unique<Transform>(glm::vec3{0, -4, 0}, glm::vec3(100)),
+		//	std::make_unique<CoordSystemRenderer>(screen_)
+		//));
 
 		// Make Light source shape
 		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
@@ -61,7 +61,7 @@ public:
 
 		// Make plane shape
 		scene_root_.push_back(std::make_unique<Shape>(
-			std::make_unique<Transform>(glm::vec3{0, -5, 0}, glm::vec3(10,1,10)),
+			std::make_unique<Transform>(glm::vec3{0, -3, 0}, glm::vec3(100,1,100)),
 			std::make_unique<ClipNearShaderRenderer>(
 				screen_, std::make_unique<UnlitTexturedShader>(),
 				mesh_instances_.get("res/grassPlane.obj")))
