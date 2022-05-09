@@ -4,8 +4,6 @@
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
-#include "../Scripts/ConcreteScripts/FunShapeScript.h"
-#include "../Scripts/ConcreteScripts/ScanerShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
@@ -38,16 +36,27 @@ public:
 		scene_root_.push_back(PointLightSourceScript::createObject(ui, screen_, mesh_instances_));
 		std::unique_ptr<Transform>& light_transform = (scene_root_.end() - 1)->get()->getTransformPtr();
 
-		// Make main cube
+		// Make main shape
 		scene_root_.push_back(
 			MainShapeScript::createObject(ui, screen_, mesh_instances_, "res/barell.obj",
 			                              light_transform));
 
+		// Make fun shape
 		scene_root_.push_back(
-			FunShapeScript::createObject(screen_, mesh_instances_, "res/barell.obj", time_));
+			std::make_unique<Shape>(
+			std::make_unique<Transform>(glm::vec3{-40,0,0}, glm::vec3(5)),
+			std::make_unique<ShaderMeshRenderer>(
+				screen_, std::make_unique<FunShader>(time_),
+				mesh_instances_.get("res/barell.obj")))
+		);
 
-		scene_root_.push_back(
-			ScanerShapeScript::createObject(screen_, mesh_instances_, "res/barell.obj"));
+		// Make scaner shape
+		scene_root_.push_back(std::make_unique<Shape>(
+			std::make_unique<Transform>(glm::vec3{40, 0, 0}, glm::vec3(5)),
+			std::make_unique<ShaderMeshRenderer>(
+				screen_, std::make_unique<ScanerShader>(),
+				mesh_instances_.get("res/barell.obj")))
+			);
 
 		//Make camera shape
 		scene_root_.push_back(CameraScript::createObject(ui, screen_));
