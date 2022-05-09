@@ -23,7 +23,7 @@ public:
 	{
 		mesh_instances_.add("res/texCub.obj");
 		mesh_instances_.add("res/barell.obj");
-		mesh_instances_.add("res/cub.obj");
+		mesh_instances_.add("res/grassPlane.obj");
 		mesh_instances_.add("res/tetrahedron.obj");
 
 		// Make CoordSys shape
@@ -56,6 +56,14 @@ public:
 			std::make_unique<ShaderMeshRenderer>(
 				screen_, std::make_unique<ScanerShader>(),
 				mesh_instances_.get("res/barell.obj")))
+			);
+
+		// Make plane shape
+		scene_root_.push_back(std::make_unique<Shape>(
+			std::make_unique<Transform>(glm::vec3{0, -5, 0}, glm::vec3(10,1,10)),
+			std::make_unique<ShaderMeshRenderer>(
+				screen_, std::make_unique<UnlitTexturedShader>(),
+				mesh_instances_.get("res/grassPlane.obj")))
 			);
 
 		//Make camera shape

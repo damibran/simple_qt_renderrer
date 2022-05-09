@@ -17,8 +17,8 @@ struct Texture
 		int t_x = tex_coord.x * width;
 		int t_y = tex_coord.y * height;
 
-		const int x = glm::clamp(static_cast<int>(tex_coord.x * width), 0, width);
-		const int y = glm::clamp(static_cast<int>(tex_coord.y * height), 0, height);
+		const int x = glm::clamp(static_cast<int>(tex_coord.x * width), 0, width-1);
+		const int y = glm::clamp(static_cast<int>(tex_coord.y * height), 0, height-1);
 
 
 		return {
