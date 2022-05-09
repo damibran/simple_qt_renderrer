@@ -9,6 +9,7 @@ protected:
 	{
 		glm::vec3 view_pos;
 		glm::vec3 view_norm;
+		glm::vec2 TC;
 	};
 
 	vrtx a;
@@ -19,10 +20,6 @@ protected:
 	glm::mat4 mv;
 	glm::mat3 timv;
 	glm::mat4 view;
-
-	glm::vec2 v0TC;
-	glm::vec2 v1TC;
-	glm::vec2 v2TC;
 
 	const Texture* texture=nullptr;
 
@@ -73,9 +70,9 @@ public:
 
 		view_light_pos = view * glm::vec4(light_obj->getPos(), 1.0f);
 
-		v0TC = v0.texCoord;
-		v1TC = v1.texCoord;
-		v2TC = v2.texCoord;
+		a.TC = v0.texCoord;
+		b.TC = v1.texCoord;
+		c.TC = v2.texCoord;
 
 		return TriangleClipPos(clip_a, clip_b, clip_c);
 	}
@@ -83,7 +80,7 @@ public:
 	glm::vec3 computeFragmentShader(const glm::vec2& pixel, float w0, float w1, float w2) override
 	{
 		glm::vec3 view_pixel_pos = w0 * a.view_pos + w1 * b.view_pos + w2 * c.view_pos;
-		const glm::vec2 frag_tex_coord = v0TC * w0 + v1TC * w1 + v2TC * w2;
+		const glm::vec2 frag_tex_coord = a.TC * w0 + b.TC * w1 + c.TC * w2;
 
 		glm::vec3 norm_pixel = glm::normalize(w0 * a.view_norm + w1 * b.view_norm + w2 * c.view_norm);
 		glm::vec3 lightDir = glm::normalize(view_light_pos - view_pixel_pos);
