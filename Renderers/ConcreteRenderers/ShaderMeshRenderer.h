@@ -28,7 +28,7 @@ protected:
 
 		for (size_t i = 0; !mesh->indices.empty() && i <= mesh->indices.size() - 3; i += 3)
 		{
-			process_trngl(mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]],
+			process_trngl(shader_,mesh->vertices[mesh->indices[i]], mesh->vertices[mesh->indices[i + 1]],
 			              mesh->vertices[mesh->indices[i + 2]]);
 		}
 
@@ -38,10 +38,10 @@ protected:
 		}
 	}
 
-	void process_trngl(const Vertex& v0, const Vertex& v1,
+	virtual void process_trngl(std::unique_ptr<Shader>& shader,const Vertex& v0, const Vertex& v1,
 	                   const Vertex& v2)
 	{
-		TriangleClipPos abc = shader_->computeVertexShader(v0, v1, v2);
+		TriangleClipPos abc = shader->computeVertexShader(v0, v1, v2);
 
 		glm::vec3 a;
 		glm::vec3 b;
@@ -63,11 +63,11 @@ protected:
 		if (abc.a.z <= abc.a.w && abc.a.z >= -abc.a.w &&
 			abc.b.z <= abc.b.w && abc.b.z >= -abc.b.w &&
 			abc.c.z <= abc.c.w && abc.c.z >= -abc.c.w) //kinda Clipping
-			put_triangle(a, b, c);
+			put_triangle(shader,a, b, c);
 	}
 
 
-	void put_triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
+	void put_triangle(std::unique_ptr<Shader>& shader,const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2)
 	{
 		const float xmin = min3(v0.x, v1.x, v2.x);
 		const float ymin = min3(v0.y, v1.y, v2.y);
@@ -84,9 +84,7 @@ protected:
 		const uint y1 = std::min(static_cast<int>(screen_.YMAX - 1), static_cast<int>(std::floor(ymax)));
 
 		float area = edgeFunction(v0, v1, v2);
-		auto loop = [this, v0, v1, v2, area, x0, x1](const uint a, const uint b)
-		{
-			for (uint y = a; y <= b; ++y)
+		for (uint y = y0; y <= y1; ++y)
 			{
 				for (uint x = x0; x <= x1; ++x)
 				{
@@ -96,7 +94,7 @@ protected:
 					float w1 = edgeFunction(v2, v0, pixel);
 					float w2 = edgeFunction(v0, v1, pixel);
 
-					if (w0 >= 0 && w1 >= 0 && w2 >= 0 || !shader_->supportsBackFaceCulling() && w0 <= 0 && w1 <= 0 && w2
+					if (w0 >= 0 && w1 >= 0 && w2 >= 0 || !shader->supportsBackFaceCulling() && w0 <= 0 && w1 <= 0 && w2
 						<= 0)
 					{
 						w0 /= area;
@@ -117,7 +115,7 @@ protected:
 
 						if (z < screen_.getZBufferAt(y * screen_.XMAX + x))
 						{
-							glm::vec3 color = shader_->computeFragmentShader(pixel, w0, w1, w2);
+							glm::vec3 color = shader->computeFragmentShader(pixel, w0, w1, w2);
 
 							if (color.x >= 0 && color.y >= 0 && color.z >= 0)// to discard return -1
 							{
@@ -128,8 +126,11 @@ protected:
 					}
 				}
 			}
-		};
-		pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
+		//auto loop = [this,&shader, v0, v1, v2, area, x0, x1](const uint a, const uint b)
+		//{
+		//	
+		//};
+		//pool_.parallelize_loop(y0, y1, loop, (y1 - y0) / pool_.get_thread_count());
 	}
 
 	Screen& screen_;

@@ -141,6 +141,9 @@
     <ClInclude Include="Shaders\ConcreteShaders\ScanerShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Renderers\ConcreteRenderers\ClipNearShaderMeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="QtMy\QTransformEditor.ui">

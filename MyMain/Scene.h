@@ -5,6 +5,7 @@
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
+#include "../Renderers/ConcreteRenderers/ClipNearShaderMeshRenderer.h"
 #include "../Shaders/ConcreteShaders/WireframeShader.h"
 #include "../Scripts/ConcreteScripts/CameraScript.h"
 #include "../Scripts/ConcreteScripts/PointLightSourceScript.h"
@@ -61,7 +62,7 @@ public:
 		// Make plane shape
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3{0, -5, 0}, glm::vec3(10,1,10)),
-			std::make_unique<ShaderMeshRenderer>(
+			std::make_unique<ClipNearShaderRenderer>(
 				screen_, std::make_unique<UnlitTexturedShader>(),
 				mesh_instances_.get("res/grassPlane.obj")))
 			);

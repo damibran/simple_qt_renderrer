@@ -94,7 +94,7 @@ private:
 				abc_.b.z <= abc_.b.w && abc_.b.z >= -abc_.b.w &&
 				abc_.c.z <= abc_.c.w && abc_.c.z >= -abc_.c.w) //kinda frutsum Clipping
 			{
-				put_triangle(a, b, c);
+				put_triangle(shader, a, b, c);
 			}
 		}
 		else
