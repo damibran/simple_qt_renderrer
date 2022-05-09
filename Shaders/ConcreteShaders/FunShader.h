@@ -10,6 +10,9 @@ class FunShader : public Shader
 	glm::vec2 v1TC;
 	glm::vec2 v2TC;
 
+	const Texture* texture;
+
+
 	double& time;
 
 public:
@@ -19,6 +22,11 @@ public:
 	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
 		mvp = trans.proj * trans.view * trans.model;
+	}
+
+	void preparePerMeshData(std::unique_ptr<Mesh> const& mesh) override
+	{
+		texture = mesh->getTexturePtr();
 	}
 
 	TriangleClipPos
@@ -43,8 +51,11 @@ public:
 		const float speed = 5.0;
 		const float f = pow(sin(20.0*frag_tex_coord.x + speed*time),2.0)+pow(cos(10.0*frag_tex_coord.y),2.0);
 
-		return {abs(sin(f)),abs(cos(f)),0.5};
-		//return {abs(sin(2*time))*abs(sin(f)),abs(cos(2*time))*abs(cos(f)),abs(cos(time+sin(time)))};
+		const glm::vec3 shield_color = glm::vec3{abs(sin(f)),abs(cos(f)),0.5};//{abs(sin(2*time))*abs(sin(f)),abs(cos(2*time))*abs(cos(f)),abs(cos(time+sin(time)))}
+		const glm::vec3 obj_color = texture->sampleTexture(frag_tex_coord);
+
+
+		return obj_color + 0.5f*(shield_color - obj_color);
 	}
 
 	bool supportsBackFaceCulling() override
