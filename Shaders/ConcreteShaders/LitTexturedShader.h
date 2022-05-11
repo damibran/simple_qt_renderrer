@@ -21,7 +21,7 @@ protected:
 	glm::mat3 timv;
 	glm::mat4 view;
 
-	const Texture* texture=nullptr;
+	const Texture* texture = nullptr;
 
 	glm::vec3 view_light_pos;
 
@@ -32,7 +32,7 @@ protected:
 	std::unique_ptr<Transform>& light_obj;
 
 public:
-	LitTexturedShader(std::unique_ptr<Transform>& lo) :light_obj(lo)
+	LitTexturedShader(std::unique_ptr<Transform>& lo) : light_obj(lo)
 	{
 	}
 
@@ -91,7 +91,8 @@ public:
 		float diff = glm::clamp(std::fmaxf(glm::dot(norm_pixel, lightDir), 0.0f), 0.0f, 1.0f);
 		float spec = glm::clamp(std::pow(std::fmaxf(glm::dot(viewDir, reflectDir), 0.0f), 32), 0.0, 1.0);
 
-		glm::vec3 color = texture->sampleTexture(frag_tex_coord) * (ambient / 3 + diff * diffStrength / 3 + spec * specStrength / 3);
+		glm::vec3 color = texture->sampleTexture(frag_tex_coord) * (ambient / 3 + diff * diffStrength / 3 + spec *
+			specStrength / 3);
 		return color;
 	}
 
@@ -105,15 +106,27 @@ public:
 	{
 		std::unique_ptr<LitTexturedShader> res = std::make_unique<LitTexturedShader>(
 			this->light_obj);
+
 		res->view_light_pos = view_light_pos;
+		res->texture = texture;
+
+		res->mvp = mvp;
+		res->mv = mv;
+		res->timv = timv;
+		res->view = view;
+
 		res->a.view_pos = lerpViewPosAlongSide(a.first, a.second);
 		res->a.view_norm = lerpViewNormAlongSide(a.first, a.second);
+		res->a.TC = lerpTexCoordAlongSide(a.first, a.second);
 
 		res->b.view_pos = lerpViewPosAlongSide(b.first, b.second);
 		res->b.view_norm = lerpViewNormAlongSide(b.first, b.second);
+		res->b.TC = lerpTexCoordAlongSide(b.first, b.second);
+
 
 		res->c.view_pos = lerpViewPosAlongSide(c.first, c.second);
 		res->c.view_norm = lerpViewNormAlongSide(c.first, c.second);
+		res->c.TC = lerpTexCoordAlongSide(c.first, c.second);
 
 		return res;
 	}
@@ -143,5 +156,18 @@ protected:
 			return this->b.view_norm + t * (this->c.view_norm - this->b.view_norm);
 		}
 		return this->c.view_norm + t * (this->a.view_norm - this->c.view_norm);
+	}
+
+	glm::vec2 lerpTexCoordAlongSide(float t, TriangleSide side) const
+	{
+		if (side == TriangleSide::AB)
+		{
+			return this->a.TC + t * (this->b.TC - this->a.TC);
+		}
+		if (side == TriangleSide::BC)
+		{
+			return this->b.TC + t * (this->c.TC - this->b.TC);
+		}
+		return this->c.TC + t * (this->a.TC - this->c.TC);
 	}
 };

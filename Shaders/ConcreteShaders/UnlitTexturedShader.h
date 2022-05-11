@@ -66,12 +66,9 @@ public:
 		res->mvp=mvp;
 
 		res->a.TC = lerpTexCoordAlongSide(a.first, a.second);
-		res->a.TC = lerpTexCoordAlongSide(a.first, a.second);
 
 		res->b.TC = lerpTexCoordAlongSide(b.first, b.second);
-		res->b.TC = lerpTexCoordAlongSide(b.first, b.second);
 
-		res->c.TC = lerpTexCoordAlongSide(c.first, c.second);
 		res->c.TC = lerpTexCoordAlongSide(c.first, c.second);
 
 		return res;

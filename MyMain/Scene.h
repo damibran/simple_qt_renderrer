@@ -63,7 +63,7 @@ public:
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3{0, -3, 0}, glm::vec3(100,1,100)),
 			std::make_unique<ClipNearShaderRenderer>(
-				screen_, std::make_unique<UnlitTexturedShader>(),
+				screen_, std::make_unique<LitTexturedShader>(light_transform),
 				mesh_instances_.get("res/grassPlane.obj")))
 			);
 
