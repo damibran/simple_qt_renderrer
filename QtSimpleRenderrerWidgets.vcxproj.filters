@@ -126,7 +126,7 @@
     <ClInclude Include="utils\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\UnlitTexturedShader.h">
+    <ClInclude Include="Shaders\ConcreteShaders\UnlitTexturedRepeatShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\MeshInstances.hpp">
@@ -142,6 +142,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderers\ConcreteRenderers\ClipNearShaderMeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\LitTexturedRepeatShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

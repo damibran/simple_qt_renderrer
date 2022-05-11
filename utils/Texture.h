@@ -28,14 +28,13 @@ struct Texture
 		};
 	}
 
-	glm::vec3 sampleTexturerRepeat(const glm::vec2& tex_coord) const
+	glm::vec3 sampleTexturerRepeat(float scale,const glm::vec2& tex_coord) const
 	{
-		int t_x = 10.f * tex_coord.x * width;
-		int t_y = 10.f * tex_coord.y * height;
+		int t_x = scale * tex_coord.x * width;
+		int t_y = scale * tex_coord.y * height;
 
 		const int x = t_x % (width - 1);
 		const int y = t_y % (height - 1);
-
 
 		return {
 			data.get()[(width * y + x) * nComp] / 255.,

@@ -3,6 +3,7 @@
 #include "Screen.h"
 #include "Shape.h"
 #include "../Shaders/ConcreteShaders/LightSourceShader.h"
+#include "../Shaders/ConcreteShaders/LitTexturedRepeatShader.h"
 #include "../Scripts/ConcreteScripts/MainShapeScript.h"
 #include "../Renderers/ConcreteRenderers/CoordSystemRenderer.h"
 #include "../Renderers/ConcreteRenderers/ClipNearShaderMeshRenderer.h"
@@ -63,7 +64,7 @@ public:
 		scene_root_.push_back(std::make_unique<Shape>(
 			std::make_unique<Transform>(glm::vec3{0, -3, 0}, glm::vec3(100,1,100)),
 			std::make_unique<ClipNearShaderRenderer>(
-				screen_, std::make_unique<LitTexturedShader>(light_transform),
+				screen_, std::make_unique<UnlitTexturedRepeatShader>(15),//,light_transform),
 				mesh_instances_.get("res/grassPlane.obj")))
 			);
 

@@ -3,7 +3,7 @@
 #include "../utils/Texture.h"
 #include "../Shader.h"
 
-class UnlitTexturedShader : public Shader
+class UnlitTexturedRepeatShader : public Shader
 {
 	struct vrtx
 	{
@@ -18,8 +18,12 @@ class UnlitTexturedShader : public Shader
 
 	glm::mat4 mvp;
 
+	float repeat_scale;
+
 
 public:
+
+	UnlitTexturedRepeatShader(float repeat_scale):repeat_scale(repeat_scale){}
 
 	void preparePerObjectVertexShaderData(const MVPMat& trans) override
 	{
@@ -49,7 +53,7 @@ public:
 	{
 		const glm::vec2 frag_tex_coord = a.TC * w0 + b.TC * w1 + c.TC * w2;
 
-		return texture->sampleTexturerRepeat(frag_tex_coord);
+		return texture->sampleTexturerRepeat(repeat_scale,frag_tex_coord);
 	}
 
 	bool supportsBackFaceCulling() override
@@ -60,7 +64,7 @@ public:
 	std::unique_ptr<Shader> clone(std::pair<float, TriangleSide> a, std::pair<float, TriangleSide> b,
 	                              std::pair<float, TriangleSide> c) override
 	{
-		std::unique_ptr<UnlitTexturedShader> res = std::make_unique<UnlitTexturedShader>();
+		std::unique_ptr<UnlitTexturedRepeatShader> res = std::make_unique<UnlitTexturedRepeatShader>(repeat_scale);
 
 		res->texture = texture;
 		res->mvp=mvp;
