@@ -4,4 +4,30 @@ Is 3D renderer made from scratch on pure C++. Qt is using only for windowing and
 
 ## Why?
 
-This and previous projects were created to fulfill my interest in computer graphic programming. I was learning OpenGL  at learnopengl.com and at some point i wasn't pretty sure about my course because of lack of low-level knowledge. So I decided to make a renderer from scratch. While I was in midway, I had a computer graphics course at University course, and it made a big influence on the project too.
+This and previous projects were created to fulfill my interest in computer graphic programming. I was learning OpenGL  at learnopengl.com and at some point i wasn't pretty sure about my course because of lack of low-level knowledge. So I decided to make a renderer from scratch. While I was in midway, I had a computer graphics course at University, it made a influence on the project too.
+
+## Features
+* Shader-based forward renderer
+* Programmable vertex & fragment shaders using C++ virtual functions
+* Perspective correct vertex attributes interpolation
+* Back-face culling
+* Homogeneous near plane clipping
+* Depth testing
+* Blinn–Phong shading model
+* Texture mapping 
+* Sutherland–Hodgman mesh-mesh clipping
+* Spatial bezier curve rendering
+* Smooth bezier surface rendering
+
+## Showcase
+
+![BarrelLightGif](Examples\Barrel_Light_Flex.gif)
+
+## Dependencies
+* [GLM](https://github.com/g-truc/glm) for math
+* [stb_image](https://github.com/nothings/stb) for texture loading
+* [assimp](https://github.com/assimp/assimp) for model loading
+
+## References
+* [scratchapixel](https://www.scratchapixel.com/)
+* [learnopengl](https://learnopengl.com/Introduction)

@@ -4,7 +4,6 @@
 #include "../Renderers/ConcreteRenderers/MeshClipShaderMeshRenderer.h"
 #include "../Shaders/ConcreteShaders/OnePointSourceLitShader.h"
 #include "../Shaders/ConcreteShaders/UnlitTexturedRepeatShader.h"
-#include "../Shaders/ConcreteShaders/ScanerShader.h"
 #include "../Shaders/ConcreteShaders/LitTexturedShader.h"
 #include "../Shaders/ConcreteShaders/FunShader.h"
 #include "../Shaders/ConcreteShaders/OnePointSourceLitShaderWithWireframe.h"

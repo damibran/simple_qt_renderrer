@@ -46,7 +46,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox">
        <property name="text">
-        <string>Flex</string>
+        <string>Light Flex</string>
        </property>
       </widget>
      </item>

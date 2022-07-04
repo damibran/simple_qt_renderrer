@@ -138,13 +138,16 @@
     <ClInclude Include="Shaders\ConcreteShaders\LitTexturedShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\ConcreteShaders\ScanerShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderers\ConcreteRenderers\ClipNearShaderMeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\ConcreteShaders\LitTexturedRepeatShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\UnLitScanerShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders\ConcreteShaders\LitScanerShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

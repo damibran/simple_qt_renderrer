@@ -60,7 +60,7 @@ public:
 		const glm::vec3 obj_color = texture->sampleTexture(frag_tex_coord);
 
 
-		return obj_color + 0.5f*(shield_color - obj_color);
+		return obj_color + 0.3f*(shield_color - obj_color);
 	}
 
 	bool supportsBackFaceCulling() override
