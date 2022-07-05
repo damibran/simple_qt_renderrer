@@ -1,10 +1,18 @@
 # simple_qt_renderrer
 
-Is 3D renderer made from scratch on pure C++. Qt is using only for windowing and widgets (sliders, labels), it doesn't take part in actual rendering at all. This project was initially based on my previous work Simple_ASCII_Renderer. 
+Is 3D renderer made from scratch on pure C++. Qt is using only for windowing and widgets (sliders, labels), it doesn't take part in rendering at all. This project was initially based on my previous work Simple_ASCII_Renderer.
 
-## Why?
+## Motivation
 
-This and previous projects were created to fulfill my interest in computer graphic programming. I was learning OpenGL  at learnopengl.com and at some point i wasn't pretty sure about my course because of lack of low-level knowledge. So I decided to make a renderer from scratch. While I was in midway, I had a computer graphics course at University, it made a influence on the project too.
+This and previous CG projects were created to fulfill my interest in computer graphic programming. I was learning OpenGL at learnopengl.com and at some point i wasn't pretty sure about my chosen course because of lack of low-level knowledge. So I decided to make a renderer from scratch. While I was in midway, I had a computer graphics course at University, it made a influence on the project too.
+
+## What's next
+
+Now, this project is on hold for number of reasons:
+* Renderer is not fast enough (my bad) and should be profiled deeper
+* Qt is too big for this project, better choice SDL and Dear ImGui
+
+But this project stays at GitHub to demonstrate my C++ and computer graphics knowledge
 
 ## Features
 * Shader-based forward renderer
@@ -21,13 +29,14 @@ This and previous projects were created to fulfill my interest in computer graph
 
 ## Showcase
 
-![BarrelLightGif](Examples\Barrel_Light_Flex.gif)
+<img src="Examples\Barrel_Light_Flex.gif">
 
 ## Dependencies
 * [GLM](https://github.com/g-truc/glm) for math
 * [stb_image](https://github.com/nothings/stb) for texture loading
 * [assimp](https://github.com/assimp/assimp) for model loading
+* [thread_pool](https://github.com/bshoshany/thread-pool) to parallelize rasterization
 
 ## References
 * [scratchapixel](https://www.scratchapixel.com/)
-* [learnopengl](https://learnopengl.com/Introduction)
+* [learnopengl](https://learnopengl.com/)
