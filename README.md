@@ -12,7 +12,8 @@ Now, this project is on hold for number of reasons:
 * Renderer is not fast enough (my bad) and should be profiled deeper
 * Qt is too big for this project, better choice SDL and Dear ImGui
 
-But this project stays at GitHub to demonstrate my C++ and computer graphics knowledge
+But this project stays at GitHub to demonstrate my C++ and computer graphics knowledge.<br>
+And now, as next stage, I want to deep dive into a Vulkan API.
 
 ## Features
 * Shader-based forward renderer
@@ -21,15 +22,16 @@ But this project stays at GitHub to demonstrate my C++ and computer graphics kno
 * Back-face culling
 * Homogeneous near plane clipping
 * Depth testing
-* Blinn–Phong shading model
+* Blinn-Phong shading model
 * Texture mapping 
-* Sutherland–Hodgman mesh-mesh clipping
+* Sutherland-Hodgman mesh-mesh clipping
 * Spatial bezier curve rendering
 * Smooth bezier surface rendering
 
 ## Showcase
 
 <img src="Examples\Barrel_Light_Flex.gif">
+This image suffers a lot from GIF compression
 
 ## Dependencies
 * [GLM](https://github.com/g-truc/glm) for math
